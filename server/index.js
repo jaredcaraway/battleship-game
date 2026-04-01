@@ -42,6 +42,18 @@ app.use('/api/auth', authRoutes);
 app.use('/api', scoresRoutes);
 
 // ---------------------------------------------------------------------------
+// Changelog — serve raw markdown
+// ---------------------------------------------------------------------------
+app.get('/changelog.md', (req, res) => {
+  const changelogPath = path.join(__dirname, '..', 'CHANGELOG.md');
+  res.type('text/plain').sendFile(changelogPath);
+});
+
+app.get('/changelog', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'changelog.html'));
+});
+
+// ---------------------------------------------------------------------------
 // SPA fallback — must come after API routes
 // ---------------------------------------------------------------------------
 app.get('/{*splat}', (req, res) => {
