@@ -31,10 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Complete battleship game — playable vs AI or multiplayer
 - Express server with Socket.io real-time game events
 - Board class with ship placement validation, attack logic, and state views
-- AIPlayer with three difficulty levels:
-  - Easy: random shots
-  - Medium: hunt + target mode
-  - Hard: probability-density targeting algorithm
+- AIPlayer with three difficulty levels (Easy: random shots, Medium: hunt + target mode, Hard: probability-density targeting)
 - GameRoom with turn management, AI integration, and 30s reconnection grace period
 - PostgreSQL database integration for users, games, leaderboard, and stats
 - JWT authentication with register/login routes and middleware
