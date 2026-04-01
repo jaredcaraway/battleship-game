@@ -1,0 +1,498 @@
+/* Retro Terminal Theme — Battleship */
+
+/* ===== Reset + Base ===== */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  background: #0d0d0d;
+  color: #00ff80;
+  font-family: 'Courier New', monospace;
+  overflow-x: hidden;
+}
+
+/* CRT scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,255,128,0.02) 2px,
+    rgba(0,255,128,0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ===== Top Nav ===== */
+#top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid #00ff8022;
+}
+
+.nav-brand {
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px #00ff80;
+}
+
+.nav-version {
+  color: #00ff8088;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid #00ff8044;
+  color: #00ff80;
+  padding: 4px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  border-color: #00ff80;
+  text-shadow: 0 0 8px #00ff80;
+}
+
+/* ===== Ad Slot ===== */
+.ad-slot {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ad-slot:empty {
+  display: none;
+}
+
+/* ===== Main Title ===== */
+#main-title {
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 4px;
+  margin: 20px 0;
+  text-shadow: 0 0 8px #00ff80;
+}
+
+/* ===== Screens ===== */
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+/* ===== Menu ===== */
+.menu-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.menu-section {
+  margin-bottom: 24px;
+}
+
+.menu-section h2, .menu-section h3 {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #00ff8088;
+  margin-bottom: 10px;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ===== Terminal Button ===== */
+.btn-terminal {
+  background: transparent;
+  border: 1px solid #00ff8066;
+  color: #00ff80;
+  padding: 8px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.btn-terminal:hover {
+  border-color: #00ff80;
+  text-shadow: 0 0 8px #00ff80;
+  background: #00ff8011;
+}
+
+/* ===== Terminal Input ===== */
+.input-terminal {
+  background: #0a0a0a;
+  border: 1px solid #00ff8044;
+  color: #00ff80;
+  padding: 8px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.input-terminal:focus {
+  border-color: #00ff8088;
+}
+
+.join-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.join-row .input-terminal {
+  flex: 1;
+}
+
+/* ===== Blink ===== */
+.blink {
+  animation: blink 1s infinite alternate;
+}
+
+/* ===== Boards ===== */
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+}
+
+.board-large {
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.board-small {
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ===== Cells ===== */
+.cell {
+  aspect-ratio: 1;
+  background: transparent;
+  border: 1px solid #00ff8022;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.cell:hover {
+  border-color: #00ff8088;
+  background: #00ff8011;
+}
+
+.cell.hit {
+  background: #ff003322;
+  border-color: #ff003366;
+  color: #ff0033;
+  text-shadow: 0 0 4px #ff0033;
+}
+
+.cell.miss {
+  background: #ffffff11;
+  border-color: #ffffff22;
+}
+
+.cell.ship {
+  background: #00ff8015;
+  border-color: #00ff8044;
+}
+
+.cell.sunk {
+  background: #ff003344;
+  border-color: #ff003388;
+}
+
+/* ===== Board Labels ===== */
+.board-label {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  margin: 8px 0;
+}
+
+.enemy-label {
+  color: #ff6b6b;
+}
+
+.friendly-label {
+  color: #00ff80;
+}
+
+.board-section {
+  margin-bottom: 16px;
+}
+
+/* ===== Game Status ===== */
+.game-status {
+  text-align: center;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #00ff8022;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #00ff8088;
+}
+
+/* ===== Game Container ===== */
+.game-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ===== Placement ===== */
+.placement-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px;
+}
+
+.placement-controls {
+  flex: 1;
+  min-width: 200px;
+}
+
+.ship-list {
+  margin-bottom: 12px;
+}
+
+.ship-item {
+  padding: 6px 8px;
+  margin-bottom: 4px;
+  border: 1px solid #00ff8033;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+  transition: all 0.15s;
+}
+
+.ship-item:hover {
+  border-color: #00ff8066;
+}
+
+.ship-item.selected {
+  border-color: #00ff80;
+  text-shadow: 0 0 8px #00ff80;
+}
+
+.ship-item.placed {
+  opacity: 0.5;
+}
+
+/* ===== Game Over ===== */
+.gameover-container {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.gameover-stats {
+  margin: 20px auto;
+  max-width: 300px;
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #00ff8088;
+}
+
+/* ===== Leaderboard ===== */
+.leaderboard-table {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.leaderboard-table th {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #00ff8066;
+  font-weight: normal;
+  padding: 6px 8px;
+  border-bottom: 1px solid #00ff8044;
+  text-align: left;
+}
+
+.leaderboard-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #00ff8022;
+}
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== Room Code ===== */
+.room-code {
+  font-size: 36px;
+  letter-spacing: 8px;
+  color: #00ff80;
+  text-shadow: 0 0 8px #00ff80;
+  margin: 16px 0;
+}
+
+.room-container,
+.waiting-container {
+  text-align: center;
+  padding: 40px;
+}
+
+/* ===== Modal ===== */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #111;
+  border: 1px solid #00ff8044;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-close {
+  float: right;
+  background: none;
+  border: none;
+  color: #00ff80;
+  cursor: pointer;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+}
+
+/* ===== Misc Text ===== */
+.subtitle {
+  color: #00ff8066;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.seo-content {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 20px;
+  color: #00ff8066;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* ===== Notification ===== */
+.notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  border: 1px solid #00ff80;
+  padding: 8px 16px;
+  z-index: 50;
+  font-size: 13px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  animation: fadeOut 2s forwards;
+}
+
+/* ===== Ship Status ===== */
+.ship-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 11px;
+  margin-top: 8px;
+  color: #00ff8088;
+}
+
+/* ===== Animations ===== */
+@keyframes blink {
+  from { opacity: 1; }
+  to   { opacity: 0.3; }
+}
+
+@keyframes fadeOut {
+  0%   { opacity: 1; }
+  70%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 600px) {
+  #main-title {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+
+  .nav-brand {
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  .room-code {
+    font-size: 28px;
+    letter-spacing: 6px;
+  }
+
+  .board-large {
+    max-width: 100%;
+  }
+
+  .board-small {
+    max-width: 100%;
+  }
+
+  .placement-container {
+    flex-direction: column;
+  }
+
+  .game-container,
+  .menu-container {
+    padding: 12px;
+  }
+
+  .btn-terminal {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+}
