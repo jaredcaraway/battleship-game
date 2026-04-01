@@ -290,11 +290,11 @@
   <!-- SVG filter for SNES-style horizontal wave distortion on defeat -->
   <svg style="position:absolute;width:0;height:0" aria-hidden="true">
     <filter id="defeat-wave">
-      <feTurbulence type="turbulence" baseFrequency="0.01 0.08" numOctaves="2" seed="3" result="turbulence">
-        <animate attributeName="baseFrequency" values="0.01 0.12;0.005 0.06;0.002 0.02;0 0" dur="2.5s" fill="freeze"/>
+      <feTurbulence type="turbulence" baseFrequency="0.01 0.12" numOctaves="2" seed="3" result="turbulence">
+        <animate attributeName="baseFrequency" values="0.01 0.12;0.005 0.06;0.002 0.02;0 0" dur="2.5s" begin="indefinite" fill="freeze"/>
       </feTurbulence>
-      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="25" xChannelSelector="R" yChannelSelector="G">
-        <animate attributeName="scale" values="25;12;4;0" dur="2.5s" fill="freeze"/>
+      <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="30" xChannelSelector="R" yChannelSelector="G">
+        <animate attributeName="scale" values="30;15;5;0" dur="2.5s" begin="indefinite" fill="freeze"/>
       </feDisplacementMap>
     </filter>
   </svg>
