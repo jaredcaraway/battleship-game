@@ -551,6 +551,24 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof AuthUI !== 'undefined') AuthUI.init();
   // SoundManager.init() is already called at the bottom of game.js
 
+  // --- Mode tabs ---
+  var modeTabs = document.querySelectorAll('.mode-tab');
+  modeTabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      modeTabs.forEach(function (t) {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+
+      var panels = document.querySelectorAll('.tab-panel');
+      panels.forEach(function (p) { p.classList.remove('active'); });
+      var target = document.getElementById(tab.getAttribute('data-tab'));
+      if (target) target.classList.add('active');
+    });
+  });
+
   // --- AI mode buttons ---
   var modeButtons = document.querySelectorAll('[data-mode]');
   modeButtons.forEach(function (btn) {
