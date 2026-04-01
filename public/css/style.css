@@ -362,13 +362,17 @@ body::after {
   gap: 24px;
   align-items: flex-start;
   justify-content: center;
-  margin-bottom: 20px;
+}
+
+.placement-board-column {
+  display: flex;
+  flex-direction: column;
 }
 
 .placement-controls {
   display: flex;
   gap: 10px;
-  justify-content: center;
+  margin-top: 8px;
 }
 
 .ship-list {
