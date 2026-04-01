@@ -450,7 +450,23 @@ body::after {
 
 #gameover-title.defeat {
   color: #ff4444;
-  text-shadow: 0 0 10px #ff444466;
+  font-size: 36px;
+  letter-spacing: 6px;
+  text-shadow: 0 0 15px #ff444488, 0 0 30px #ff444433;
+  filter: url(#defeat-wave);
+  animation: defeatFadeIn 2.5s ease-out forwards;
+}
+
+@keyframes defeatFadeIn {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .gameover-stats {
