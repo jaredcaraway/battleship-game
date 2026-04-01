@@ -328,17 +328,27 @@ body::after {
 }
 
 /* ===== Leaderboard ===== */
-.leaderboard-table {
+#screen-leaderboard {
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.leaderboard-table,
+#leaderboard-table {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
   border-collapse: collapse;
+  border-collapse: collapse;
   font-size: 12px;
 }
 
-.leaderboard-table th {
+.leaderboard-table th,
+#leaderboard-table th {
   text-transform: uppercase;
   letter-spacing: 2px;
+  font-size: 10px;
   color: #00ff8066;
   font-weight: normal;
   padding: 6px 8px;
@@ -346,13 +356,31 @@ body::after {
   text-align: left;
 }
 
-.leaderboard-table td {
-  padding: 6px 8px;
+.leaderboard-table td,
+#leaderboard-table td {
+  padding: 8px 12px;
   border-bottom: 1px solid #00ff8022;
 }
 
-.leaderboard-table tr:last-child td {
+.leaderboard-table tr:last-child td,
+#leaderboard-table tr:last-child td {
   border-bottom: none;
+}
+
+#leaderboard-table td:first-child,
+#leaderboard-table th:first-child {
+  text-align: center;
+  width: 50px;
+}
+
+#leaderboard-table td:nth-child(3),
+#leaderboard-table td:nth-child(4),
+#leaderboard-table td:nth-child(5),
+#leaderboard-table th:nth-child(3),
+#leaderboard-table th:nth-child(4),
+#leaderboard-table th:nth-child(5) {
+  text-align: right;
+  width: 80px;
 }
 
 /* ===== Room Code ===== */
