@@ -156,8 +156,10 @@ body::after {
   gap: 12px;
 }
 
-#tab-ai.active {
-  align-items: center;
+#tab-ai .btn-group {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }
 
 .menu-section h2, .menu-section h3 {
