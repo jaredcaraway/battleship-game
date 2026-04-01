@@ -26,7 +26,7 @@ var SoundManager = {
   },
 
   _load: function () {
-    var files = { fire: 'fire.mp3', hit: 'hit.mp3', miss: 'miss.mp3', sunk: 'sunk.mp3' };
+    var files = { fire: 'fire.wav', hit: 'hit.wav', miss: 'miss.wav', sunk: 'sunk.wav' };
     for (var name in files) {
       if (Object.prototype.hasOwnProperty.call(files, name)) {
         var audio = new Audio('/sounds/' + files[name]);
