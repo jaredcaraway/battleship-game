@@ -362,13 +362,17 @@ body::after {
   gap: 24px;
   align-items: flex-start;
   justify-content: center;
-  margin-bottom: 20px;
+}
+
+.placement-board-column {
+  display: flex;
+  flex-direction: column;
 }
 
 .placement-controls {
   display: flex;
   gap: 10px;
-  justify-content: center;
+  margin-top: 8px;
 }
 
 .ship-list {
@@ -515,6 +519,47 @@ body::after {
   cursor: crosshair;
   font-family: 'Courier New', monospace;
   font-size: 16px;
+}
+
+/* ===== Settings Modal ===== */
+.modal-title {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #00ff8088;
+  margin-bottom: 16px;
+}
+
+.settings-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #00ff8015;
+}
+
+.settings-group:last-child {
+  border-bottom: none;
+}
+
+.settings-label {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #00ff80cc;
+}
+
+.settings-toggle {
+  padding: 4px 16px;
+  font-size: 12px;
+  min-width: 60px;
+}
+
+.settings-hint {
+  font-size: 11px;
+  color: #00ff8044;
+  letter-spacing: 1px;
+  font-style: italic;
 }
 
 /* ===== Misc Text ===== */

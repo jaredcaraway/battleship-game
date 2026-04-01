@@ -663,12 +663,44 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // --- Sound toggle ---
+  // --- Settings modal ---
+  var modalSettings = document.getElementById('modal-settings');
+  var btnSettings = document.getElementById('btn-settings');
+  var btnCloseSettings = document.getElementById('btn-close-settings');
+  var settingsOverlay = document.getElementById('modal-settings-overlay');
+
+  function openSettings() {
+    if (modalSettings) {
+      modalSettings.removeAttribute('hidden');
+      modalSettings.classList.add('active');
+    }
+  }
+
+  function closeSettings() {
+    if (modalSettings) {
+      modalSettings.classList.remove('active');
+      modalSettings.setAttribute('hidden', '');
+    }
+  }
+
+  if (btnSettings) btnSettings.addEventListener('click', openSettings);
+  if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettings);
+  if (settingsOverlay) settingsOverlay.addEventListener('click', closeSettings);
+
+  // --- Sound toggle (inside settings) ---
   var btnSound = document.getElementById('btn-sound');
+  // Restore saved preference
+  var savedSound = localStorage.getItem('battleship-sound');
+  if (savedSound === 'on') {
+    SoundManager.muted = false;
+    if (btnSound) btnSound.textContent = 'ON';
+  }
+
   if (btnSound) {
     btnSound.addEventListener('click', function () {
       var muted = SoundManager.toggle();
-      btnSound.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
+      btnSound.textContent = muted ? 'OFF' : 'ON';
+      localStorage.setItem('battleship-sound', muted ? 'off' : 'on');
     });
   }
 

@@ -52,7 +52,7 @@
   <nav id="top-nav" aria-label="Main navigation">
     <span class="nav-brand">BATTLESHIP v2.0</span>
     <div class="nav-controls">
-      <button id="btn-sound" class="nav-btn" aria-label="Toggle sound">SOUND: OFF</button>
+      <button id="btn-settings" class="nav-btn" aria-label="Open settings">SETTINGS</button>
       <button id="btn-login" class="nav-btn" aria-label="Login or register">LOGIN</button>
     </div>
   </nav>
@@ -123,15 +123,17 @@
     <section id="screen-placement" class="screen" aria-label="Place your ships">
       <h2>Place Your Ships</h2>
       <div class="placement-layout">
-        <div id="board-placement" class="board board-large" role="grid" aria-label="Ship placement board"></div>
+        <div class="placement-board-column">
+          <div id="board-placement" class="board board-large" role="grid" aria-label="Ship placement board"></div>
+          <div class="placement-controls">
+            <button id="btn-rotate" class="btn-terminal">Rotate Ship [R]</button>
+            <button id="btn-randomize" class="btn-terminal">Randomize</button>
+            <button id="btn-ready" class="btn-terminal">Ready</button>
+          </div>
+        </div>
         <div class="ship-list" id="ship-list" aria-label="Ships to place">
           <!-- Ship items rendered by JS -->
         </div>
-      </div>
-      <div class="placement-controls">
-        <button id="btn-rotate" class="btn-terminal">Rotate Ship [R]</button>
-        <button id="btn-randomize" class="btn-terminal">Randomize</button>
-        <button id="btn-ready" class="btn-terminal">Ready</button>
       </div>
     </section>
 
@@ -193,6 +195,24 @@
   </main>
 
   <!-- Auth Modal -->
+  <div id="modal-settings" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-settings-title" hidden>
+    <div class="modal-overlay" id="modal-settings-overlay"></div>
+    <div class="modal-content">
+      <button id="btn-close-settings" class="nav-btn modal-close" aria-label="Close settings">&times;</button>
+      <h2 id="modal-settings-title" class="modal-title">Settings</h2>
+
+      <div class="settings-group">
+        <label class="settings-label">Sound</label>
+        <button id="btn-sound" class="btn-terminal settings-toggle" aria-label="Toggle sound">OFF</button>
+      </div>
+
+      <div class="settings-group">
+        <label class="settings-label">Theme</label>
+        <span class="settings-hint">Coming soon</span>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-auth" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title" hidden>
     <div class="modal-overlay" id="modal-auth-overlay"></div>
     <div class="modal-content">
