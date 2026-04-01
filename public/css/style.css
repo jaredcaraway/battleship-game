@@ -12,6 +12,7 @@ html, body {
   background: #0d0d0d;
   color: #00ff80;
   font-family: 'Courier New', monospace;
+  cursor: crosshair;
   overflow-x: hidden;
 }
 
@@ -59,7 +60,7 @@ body::after {
   padding: 4px 12px;
   font-family: 'Courier New', monospace;
   font-size: 12px;
-  cursor: pointer;
+  cursor: crosshair;
   letter-spacing: 1px;
   transition: all 0.2s;
 }
@@ -134,7 +135,7 @@ body::after {
   background: transparent;
   color: #00ff8066;
   border: 1px solid #00ff8033;
-  cursor: pointer;
+  cursor: crosshair;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 
@@ -191,7 +192,7 @@ body::after {
   padding: 8px 16px;
   font-family: 'Courier New', monospace;
   font-size: 13px;
-  cursor: pointer;
+  cursor: crosshair;
   letter-spacing: 1px;
   transition: all 0.2s;
 }
@@ -257,7 +258,7 @@ body::after {
   background: transparent;
   border: 1px solid #00ff8022;
   border-radius: 2px;
-  cursor: pointer;
+  cursor: crosshair;
   transition: all 0.15s;
   display: flex;
   align-items: center;
@@ -378,7 +379,7 @@ body::after {
   padding: 6px 8px;
   margin-bottom: 4px;
   border: 1px solid #00ff8033;
-  cursor: pointer;
+  cursor: crosshair;
   font-size: 12px;
   letter-spacing: 1px;
   transition: all 0.15s;
@@ -511,7 +512,7 @@ body::after {
   background: none;
   border: none;
   color: #00ff80;
-  cursor: pointer;
+  cursor: crosshair;
   font-family: 'Courier New', monospace;
   font-size: 16px;
 }
