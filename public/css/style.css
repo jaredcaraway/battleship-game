@@ -180,7 +180,8 @@ body::after {
 }
 
 .board-large {
-  max-width: 450px;
+  width: 400px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -270,19 +271,30 @@ body::after {
 }
 
 /* ===== Placement ===== */
+#screen-placement {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+#screen-placement h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .placement-container,
 .placement-layout {
-  max-width: 600px;
-  margin: 0 auto;
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 16px;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .placement-controls {
-  flex: 1;
-  min-width: 200px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 .ship-list {
@@ -511,8 +523,10 @@ body::after {
     max-width: 100%;
   }
 
-  .placement-container {
+  .placement-container,
+  .placement-layout {
     flex-direction: column;
+    align-items: center;
   }
 
   .game-container,
