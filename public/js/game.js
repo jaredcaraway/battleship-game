@@ -110,11 +110,12 @@ function updateBoard(containerId, gridState) {
     } else if (state === 'miss') {
       cell.classList.add('miss');
       cell.textContent = '\u00B7'; // ·
-    } else if (state === 'ship') {
-      cell.classList.add('ship');
     } else if (state === 'sunk') {
       cell.classList.add('sunk');
       cell.textContent = '\u2715';
+    } else if (state) {
+      // Any other truthy value is a ship (server sends ship names like 'carrier')
+      cell.classList.add('ship');
     }
   });
 }
