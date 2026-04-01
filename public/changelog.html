@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog — Battleship</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .changelog-container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+      color: #00ff80cc;
+      line-height: 1.8;
+    }
+    .changelog-container h1 {
+      font-size: 16px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #00ff80;
+      text-shadow: 0 0 8px #00ff80;
+      margin-bottom: 8px;
+    }
+    .changelog-container h2 {
+      font-size: 14px;
+      color: #00ff80;
+      margin-top: 28px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid #00ff8022;
+      padding-bottom: 4px;
+    }
+    .changelog-container h3 {
+      font-size: 12px;
+      color: #00ff80aa;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+    .changelog-container ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .changelog-container li {
+      padding: 2px 0;
+      color: #00ff8099;
+      font-size: 12px;
+    }
+    .changelog-container li::before {
+      content: "> ";
+      color: #00ff8044;
+    }
+    .changelog-container p {
+      font-size: 12px;
+      color: #00ff8066;
+    }
+    .changelog-container a {
+      color: #00ff8066;
+      text-decoration: underline;
+    }
+    .changelog-container a:hover {
+      color: #00ff80;
+    }
+    .changelog-back {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #00ff8044;
+      font-size: 12px;
+      text-decoration: underline;
+      letter-spacing: 1px;
+    }
+    .changelog-back:hover {
+      color: #00ff8088;
+    }
+  </style>
+</head>
+<body>
+  <div class="changelog-container">
+    <a href="/" class="changelog-back">&lt; back to game</a>
+    <div id="changelog-content">Loading...</div>
+  </div>
+  <script>
+    fetch('/changelog.md')
+      .then(function (res) { return res.text(); })
+      .then(function (md) {
+        var html = md
+          // Headers
+          .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+          .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+          .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+          // Bold
+          .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+          // Links
+          .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+          // List items
+          .replace(/^- (.+)$/gm, '<li>$1</li>')
+          // Wrap consecutive <li> in <ul>
+          .replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>')
+          // Paragraphs for remaining lines
+          .replace(/^(?!<[hul])([\w].+)$/gm, '<p>$1</p>')
+          // Clean up extra newlines
+          .replace(/\n{2,}/g, '\n');
+
+        document.getElementById('changelog-content').innerHTML = html;
+      });
+  </script>
+</body>
+</html>
