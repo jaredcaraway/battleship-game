@@ -37,6 +37,51 @@ function showScreen(screenId) {
 // Game Over
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Victory confetti — lazy-loads canvas-confetti on first win
+// ---------------------------------------------------------------------------
+var _confettiLoaded = false;
+
+function _loadConfetti(callback) {
+  if (_confettiLoaded) { callback(); return; }
+  var script = document.createElement('script');
+  script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js';
+  script.onload = function () { _confettiLoaded = true; callback(); };
+  script.onerror = function () { /* silently skip if CDN unreachable */ };
+  document.head.appendChild(script);
+}
+
+function _fireVictoryConfetti() {
+  _loadConfetti(function () {
+    if (typeof confetti !== 'function') return;
+
+    // Green-themed burst from both sides
+    var colors = ['#00ff80', '#00cc66', '#33ff99', '#00ff4c', '#88ffbb'];
+    var defaults = { colors: colors, ticks: 200, spread: 70, gravity: 0.8 };
+
+    confetti(Object.assign({}, defaults, {
+      particleCount: 80,
+      angle: 60,
+      origin: { x: 0, y: 0.7 }
+    }));
+    confetti(Object.assign({}, defaults, {
+      particleCount: 80,
+      angle: 120,
+      origin: { x: 1, y: 0.7 }
+    }));
+
+    // Second burst after a short delay
+    setTimeout(function () {
+      confetti(Object.assign({}, defaults, {
+        particleCount: 60,
+        angle: 90,
+        spread: 100,
+        origin: { x: 0.5, y: 0.5 }
+      }));
+    }, 400);
+  });
+}
+
 /**
  * showGameOver(data)
  * Populates and shows the game over screen.
@@ -70,6 +115,8 @@ function showGameOver(data) {
   }
 
   showScreen('screen-gameover');
+
+  if (data.won) _fireVictoryConfetti();
 }
 
 // ---------------------------------------------------------------------------

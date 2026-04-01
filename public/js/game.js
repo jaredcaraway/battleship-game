@@ -408,6 +408,7 @@ function connectSocket() {
     }
 
     if (typeof showScreen === 'function') showScreen('screen-gameover');
+    if (iWon && typeof _fireVictoryConfetti === 'function') _fireVictoryConfetti();
   });
 
   // ---- opponent-disconnected: opponent left, countdown to forfeit ----------
