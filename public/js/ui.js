@@ -94,9 +94,15 @@ function showGameOver(data) {
   if (title) {
     title.textContent = data.won ? 'VICTORY!' : 'DEFEAT';
     title.classList.remove('victory', 'defeat');
-    // Force reflow to restart animation if replaying
+    // Force reflow to restart CSS animation if replaying
     void title.offsetWidth;
     title.classList.add(data.won ? 'victory' : 'defeat');
+
+    // Restart SVG filter animations for defeat wave effect
+    if (!data.won) {
+      var anims = document.querySelectorAll('#defeat-wave animate');
+      anims.forEach(function (a) { a.beginElement(); });
+    }
   }
 
   var statsEl = document.getElementById('gameover-stats');

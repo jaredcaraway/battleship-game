@@ -392,6 +392,11 @@ function connectSocket() {
       title.classList.remove('victory', 'defeat');
       void title.offsetWidth;
       title.classList.add(iWon ? 'victory' : 'defeat');
+
+      if (!iWon) {
+        var anims = document.querySelectorAll('#defeat-wave animate');
+        anims.forEach(function (a) { a.beginElement(); });
+      }
     }
 
     var statsEl = document.getElementById('gameover-stats');
