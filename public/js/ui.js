@@ -199,7 +199,7 @@ function _updateShipListUI() {
     item.classList.remove('selected', 'placed');
 
     var isPlaced = placementState.placedShips.some(function (p) {
-      return p.name === FLEET[idx].name;
+      return p.name === FLEET[idx].name.toLowerCase();
     });
     if (isPlaced) {
       item.classList.add('placed');
@@ -253,8 +253,9 @@ function _handlePlacementClick(row, col) {
   var ship = FLEET[idx];
   if (!ship) return;
 
+  var shipNameLower = ship.name.toLowerCase();
   var isPlaced = placementState.placedShips.some(function (p) {
-    return p.name === ship.name;
+    return p.name === shipNameLower;
   });
   if (isPlaced) return;
 
@@ -266,7 +267,7 @@ function _handlePlacementClick(row, col) {
 
   // Record placement
   placementState.placedShips.push({
-    name: ship.name.toLowerCase(),
+    name: shipNameLower,
     col: col,
     row: row,
     size: ship.size,
@@ -280,8 +281,9 @@ function _handlePlacementClick(row, col) {
   // Auto-select next unplaced ship
   var nextIdx = -1;
   for (var i = 0; i < FLEET.length; i++) {
+    var fleetNameLower = FLEET[i].name.toLowerCase();
     var isAlreadyPlaced = placementState.placedShips.some(function (p) {
-      return p.name === FLEET[i].name.toLowerCase();
+      return p.name === fleetNameLower;
     });
     if (!isAlreadyPlaced) {
       nextIdx = i;
