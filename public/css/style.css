@@ -270,7 +270,8 @@ body::after {
 }
 
 /* ===== Placement ===== */
-.placement-container {
+.placement-container,
+.placement-layout {
   max-width: 600px;
   margin: 0 auto;
   display: flex;

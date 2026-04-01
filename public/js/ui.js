@@ -21,6 +21,16 @@ function showScreen(screenId) {
   });
   var target = document.getElementById(screenId);
   if (target) target.classList.add('active');
+  window.scrollTo(0, 0);
+
+  // Hide SEO content and ads during gameplay, show on menu
+  var seo = document.getElementById('seo-content');
+  var adTop = document.getElementById('ad-top');
+  var adBottom = document.getElementById('ad-bottom');
+  var isMenu = screenId === 'screen-menu';
+  if (seo) seo.style.display = isMenu ? '' : 'none';
+  if (adTop) adTop.style.display = isMenu ? '' : 'none';
+  if (adBottom) adBottom.style.display = isMenu ? '' : 'none';
 }
 
 // ---------------------------------------------------------------------------
