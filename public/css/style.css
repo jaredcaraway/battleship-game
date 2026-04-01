@@ -226,6 +226,18 @@ body::after {
   border-color: #00ff8044;
 }
 
+.cell.preview-valid {
+  background: #00ff8025;
+  border-color: #00ff8088;
+  box-shadow: inset 0 0 4px #00ff8033;
+}
+
+.cell.preview-invalid {
+  background: #ff003325;
+  border-color: #ff003388;
+  box-shadow: inset 0 0 4px #ff003333;
+}
+
 .cell.sunk {
   background: #ff003344;
   border-color: #ff003388;
