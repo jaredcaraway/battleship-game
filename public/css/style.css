@@ -156,6 +156,10 @@ body::after {
   gap: 12px;
 }
 
+#tab-ai.active {
+  align-items: center;
+}
+
 .menu-section h2, .menu-section h3 {
   font-size: 11px;
   letter-spacing: 2px;
