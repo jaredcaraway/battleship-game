@@ -89,7 +89,9 @@ var placementState = {
   orientation: 'horizontal',
   placedShips: [],
   // 10x10 grid tracking which cells are occupied
-  occupiedGrid: null
+  occupiedGrid: null,
+  lastHoverRow: -1,
+  lastHoverCol: -1
 };
 
 function _initOccupiedGrid() {
@@ -176,11 +178,21 @@ function _renderShipList() {
     item.appendChild(sizeSpan);
 
     item.addEventListener('click', function () {
-      // Only selectable if not yet placed
-      var placed = placementState.placedShips.some(function (p) {
-        return p.name === ship.name;
+      var shipNameLower = ship.name.toLowerCase();
+      var placedIdx = placementState.placedShips.findIndex(function (p) {
+        return p.name === shipNameLower;
       });
-      if (!placed) {
+
+      if (placedIdx !== -1) {
+        // Clicking a placed ship — remove it from board and re-select
+        _pickUpPlacedShip(placedIdx);
+      } else if (placementState.selectedShip === idx) {
+        // Clicking the currently selected ship — deselect (drop it)
+        placementState.selectedShip = -1;
+        _updateShipListUI();
+        _clearPreview();
+      } else {
+        // Clicking an unplaced, unselected ship — select it
         placementState.selectedShip = idx;
         _updateShipListUI();
       }
@@ -235,6 +247,8 @@ function _renderPlacementBoardCells() {
           _handlePlacementHover(r, c);
         });
         cell.addEventListener('mouseleave', function () {
+          placementState.lastHoverRow = -1;
+          placementState.lastHoverCol = -1;
           _clearPreview();
         });
       })(row, col);
@@ -247,17 +261,59 @@ function _renderPlacementBoardCells() {
   _redrawPlacedShips();
 }
 
+function _findPlacedShipAt(row, col) {
+  for (var i = 0; i < placementState.placedShips.length; i++) {
+    var p = placementState.placedShips[i];
+    var cells = _getShipCells(p.col, p.row, p.size, p.orientation);
+    for (var j = 0; j < cells.length; j++) {
+      if (cells[j].row === row && cells[j].col === col) return i;
+    }
+  }
+  return -1;
+}
+
+function _pickUpPlacedShip(placedIdx) {
+  var removed = placementState.placedShips[placedIdx];
+  var cells = _getShipCells(removed.col, removed.row, removed.size, removed.orientation);
+  cells.forEach(function (c) {
+    placementState.occupiedGrid[c.row][c.col] = false;
+  });
+  placementState.placedShips.splice(placedIdx, 1);
+
+  // Find the FLEET index for this ship
+  var fleetIdx = -1;
+  for (var i = 0; i < FLEET.length; i++) {
+    if (FLEET[i].name.toLowerCase() === removed.name) {
+      fleetIdx = i;
+      break;
+    }
+  }
+
+  placementState.selectedShip = fleetIdx;
+  placementState.orientation = removed.orientation;
+  _redrawPlacedShips();
+  _updateShipListUI();
+
+  var readyBtn = document.getElementById('btn-ready');
+  if (readyBtn) readyBtn.disabled = true;
+}
+
 function _handlePlacementClick(row, col) {
   var idx = placementState.selectedShip;
-  // Find the first unplaced ship if current is already placed
   var ship = FLEET[idx];
-  if (!ship) return;
+
+  // If no ship selected or selected ship is already placed, try picking up from board
+  var holdingShip = ship && !placementState.placedShips.some(function (p) {
+    return p.name === ship.name.toLowerCase();
+  });
+
+  if (!holdingShip) {
+    var placedIdx = _findPlacedShipAt(row, col);
+    if (placedIdx !== -1) _pickUpPlacedShip(placedIdx);
+    return;
+  }
 
   var shipNameLower = ship.name.toLowerCase();
-  var isPlaced = placementState.placedShips.some(function (p) {
-    return p.name === shipNameLower;
-  });
-  if (isPlaced) return;
 
   var valid = _isValidPlacement(col, row, ship.size, placementState.orientation, placementState.occupiedGrid);
   if (!valid) return;
@@ -302,6 +358,8 @@ function _handlePlacementClick(row, col) {
 }
 
 function _handlePlacementHover(row, col) {
+  placementState.lastHoverRow = row;
+  placementState.lastHoverCol = col;
   _clearPreview();
 
   var idx = placementState.selectedShip;
@@ -590,13 +648,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Rotate button
   var btnRotate = document.getElementById('btn-rotate');
+
+  function _rotateShip() {
+    placementState.orientation =
+      placementState.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+    if (btnRotate) {
+      btnRotate.textContent = 'Rotate Ship [R]';
+    }
+    // Refresh hover preview so the rotated orientation is visible immediately
+    if (placementState.lastHoverRow >= 0 && placementState.lastHoverCol >= 0) {
+      _handlePlacementHover(placementState.lastHoverRow, placementState.lastHoverCol);
+    }
+  }
+
   if (btnRotate) {
-    btnRotate.addEventListener('click', function () {
-      placementState.orientation =
-        placementState.orientation === 'horizontal' ? 'vertical' : 'horizontal';
-      btnRotate.textContent =
-        'Rotate Ship [' + placementState.orientation.toUpperCase().charAt(0) + ']';
-    });
+    btnRotate.addEventListener('click', _rotateShip);
   }
 
   // R key shortcut for rotate
@@ -604,12 +670,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var activeScreen = document.querySelector('#screen-placement.active');
     if (!activeScreen) return;
     if (e.key === 'r' || e.key === 'R') {
-      placementState.orientation =
-        placementState.orientation === 'horizontal' ? 'vertical' : 'horizontal';
-      if (btnRotate) {
-        btnRotate.textContent =
-          'Rotate Ship [' + placementState.orientation.toUpperCase().charAt(0) + ']';
-      }
+      _rotateShip();
     }
   });
 
