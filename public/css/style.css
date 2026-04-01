@@ -578,6 +578,26 @@ body::after {
   line-height: 1.7;
 }
 
+/* ===== Footer ===== */
+.site-footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.site-footer a {
+  color: #00ff8033;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.site-footer a:hover {
+  color: #00ff8088;
+}
+
 /* ===== Notification ===== */
 .notification {
   position: fixed;
