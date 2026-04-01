@@ -12,6 +12,7 @@ html, body {
   background: #0d0d0d;
   color: #00ff80;
   font-family: 'Courier New', monospace;
+  cursor: crosshair;
   overflow-x: hidden;
 }
 
