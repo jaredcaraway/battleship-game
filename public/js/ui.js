@@ -92,7 +92,11 @@ function showGameOver(data) {
 
   var title = document.getElementById('gameover-title');
   if (title) {
-    title.textContent = data.won ? 'VICTORY' : 'DEFEAT';
+    title.textContent = data.won ? 'VICTORY!' : 'DEFEAT';
+    title.classList.remove('victory', 'defeat');
+    // Force reflow to restart animation if replaying
+    void title.offsetWidth;
+    title.classList.add(data.won ? 'victory' : 'defeat');
   }
 
   var statsEl = document.getElementById('gameover-stats');

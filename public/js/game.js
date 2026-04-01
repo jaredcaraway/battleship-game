@@ -387,7 +387,12 @@ function connectSocket() {
     myTurn = false;
 
     var title = document.getElementById('gameover-title');
-    if (title) title.textContent = iWon ? 'VICTORY' : 'DEFEAT';
+    if (title) {
+      title.textContent = iWon ? 'VICTORY!' : 'DEFEAT';
+      title.classList.remove('victory', 'defeat');
+      void title.offsetWidth;
+      title.classList.add(iWon ? 'victory' : 'defeat');
+    }
 
     var statsEl = document.getElementById('gameover-stats');
     if (statsEl) {
