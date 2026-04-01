@@ -364,12 +364,34 @@ function _handlePlacementHover(row, col) {
 
   var idx = placementState.selectedShip;
   var ship = FLEET[idx];
-  if (!ship) return;
 
-  var isPlaced = placementState.placedShips.some(function (p) {
+  // Check if user is holding a ship
+  var holdingShip = ship && !placementState.placedShips.some(function (p) {
     return p.name === ship.name.toLowerCase();
   });
-  if (isPlaced) return;
+
+  // If not holding a ship, show pickup tooltip on placed ships
+  if (!holdingShip) {
+    var placedIdx = _findPlacedShipAt(row, col);
+    if (placedIdx !== -1) {
+      var placed = placementState.placedShips[placedIdx];
+      var placedCells = _getShipCells(placed.col, placed.row, placed.size, placed.orientation);
+      var board = document.getElementById('board-placement');
+      if (board) {
+        // Capitalize ship name for display
+        var displayName = placed.name.charAt(0).toUpperCase() + placed.name.slice(1);
+        placedCells.forEach(function (pos) {
+          var cell = board.querySelector(
+            '.cell[data-row="' + pos.row + '"][data-col="' + pos.col + '"]'
+          );
+          if (cell) cell.title = 'Pick up ' + displayName;
+        });
+      }
+    }
+    return;
+  }
+
+  if (!ship) return;
 
   var cells = _getShipCells(col, row, ship.size, placementState.orientation);
   var valid = _isValidPlacement(col, row, ship.size, placementState.orientation, placementState.occupiedGrid);
@@ -392,6 +414,9 @@ function _handlePlacementHover(row, col) {
 function _clearPreview() {
   var board = document.getElementById('board-placement');
   if (!board) return;
+  // Clear tooltips
+  var titledCells = board.querySelectorAll('.cell[title]');
+  titledCells.forEach(function (cell) { cell.removeAttribute('title'); });
   var previewCells = board.querySelectorAll('.preview-valid, .preview-invalid');
   previewCells.forEach(function (cell) {
     cell.classList.remove('preview-valid', 'preview-invalid');
