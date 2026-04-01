@@ -590,7 +590,7 @@ body::after {
   font-family: 'Courier New', monospace;
   font-size: 11px;
   letter-spacing: 1px;
-  text-decoration: none;
+  text-decoration: underline;
   transition: color 0.2s;
 }
 
