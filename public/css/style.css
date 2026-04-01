@@ -111,6 +111,51 @@ body::after {
   gap: 12px;
 }
 
+.mode-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 4px;
+}
+
+.mode-tab {
+  flex: 1;
+  padding: 8px 0;
+  font-family: 'Fira Mono', 'Courier New', monospace;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: transparent;
+  color: #00ff8066;
+  border: 1px solid #00ff8033;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.mode-tab:first-child {
+  border-right: none;
+}
+
+.mode-tab:hover {
+  color: #00ff80aa;
+  border-color: #00ff8055;
+}
+
+.mode-tab.active {
+  color: #00ff80;
+  border-color: #00ff8088;
+  background: #00ff8010;
+}
+
+.tab-panel {
+  display: none;
+}
+
+.tab-panel.active {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .menu-section h2, .menu-section h3 {
   font-size: 11px;
   letter-spacing: 2px;
