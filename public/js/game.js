@@ -1,0 +1,454 @@
+/* game.js — Battleship client: Socket.io + board rendering + game loop
+ * Loaded BEFORE ui.js. Exposes globals consumed by ui.js.
+ */
+
+'use strict';
+
+// ---------------------------------------------------------------------------
+// Global state
+// ---------------------------------------------------------------------------
+var socket = null;
+var currentRoomId = null;
+var myTurn = false;
+var mySocketId = null;
+
+// ---------------------------------------------------------------------------
+// SoundManager
+// ---------------------------------------------------------------------------
+var SoundManager = {
+  muted: true,
+  sounds: {},
+
+  init: function () {
+    document.addEventListener('click', function () {
+      SoundManager._load();
+    }, { once: true });
+  },
+
+  _load: function () {
+    var files = { fire: 'fire.mp3', hit: 'hit.mp3', miss: 'miss.mp3', sunk: 'sunk.mp3' };
+    for (var name in files) {
+      if (Object.prototype.hasOwnProperty.call(files, name)) {
+        var audio = new Audio('/sounds/' + files[name]);
+        audio.preload = 'auto';
+        this.sounds[name] = audio;
+      }
+    }
+  },
+
+  play: function (name) {
+    if (this.muted || !this.sounds[name]) return;
+    this.sounds[name].currentTime = 0;
+    this.sounds[name].play().catch(function () {});
+  },
+
+  toggle: function () {
+    this.muted = !this.muted;
+    return this.muted;
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Board rendering
+// ---------------------------------------------------------------------------
+
+/**
+ * renderBoard(containerId, grid, clickable)
+ * Clears the container and builds a 10x10 grid of div.cell elements.
+ * If clickable=true, each cell gets a click handler → fireAt(row, col).
+ */
+function renderBoard(containerId, grid, clickable) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  for (var row = 0; row < 10; row++) {
+    for (var col = 0; col < 10; col++) {
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.setAttribute('data-row', row);
+      cell.setAttribute('data-col', col);
+
+      if (clickable) {
+        (function (r, c) {
+          cell.addEventListener('click', function () {
+            fireAt(r, c);
+          });
+        })(row, col);
+      }
+
+      container.appendChild(cell);
+    }
+  }
+}
+
+/**
+ * updateBoard(containerId, gridState)
+ * Updates CSS classes on existing cells based on a 10x10 state array.
+ * Cell values: null | 'ship' | 'hit' | 'miss'
+ */
+function updateBoard(containerId, gridState) {
+  var container = document.getElementById(containerId);
+  if (!container || !gridState) return;
+
+  var cells = container.querySelectorAll('.cell');
+  cells.forEach(function (cell) {
+    var row = parseInt(cell.getAttribute('data-row'), 10);
+    var col = parseInt(cell.getAttribute('data-col'), 10);
+    if (isNaN(row) || isNaN(col)) return;
+
+    var state = gridState[row] && gridState[row][col];
+
+    // Reset dynamic classes
+    cell.classList.remove('hit', 'miss', 'ship', 'sunk');
+    cell.textContent = '';
+
+    if (state === 'hit') {
+      cell.classList.add('hit');
+      cell.textContent = '\u2715'; // ✕
+    } else if (state === 'miss') {
+      cell.classList.add('miss');
+      cell.textContent = '\u00B7'; // ·
+    } else if (state === 'ship') {
+      cell.classList.add('ship');
+    } else if (state === 'sunk') {
+      cell.classList.add('sunk');
+      cell.textContent = '\u2715';
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// fireAt
+// ---------------------------------------------------------------------------
+
+/**
+ * fireAt(row, col)
+ * Emits a 'fire' event if it is this player's turn.
+ * Temporarily disables the enemy board to prevent double-fire.
+ */
+function fireAt(row, col) {
+  if (!myTurn) return;
+  if (!socket) return;
+
+  // Disable enemy board clicks immediately
+  myTurn = false;
+  updateTurnIndicator(false);
+
+  socket.emit('fire', { row: row, col: col });
+  SoundManager.play('fire');
+}
+
+// ---------------------------------------------------------------------------
+// Helper UI functions
+// ---------------------------------------------------------------------------
+
+/**
+ * showNotification(message)
+ * Appends a div.notification to <body>. CSS fadeOut animation auto-removes it.
+ */
+function showNotification(message) {
+  var el = document.createElement('div');
+  el.className = 'notification';
+  el.textContent = message;
+  document.body.appendChild(el);
+
+  // Remove after animation completes (2s matches the CSS fadeOut)
+  setTimeout(function () {
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
+  }, 2100);
+}
+
+/**
+ * updateTurnIndicator(isMyTurn)
+ * Updates #status-turn text and styling.
+ */
+function updateTurnIndicator(isMyTurn) {
+  var el = document.getElementById('status-turn');
+  if (!el) return;
+
+  if (isMyTurn) {
+    el.textContent = 'YOUR TURN';
+    el.style.color = '#00ff80';
+  } else {
+    el.textContent = "OPPONENT'S TURN";
+    el.style.color = '#ff6b6b';
+  }
+}
+
+/**
+ * updateShipStatus(ships)
+ * Renders ship name + sunk indicators into #ship-status.
+ * ships is an array of { name, sunk } objects.
+ */
+function updateShipStatus(ships) {
+  var container = document.getElementById('ship-status');
+  if (!container || !Array.isArray(ships)) return;
+
+  container.innerHTML = '';
+
+  ships.forEach(function (ship) {
+    var el = document.createElement('span');
+    el.className = 'ship-status-item' + (ship.sunk ? ' sunk' : '');
+    el.textContent = ship.name + (ship.sunk ? ' [SUNK]' : ' [OK]');
+    if (ship.sunk) {
+      el.style.color = '#ff0033';
+      el.style.textDecoration = 'line-through';
+    }
+    container.appendChild(el);
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Socket connection
+// ---------------------------------------------------------------------------
+
+function connectSocket() {
+  var token = localStorage.getItem('battleship_token');
+  socket = io({ auth: { token: token } });
+
+  // ---- connection lifecycle ------------------------------------------------
+
+  socket.on('connect', function () {
+    mySocketId = socket.id;
+  });
+
+  // ---- game-created: AI game was created ------------------------------------
+  socket.on('game-created', function (data) {
+    currentRoomId = data.roomId;
+    if (typeof showScreen === 'function') showScreen('screen-placement');
+  });
+
+  // ---- room-created: private PvP room created --------------------------------
+  socket.on('room-created', function (data) {
+    currentRoomId = data.roomId;
+    var display = document.getElementById('room-code-display');
+    if (display) display.textContent = data.roomId;
+    if (typeof showScreen === 'function') showScreen('screen-room');
+  });
+
+  // ---- player-joined: second player joined a private room -------------------
+  socket.on('player-joined', function (data) {
+    var count = data.playerCount;
+    var waitingText = document.querySelector('#screen-room .waiting-text');
+    if (waitingText) {
+      if (count >= 2) {
+        waitingText.textContent = 'Opponent joined! Starting...';
+      } else {
+        waitingText.textContent = 'Waiting for opponent to join...';
+      }
+    }
+    // When the joining player gets this, move them to placement
+    if (count >= 2 && socket && socket.id !== null) {
+      if (typeof showScreen === 'function') showScreen('screen-placement');
+    }
+  });
+
+  // ---- match-found: matchmaking succeeded -----------------------------------
+  socket.on('match-found', function (data) {
+    currentRoomId = data.roomId;
+    if (typeof showScreen === 'function') showScreen('screen-placement');
+  });
+
+  // ---- matchmaking: status update -------------------------------------------
+  socket.on('matchmaking', function (data) {
+    if (data.status === 'waiting') {
+      if (typeof showScreen === 'function') showScreen('screen-waiting');
+    } else if (data.status === 'timeout') {
+      showNotification('No opponent found. Try again or play vs AI.');
+      if (typeof showScreen === 'function') showScreen('screen-menu');
+    }
+  });
+
+  // ---- ships-placed: this player placed ships successfully ------------------
+  socket.on('ships-placed', function (data) {
+    // In multiplayer, show a "waiting for opponent" notice
+    var waitingContent = document.querySelector('#screen-placement .placement-controls');
+    if (waitingContent) {
+      var readyBtn = document.getElementById('btn-ready');
+      if (readyBtn) readyBtn.disabled = true;
+    }
+    showNotification('Ships placed! Waiting for opponent...');
+  });
+
+  // ---- game-start: both players ready, game begins --------------------------
+  socket.on('game-start', function (data) {
+    if (typeof showScreen === 'function') showScreen('screen-game');
+    // Request full state after showing game screen
+    if (socket) socket.emit('get-state');
+  });
+
+  // ---- game-state: full state update ----------------------------------------
+  socket.on('game-state', function (data) {
+    currentRoomId = data.roomId;
+
+    // Determine if it is my turn
+    myTurn = (data.currentTurn === socket.id);
+    updateTurnIndicator(myTurn);
+
+    // Render boards
+    if (data.myBoard && data.myBoard.grid) {
+      renderBoard('board-player', data.myBoard.grid, false);
+      updateBoard('board-player', data.myBoard.grid);
+    }
+
+    if (data.enemyBoard && data.enemyBoard.grid) {
+      renderBoard('board-enemy', data.enemyBoard.grid, myTurn);
+      updateBoard('board-enemy', data.enemyBoard.grid);
+    }
+
+    // Update ship status (own fleet)
+    if (data.myBoard && data.myBoard.ships) {
+      updateShipStatus(data.myBoard.ships);
+    }
+
+    // Update status message
+    var statusMsg = document.getElementById('status-message');
+    if (statusMsg) {
+      statusMsg.textContent = myTurn ? 'Your turn — pick a target' : 'Waiting for opponent...';
+    }
+  });
+
+  // ---- fire-result: a shot was resolved ------------------------------------
+  socket.on('fire-result', function (data) {
+    var isMyShot = (data.shooter === socket.id);
+
+    if (isMyShot) {
+      // Update enemy board
+      updateSingleCell('board-enemy', data.row, data.col, data.result);
+      if (data.result === 'hit' || data.result === 'sunk') {
+        SoundManager.play(data.sunk ? 'sunk' : 'hit');
+      } else {
+        SoundManager.play('miss');
+      }
+    } else {
+      // Update own board
+      updateSingleCell('board-player', data.row, data.col, data.result);
+      if (data.result === 'hit' || data.result === 'sunk') {
+        SoundManager.play(data.sunk ? 'sunk' : 'hit');
+      } else {
+        SoundManager.play('miss');
+      }
+    }
+
+    // Show notification if a ship was sunk
+    if (data.sunk && data.shipName) {
+      var who = isMyShot ? 'You sunk the enemy' : 'Your';
+      var msg = isMyShot
+        ? 'You sunk the enemy ' + data.shipName + '!'
+        : 'Your ' + data.shipName + ' was sunk!';
+      showNotification(msg);
+    }
+  });
+
+  // ---- turn-change: whose turn it is changed --------------------------------
+  socket.on('turn-change', function (data) {
+    myTurn = (data.currentTurn === socket.id);
+    updateTurnIndicator(myTurn);
+
+    // Re-render enemy board to enable/disable clicks
+    var enemyBoard = document.getElementById('board-enemy');
+    if (enemyBoard) {
+      var cells = enemyBoard.querySelectorAll('.cell');
+      cells.forEach(function (cell) {
+        // Clone to strip old listeners, then re-attach if needed
+        var newCell = cell.cloneNode(true);
+        if (myTurn) {
+          var row = parseInt(newCell.getAttribute('data-row'), 10);
+          var col = parseInt(newCell.getAttribute('data-col'), 10);
+          // Only add click if the cell is not already hit/miss/sunk
+          if (!newCell.classList.contains('hit') &&
+              !newCell.classList.contains('miss') &&
+              !newCell.classList.contains('sunk')) {
+            (function (r, c) {
+              newCell.addEventListener('click', function () {
+                fireAt(r, c);
+              });
+            })(row, col);
+          }
+        }
+        cell.parentNode.replaceChild(newCell, cell);
+      });
+    }
+
+    var statusMsg = document.getElementById('status-message');
+    if (statusMsg) {
+      statusMsg.textContent = myTurn ? 'Your turn — pick a target' : 'Waiting for opponent...';
+    }
+  });
+
+  // ---- game-over ------------------------------------------------------------
+  socket.on('game-over', function (data) {
+    var iWon = (data.winner === socket.id);
+    myTurn = false;
+
+    var title = document.getElementById('gameover-title');
+    if (title) title.textContent = iWon ? 'VICTORY' : 'DEFEAT';
+
+    var statsEl = document.getElementById('gameover-stats');
+    if (statsEl) {
+      var lines = [];
+      if (data.turns !== undefined) lines.push('Turns: ' + data.turns);
+      if (data.duration !== undefined) {
+        lines.push('Duration: ' + Math.round(data.duration / 1000) + 's');
+      }
+      if (data.reason) {
+        var reasons = {
+          opponent_disconnected: 'Opponent disconnected'
+        };
+        lines.push('Reason: ' + (reasons[data.reason] || data.reason));
+      }
+      statsEl.innerHTML = lines.map(function (l) {
+        return '<div>' + l + '</div>';
+      }).join('');
+    }
+
+    if (typeof showScreen === 'function') showScreen('screen-gameover');
+  });
+
+  // ---- opponent-disconnected: opponent left, countdown to forfeit ----------
+  socket.on('opponent-disconnected', function (data) {
+    var seconds = data.timeout ? Math.round(data.timeout / 1000) : 30;
+    showNotification('Opponent disconnected. Waiting ' + seconds + 's for reconnect...');
+  });
+
+  // ---- error ----------------------------------------------------------------
+  socket.on('error', function (data) {
+    showNotification(data.message || 'An error occurred');
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Internal helper: update a single cell on a board
+// ---------------------------------------------------------------------------
+function updateSingleCell(containerId, row, col, state) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+
+  var cell = container.querySelector(
+    '.cell[data-row="' + row + '"][data-col="' + col + '"]'
+  );
+  if (!cell) return;
+
+  cell.classList.remove('hit', 'miss', 'ship', 'sunk');
+  cell.textContent = '';
+
+  if (state === 'hit') {
+    cell.classList.add('hit');
+    cell.textContent = '\u2715';
+  } else if (state === 'miss') {
+    cell.classList.add('miss');
+    cell.textContent = '\u00B7';
+  } else if (state === 'sunk') {
+    cell.classList.add('sunk');
+    cell.textContent = '\u2715';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+SoundManager.init();
