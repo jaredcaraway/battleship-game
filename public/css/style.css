@@ -597,7 +597,15 @@ body::after {
 
 #screen-placement h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 4px;
+}
+
+.placement-hint {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #00ff8033;
+  margin-bottom: 16px;
 }
 
 .placement-container,
