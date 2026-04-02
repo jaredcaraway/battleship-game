@@ -8,9 +8,38 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const path = require('path');
 
+const fs = require('fs');
 const authRoutes = require('./routes/auth');
 const scoresRoutes = require('./routes/scores');
 const { setupSocketHandlers } = require('./socket/handlers');
+const pool = require('./db/pool');
+
+// ---------------------------------------------------------------------------
+// Startup validation
+// ---------------------------------------------------------------------------
+if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'change-me-to-a-random-string') {
+  console.error('FATAL: JWT_SECRET not configured. Run: openssl rand -hex 32');
+  process.exit(1);
+}
+
+// Auto-init database tables
+async function initDatabase() {
+  try {
+    await pool.query('SELECT 1 FROM users LIMIT 0');
+  } catch (err) {
+    if (err.code === '42P01') { // table does not exist
+      console.log('Initializing database schema...');
+      const schema = fs.readFileSync(path.join(__dirname, 'db', 'schema.sql'), 'utf8');
+      await pool.query(schema);
+      console.log('Database schema initialized.');
+    } else if (err.code === 'ECONNREFUSED' || err.code === '28P01') {
+      console.warn('Database unavailable — auth and leaderboard features disabled.');
+    } else {
+      console.warn('Database check failed:', err.message);
+    }
+  }
+}
+initDatabase();
 
 // ---------------------------------------------------------------------------
 // App setup

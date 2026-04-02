@@ -59,12 +59,18 @@ var AuthUI = {
     AuthUI._currentMode = mode || 'login';
     AuthUI._renderForm();
     var modal = document.getElementById('modal-auth');
-    if (modal) modal.removeAttribute('hidden');
+    if (modal) {
+      modal.removeAttribute('hidden');
+      modal.classList.add('active');
+    }
   },
 
   hideModal: function () {
     var modal = document.getElementById('modal-auth');
-    if (modal) modal.setAttribute('hidden', '');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.setAttribute('hidden', '');
+    }
     // Clear any error messages
     var container = document.getElementById('auth-form-container');
     if (container) container.innerHTML = '';
