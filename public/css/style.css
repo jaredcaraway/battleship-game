@@ -943,6 +943,19 @@ body::after {
   100% { opacity: 0; }
 }
 
+/* ===== Reduce Motion ===== */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001s !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.001s !important;
+}
+
+.reduce-motion #gameover-title.defeat {
+  filter: none;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   #main-title {
