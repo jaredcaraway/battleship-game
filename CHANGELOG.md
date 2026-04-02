@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.5.0] - 2026-04-02
+
+### Added
+- **Cumulative stats dashboard**: localStorage-persisted career stats (games, wins, losses, win rate, hit rate, fastest win, streaks, per-mode breakdown) with dedicated My Stats screen
+- **Sunk ships tracker**: red pixel-block cards appear under enemy board as ships are destroyed
+- **Difficulty badge**: color-coded EASY/MEDIUM/HARD label in status bar during AI games
+- **Career hit rate**: shown on both stats dashboard and game over screen
+- **AI turn delay**: 800-1500ms random delay before AI fires back for natural feel
+
+### Fixed
+- Game-over handler routed through shared showGameOver() — accuracy, stats recording, confetti, and defeat animation now all work correctly
+- Turn-change emitted after delayed AI move to re-enable player clicks
+- Orphaned oscilloscope canvases cleaned up on interrupted turn transitions
+
 ## [1.4.0] - 2026-04-02
 
 ### Added
