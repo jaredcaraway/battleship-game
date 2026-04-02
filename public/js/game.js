@@ -318,17 +318,43 @@ function _playTurnBeep() {
   } catch (e) { /* ignore audio errors */ }
 }
 
+var _myTurnMessages = [
+  'LOCK TARGET — FIRE AT WILL',
+  'SELECT COORDINATES, COMMANDER',
+  'TARGETING SYSTEMS ONLINE',
+  'AWAITING YOUR COMMAND',
+  'WEAPONS HOT — CHOOSE TARGET'
+];
+
+var _opponentTurnMessages = [
+  'INCOMING THREAT DETECTED',
+  'ENEMY CALCULATING...',
+  'BRACE FOR IMPACT',
+  'AWAITING INTEL...',
+  'HOSTILE TARGETING IN PROGRESS'
+];
+
+function _randomMessage(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
 function updateTurnIndicator(isMyTurn) {
-  var el = document.getElementById('status-turn');
-  if (!el) return;
+  var turnEl = document.getElementById('status-turn');
+  var msgEl = document.getElementById('status-message');
 
   if (isMyTurn) {
-    el.textContent = 'YOUR TURN';
-    el.style.color = '#00ff80';
+    if (turnEl) {
+      turnEl.textContent = 'YOUR TURN';
+      turnEl.style.color = '#00ff80';
+    }
+    if (msgEl) msgEl.textContent = _randomMessage(_myTurnMessages);
     _playTurnBeep();
   } else {
-    el.textContent = "OPPONENT'S TURN";
-    el.style.color = '#ff6b6b';
+    if (turnEl) {
+      turnEl.textContent = "OPPONENT'S TURN";
+      turnEl.style.color = '#ff6b6b';
+    }
+    if (msgEl) msgEl.textContent = _randomMessage(_opponentTurnMessages);
   }
 
   // Pulse the status bar
@@ -432,7 +458,7 @@ function connectSocket() {
       var readyBtn = document.getElementById('btn-ready');
       if (readyBtn) readyBtn.disabled = true;
     }
-    showNotification('Ships placed! Waiting for opponent...');
+    showNotification('FLEET DEPLOYED — AWAITING ENEMY CONTACT');
   });
 
   // ---- game-start: both players ready, game begins --------------------------
@@ -467,10 +493,7 @@ function connectSocket() {
     }
 
     // Update status message
-    var statusMsg = document.getElementById('status-message');
-    if (statusMsg) {
-      statusMsg.textContent = myTurn ? 'Your turn — pick a target' : 'Waiting for opponent...';
-    }
+    // status-message updated by updateTurnIndicator
   });
 
   // ---- fire-result: a shot was resolved ------------------------------------
@@ -501,10 +524,10 @@ function connectSocket() {
 
     // Show notification if a ship was sunk
     if (data.sunk && data.shipName) {
-      var who = isMyShot ? 'You sunk the enemy' : 'Your';
+      var shipUpper = data.shipName.toUpperCase();
       var msg = isMyShot
-        ? 'You sunk the enemy ' + data.shipName + '!'
-        : 'Your ' + data.shipName + ' was sunk!';
+        ? 'ENEMY ' + shipUpper + ' DESTROYED'
+        : shipUpper + ' LOST — HULL BREACH';
       showNotification(msg);
     }
   });
@@ -539,10 +562,7 @@ function connectSocket() {
       });
     }
 
-    var statusMsg = document.getElementById('status-message');
-    if (statusMsg) {
-      statusMsg.textContent = myTurn ? 'Your turn — pick a target' : 'Waiting for opponent...';
-    }
+    // status-message updated by updateTurnIndicator
   });
 
   // ---- game-over ------------------------------------------------------------
