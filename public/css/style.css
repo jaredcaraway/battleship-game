@@ -1058,6 +1058,35 @@ body::after {
   margin-bottom: 4px;
 }
 
+.fleet-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.fleet-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.fleet-list li::before {
+  display: none;
+}
+
+.seo-blocks {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.seo-block {
+  width: 12px;
+  height: 12px;
+  background: #00ff8044;
+  border: 1px solid #00ff8033;
+  border-radius: 1px;
+}
+
 /* ===== Footer ===== */
 .site-footer {
   text-align: center;
