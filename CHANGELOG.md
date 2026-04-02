@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.3.0] - 2026-04-02
+
+### Added
+- **Game UI rework**: side-by-side desktop layout — enemy board (large, left) + player board (small, right) with ship status beneath
+- **3D water ripple effect**: perspective-based undulating wave radiates from impact point on each shot, amplitude decays with distance
+- **Screen shake**: light shake on hits, heavy shake on ship sinking — JS-driven decaying random jitter
+- **Turn change alerts**: 880Hz beep via Web Audio API + status bar green pulse on turn change
+- **Targeting highlight**: enemy board cells glow with inner/outer box-shadow on hover (excludes already-hit cells)
+- **Menu visual hierarchy**: underline-style tabs, color-coded difficulty buttons (green/amber/red), secondary leaderboard button
+- **Undo placement**: Undo [Z] button reverts last placed ship during placement phase
+- **Play Again shortcut**: replays same AI difficulty from game over screen without returning to menu
+- Board labels styled as subtle uppercase headers, enemy label brighter
+
+### Fixed
+- Player board thumbnail no longer resizes after first hit (explicit width instead of max-width only)
+- Difficulty button colors now properly override base `.btn-terminal` styles (specificity fix)
+- Screen shake duration increased for better feel (was too subtle)
+
 ## [1.2.0] - 2026-04-02
 
 ### Added
