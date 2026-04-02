@@ -130,6 +130,7 @@ function updateBoard(containerId, gridState) {
  * intensity: 'light' (hit) or 'heavy' (sunk)
  */
 function _shakeScreen(intensity) {
+  if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
   var el = document.getElementById('screen-game');
   if (!el) return;
 
@@ -159,6 +160,7 @@ function _shakeScreen(intensity) {
  * Temporarily disables the enemy board to prevent double-fire.
  */
 function _spawnRipple(row, col) {
+  if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
   var board = document.getElementById('board-enemy');
   if (!board) return;
 
@@ -497,7 +499,7 @@ function connectSocket() {
       void title.offsetWidth;
       title.classList.add(iWon ? 'victory' : 'defeat');
 
-      if (!iWon) {
+      if (!iWon && typeof MotionSettings !== 'undefined' && MotionSettings.enabled) {
         var anims = document.querySelectorAll('#defeat-wave animate');
         anims.forEach(function (a) { a.beginElement(); });
       }

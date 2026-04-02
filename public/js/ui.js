@@ -5,6 +5,32 @@
 
 'use strict';
 
+// Global motion settings — checked by all animation/effect functions
+var MotionSettings = {
+  enabled: true,
+  init: function () {
+    // Respect OS-level preference
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.enabled = false;
+    }
+    // Override with saved user preference
+    var saved = localStorage.getItem('cyber-ship-battle-motion');
+    if (saved === 'off') this.enabled = false;
+    if (saved === 'on') this.enabled = true;
+    this._applyClass();
+  },
+  toggle: function () {
+    this.enabled = !this.enabled;
+    localStorage.setItem('cyber-ship-battle-motion', this.enabled ? 'on' : 'off');
+    this._applyClass();
+    return this.enabled;
+  },
+  _applyClass: function () {
+    document.documentElement.classList.toggle('reduce-motion', !this.enabled);
+  }
+};
+MotionSettings.init();
+
 // Track last game mode for Play Again
 var _lastGameMode = null; // { type: 'ai', difficulty: 'easy' } or { type: 'multiplayer' }
 
@@ -55,6 +81,7 @@ function _loadConfetti(callback) {
 }
 
 function _fireVictoryConfetti() {
+  if (!MotionSettings.enabled) return;
   _loadConfetti(function () {
     if (typeof confetti !== 'function') return;
 
@@ -102,7 +129,7 @@ function showGameOver(data) {
     title.classList.add(data.won ? 'victory' : 'defeat');
 
     // Restart SVG filter animations for defeat wave effect
-    if (!data.won) {
+    if (!data.won && MotionSettings.enabled) {
       var anims = document.querySelectorAll('#defeat-wave animate');
       anims.forEach(function (a) { a.beginElement(); });
     }
@@ -786,6 +813,16 @@ document.addEventListener('DOMContentLoaded', function () {
       var muted = SoundManager.toggle();
       btnSound.textContent = muted ? 'OFF' : 'ON';
       localStorage.setItem('battleship-sound', muted ? 'off' : 'on');
+    });
+  }
+
+  // --- Motion toggle (inside settings) ---
+  var btnMotion = document.getElementById('btn-motion');
+  if (btnMotion) {
+    btnMotion.textContent = MotionSettings.enabled ? 'ON' : 'OFF';
+    btnMotion.addEventListener('click', function () {
+      var enabled = MotionSettings.toggle();
+      btnMotion.textContent = enabled ? 'ON' : 'OFF';
     });
   }
 
