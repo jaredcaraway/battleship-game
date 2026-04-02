@@ -115,7 +115,13 @@
       <div class="screen-centered">
         <h2 class="screen-heading">Room Created</h2>
         <p class="screen-subtitle">Share this code with your opponent:</p>
-        <p id="room-code-display" class="room-code" aria-live="polite" title="Click to copy"></p>
+        <p class="room-code-wrapper" title="Click to copy">
+          <span id="room-code-display" class="room-code" aria-live="polite"></span>
+          <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+          </svg>
+        </p>
         <p id="room-code-copied" class="copy-confirm" hidden>Copied!</p>
         <p class="screen-subtitle blink">Waiting for opponent to join...</p>
         <button id="btn-cancel-room" class="btn-terminal">Cancel</button>
