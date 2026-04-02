@@ -279,6 +279,10 @@ function _updateShipListUI() {
       item.classList.add('selected');
     }
   });
+
+  // Update undo button state
+  var undo = document.getElementById('btn-undo');
+  if (undo) undo.disabled = placementState.placedShips.length === 0;
 }
 
 function _renderPlacementBoard() {
@@ -833,6 +837,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // Undo button
+  var btnUndo = document.getElementById('btn-undo');
+
+  function _updateUndoState() {
+    if (btnUndo) {
+      btnUndo.disabled = placementState.placedShips.length === 0;
+    }
+  }
+
+  function _undoLastPlacement() {
+    if (placementState.placedShips.length === 0) return;
+    var lastIdx = placementState.placedShips.length - 1;
+    _pickUpPlacedShip(lastIdx);
+    _updateUndoState();
+  }
+
+  if (btnUndo) {
+    btnUndo.addEventListener('click', _undoLastPlacement);
+  }
+
   // Ready button
   var btnReady = document.getElementById('btn-ready');
   function _submitReady() {
@@ -854,6 +878,8 @@ document.addEventListener('DOMContentLoaded', function () {
       _rotateShip();
     } else if (e.key === 's' || e.key === 'S') {
       _randomizePlacement();
+    } else if (e.key === 'z' || e.key === 'Z') {
+      _undoLastPlacement();
     } else if (e.key === 'Enter') {
       _submitReady();
     }
