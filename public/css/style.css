@@ -375,6 +375,29 @@ body::after {
 }
 
 /* ===== Game Container ===== */
+#status-bar {
+  text-align: center;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #00ff8022;
+  transition: border-color 0.3s;
+}
+
+#status-bar.pulse {
+  animation: statusPulse 0.6s ease-out;
+}
+
+@keyframes statusPulse {
+  0% {
+    border-color: #00ff80;
+    box-shadow: 0 0 12px #00ff8044;
+  }
+  100% {
+    border-color: #00ff8022;
+    box-shadow: none;
+  }
+}
+
 .game-container {
   max-width: 500px;
   margin: 0 auto;
