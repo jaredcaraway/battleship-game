@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-04-02
+
+### Added
+- Rebranded to **Cyber Ship Battle**
+- Victory screen: confetti celebration (canvas-confetti, green-themed, lazy-loaded from CDN)
+- Victory screen: "VICTORY!" slam animation with triple-layer green glow
+- Defeat screen: SNES-style horizontal wave distortion via SVG turbulence filter
+- Defeat screen: red text with layered glow
+- Game over screen vertically centered with flexbox layout
+- Onsite changelog page at `/changelog` rendering from CHANGELOG.md
+- Changelog footer link with `>_ changelog` terminal prompt
+- Click-to-copy room code with SVG copy icon and "Copied!" confirmation
+- Room lobby and matchmaking screens centered with consistent styling
+- Reusable CSS style guide patterns (`.screen-centered`, `.screen-heading`, `.screen-subtitle`)
+- Keyboard shortcuts for all placement buttons: Rotate [R], Randomize [S], Ready [Enter]
+
+### Fixed
+- All links underlined for UX discoverability
+- Placement controls flush beneath game board
+
 ## [1.1.0] - 2026-04-01
 
 ### Added
