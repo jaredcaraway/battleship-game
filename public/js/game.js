@@ -132,36 +132,47 @@ function updateBoard(containerId, gridState) {
 function _spawnRipple(row, col) {
   var board = document.getElementById('board-enemy');
   if (!board) return;
-  var cell = board.querySelector('.cell[data-row="' + row + '"][data-col="' + col + '"]');
-  if (!cell) return;
 
-  cell.classList.remove('ripple');
-  void cell.offsetWidth;
-  cell.classList.add('ripple');
+  var cells = board.querySelectorAll('.cell');
+  var maxDist = 0;
 
-  // Spawn extra ripple rings on neighboring cells for spread effect
-  var neighbors = [
-    [row - 1, col], [row + 1, col], [row, col - 1], [row, col + 1]
-  ];
-  neighbors.forEach(function (pos, i) {
-    var n = board.querySelector('.cell[data-row="' + pos[0] + '"][data-col="' + pos[1] + '"]');
-    if (n) {
-      setTimeout(function () {
-        n.classList.remove('ripple');
-        void n.offsetWidth;
-        n.classList.add('ripple');
-      }, 100 + i * 60);
-    }
+  // Calculate distances from impact point
+  cells.forEach(function (cell) {
+    var r = parseInt(cell.getAttribute('data-row'), 10);
+    var c = parseInt(cell.getAttribute('data-col'), 10);
+    var dist = Math.sqrt((r - row) * (r - row) + (c - col) * (c - col));
+    if (dist > maxDist) maxDist = dist;
+    cell._rippleDist = dist;
   });
 
-  // Clean up classes after animation
+  // Animate each cell with delay based on distance
+  cells.forEach(function (cell) {
+    var dist = cell._rippleDist;
+    var delay = dist * 0.05; // 50ms per unit distance
+    // Amplitude decreases with distance
+    var amplitude = Math.max(0.2, 1 - (dist / maxDist));
+    var duration = 0.4 + dist * 0.04; // longer settle for distant cells
+
+    cell.classList.remove('wave');
+    void cell.offsetWidth;
+    cell.style.setProperty('--wave-delay', delay + 's');
+    cell.style.setProperty('--wave-duration', duration + 's');
+    cell.style.setProperty('--wave-amplitude', amplitude);
+    cell.classList.add('wave');
+
+    delete cell._rippleDist;
+  });
+
+  // Clean up after all animations complete
+  var cleanupTime = (maxDist * 0.05 + 0.4 + maxDist * 0.04) * 1000 + 100;
   setTimeout(function () {
-    cell.classList.remove('ripple');
-    neighbors.forEach(function (pos) {
-      var n = board.querySelector('.cell[data-row="' + pos[0] + '"][data-col="' + pos[1] + '"]');
-      if (n) n.classList.remove('ripple');
+    cells.forEach(function (cell) {
+      cell.classList.remove('wave');
+      cell.style.removeProperty('--wave-delay');
+      cell.style.removeProperty('--wave-duration');
+      cell.style.removeProperty('--wave-amplitude');
     });
-  }, 1200);
+  }, cleanupTime);
 }
 
 function fireAt(row, col) {

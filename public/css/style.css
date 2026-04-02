@@ -276,6 +276,8 @@ body::after {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 2px;
+  perspective: 600px;
+  transform-style: preserve-3d;
 }
 
 .board-large {
@@ -308,45 +310,41 @@ body::after {
   background: #00ff8011;
 }
 
-.cell.ripple {
-  position: relative;
-  overflow: visible;
+.cell.wave {
+  animation: wave3d var(--wave-duration, 0.6s) ease-out forwards;
+  animation-delay: var(--wave-delay, 0s);
+  transform-style: preserve-3d;
 }
 
-.cell.ripple::before,
-.cell.ripple::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  border: 1px solid #00ff8088;
-  transform: translate(-50%, -50%) scale(0);
-  animation: waterRipple 0.8s ease-out forwards;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.cell.ripple::after {
-  animation-delay: 0.15s;
-}
-
-@keyframes waterRipple {
+@keyframes wave3d {
   0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.8;
-    border-width: 2px;
+    transform: perspective(600px) translateZ(0) rotateX(0) scaleY(1);
+    box-shadow: none;
   }
-  50% {
-    opacity: 0.4;
-    border-width: 1px;
+  15% {
+    transform: perspective(600px) translateZ(calc(14px * var(--wave-amplitude, 1)))
+               rotateX(calc(-5deg * var(--wave-amplitude, 1)))
+               scaleY(calc(1 + 0.08 * var(--wave-amplitude, 1)));
+    box-shadow: 0 4px 8px rgba(0, 255, 128, calc(0.2 * var(--wave-amplitude, 1)));
+    border-color: #00ff8066;
+  }
+  35% {
+    transform: perspective(600px) translateZ(calc(-8px * var(--wave-amplitude, 1)))
+               rotateX(calc(3deg * var(--wave-amplitude, 1)))
+               scaleY(calc(1 - 0.04 * var(--wave-amplitude, 1)));
+    box-shadow: 0 -2px 4px rgba(0, 255, 128, calc(0.1 * var(--wave-amplitude, 1)));
+  }
+  55% {
+    transform: perspective(600px) translateZ(calc(4px * var(--wave-amplitude, 1)))
+               rotateX(calc(-1.5deg * var(--wave-amplitude, 1)));
+  }
+  75% {
+    transform: perspective(600px) translateZ(calc(-1.5px * var(--wave-amplitude, 1)))
+               rotateX(calc(0.5deg * var(--wave-amplitude, 1)));
   }
   100% {
-    transform: translate(-50%, -50%) scale(8);
-    opacity: 0;
-    border-width: 0.5px;
+    transform: perspective(600px) translateZ(0) rotateX(0) scaleY(1);
+    box-shadow: none;
   }
 }
 
