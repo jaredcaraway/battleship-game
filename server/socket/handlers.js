@@ -246,23 +246,47 @@ function setupSocketHandlers(io) {
         winner: result.winner,
       });
 
-      // Emit AI counter-move as a separate event (if present)
+      // Emit AI counter-move after a delay for natural feel
       if (result.aiMove) {
-        io.to(roomId).emit('fire-result', {
-          shooter: 'ai-player',
-          row: result.aiMove.row,
-          col: result.aiMove.col,
-          result: result.aiMove.result,
-          shipName: result.aiMove.shipName,
-          sunk: result.aiMove.sunk,
-          gameOver: result.gameOver,
-          winner: result.winner,
-        });
-      }
+        const aiDelay = 800 + Math.floor(Math.random() * 700); // 800-1500ms
+        setTimeout(() => {
+          io.to(roomId).emit('fire-result', {
+            shooter: 'ai-player',
+            row: result.aiMove.row,
+            col: result.aiMove.col,
+            result: result.aiMove.result,
+            shipName: result.aiMove.shipName,
+            sunk: result.aiMove.sunk,
+            gameOver: result.gameOver,
+            winner: result.winner,
+          });
 
-      if (result.gameOver) {
+          if (result.gameOver) {
+            const stats = room.getStats();
+            for (const player of room.players) {
+              const isP1 = room.players[0] && room.players[0].socketId === player.socketId;
+              const playerSocket = io.sockets.sockets.get(player.socketId);
+              if (playerSocket) {
+                playerSocket.emit('game-over', {
+                  winner: result.winner,
+                  roomId,
+                  turns: stats.turns,
+                  duration: stats.duration_seconds ? stats.duration_seconds * 1000 : null,
+                  accuracy: Math.round((isP1 ? stats.player1_accuracy : stats.player2_accuracy) * 100),
+                  mode: stats.mode,
+                });
+              }
+            }
+            saveGameResult(room);
+            rooms.delete(roomId);
+            for (const player of room.players) {
+              socketToRoom.delete(player.socketId);
+            }
+          }
+        }, aiDelay);
+      } else if (result.gameOver) {
+        // Player won (no AI counter-move) — emit immediately
         const stats = room.getStats();
-        // Send per-player stats
         for (const player of room.players) {
           const isP1 = room.players[0] && room.players[0].socketId === player.socketId;
           const playerSocket = io.sockets.sockets.get(player.socketId);
