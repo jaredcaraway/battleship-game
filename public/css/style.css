@@ -345,7 +345,8 @@ body::after {
 }
 
 .board-small {
-  max-width: 280px;
+  width: 280px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
