@@ -482,11 +482,27 @@ body::after {
 
 /* ===== Game Container ===== */
 #status-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   text-align: center;
-  padding: 8px;
+  padding: 10px 12px;
   margin-bottom: 12px;
   border: 1px solid #00ff8022;
   transition: border-color 0.3s;
+}
+
+#status-message {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #00ff8055;
+}
+
+#status-turn {
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 3px;
 }
 
 #status-bar.pulse {
