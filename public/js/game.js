@@ -318,26 +318,114 @@ function _playTurnBeep() {
   } catch (e) { /* ignore audio errors */ }
 }
 
+var _myTurnMessages = [
+  'LOCK TARGET — FIRE AT WILL',
+  'SELECT COORDINATES, COMMANDER',
+  'TARGETING SYSTEMS ONLINE',
+  'AWAITING YOUR COMMAND',
+  'WEAPONS HOT — CHOOSE TARGET'
+];
+
+var _opponentTurnMessages = [
+  'INCOMING THREAT DETECTED',
+  'ENEMY CALCULATING...',
+  'BRACE FOR IMPACT',
+  'AWAITING INTEL...',
+  'HOSTILE TARGETING IN PROGRESS'
+];
+
+function _randomMessage(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+var _turnTransitionTimer = null;
+
 function updateTurnIndicator(isMyTurn) {
-  var el = document.getElementById('status-turn');
-  if (!el) return;
-
-  if (isMyTurn) {
-    el.textContent = 'YOUR TURN';
-    el.style.color = '#00ff80';
-    _playTurnBeep();
-  } else {
-    el.textContent = "OPPONENT'S TURN";
-    el.style.color = '#ff6b6b';
-  }
-
-  // Pulse the status bar
   var bar = document.getElementById('status-bar');
-  if (bar) {
-    bar.classList.remove('pulse');
-    void bar.offsetWidth;
-    bar.classList.add('pulse');
-  }
+  var turnEl = document.getElementById('status-turn');
+  var msgEl = document.getElementById('status-message');
+  if (!bar) return;
+
+  // Clear any pending transition
+  if (_turnTransitionTimer) clearTimeout(_turnTransitionTimer);
+
+  // Phase 1: collapse text
+  bar.classList.add('collapsing');
+
+  // Phase 2: show scanline, swap text while collapsed
+  _turnTransitionTimer = setTimeout(function () {
+    // Add animated oscilloscope canvas
+    var line = document.createElement('canvas');
+    line.className = 'status-line';
+    line.width = bar.offsetWidth * 0.8;
+    line.height = 24;
+    bar.appendChild(line);
+
+    var ctx2d = line.getContext('2d');
+    var phase = 0;
+    var animId = null;
+
+    function drawWave() {
+      var w = line.width;
+      var h = line.height;
+      ctx2d.clearRect(0, 0, w, h);
+
+      // Glow layer
+      ctx2d.shadowColor = '#00ff80';
+      ctx2d.shadowBlur = 6;
+      ctx2d.strokeStyle = '#00ff80';
+      ctx2d.lineWidth = 1.5;
+      ctx2d.beginPath();
+
+      for (var x = 0; x < w; x++) {
+        var t = x / w;
+        var noise = (Math.random() - 0.5) * 3;
+        var wave = Math.sin(t * 12 + phase) * 4;
+        var spike = Math.random() < 0.03 ? (Math.random() - 0.5) * 10 : 0;
+        var y = h / 2 + wave + noise + spike;
+        if (x === 0) ctx2d.moveTo(x, y);
+        else ctx2d.lineTo(x, y);
+      }
+      ctx2d.stroke();
+
+      // Dimmer second pass for thickness
+      ctx2d.shadowBlur = 0;
+      ctx2d.globalAlpha = 0.3;
+      ctx2d.lineWidth = 3;
+      ctx2d.stroke();
+      ctx2d.globalAlpha = 1;
+
+      phase += 0.8;
+      animId = requestAnimationFrame(drawWave);
+    }
+    drawWave();
+
+    // Store animId for cleanup
+    line._animId = animId;
+
+    // Swap content while hidden
+    if (isMyTurn) {
+      if (turnEl) { turnEl.textContent = 'YOUR TURN'; turnEl.style.color = '#00ff80'; }
+      if (msgEl) msgEl.textContent = _randomMessage(_myTurnMessages);
+    } else {
+      if (turnEl) { turnEl.textContent = "OPPONENT'S TURN"; turnEl.style.color = '#ff6b6b'; }
+      if (msgEl) msgEl.textContent = _randomMessage(_opponentTurnMessages);
+    }
+
+    // Phase 3: remove line, expand text
+    _turnTransitionTimer = setTimeout(function () {
+      if (line._animId) cancelAnimationFrame(line._animId);
+      if (line.parentNode) line.parentNode.removeChild(line);
+      bar.classList.remove('collapsing');
+
+      // Pulse
+      bar.classList.remove('pulse');
+      void bar.offsetWidth;
+      bar.classList.add('pulse');
+    }, 300);
+  }, 150);
+
+  if (isMyTurn) _playTurnBeep();
 }
 
 /**
@@ -432,7 +520,7 @@ function connectSocket() {
       var readyBtn = document.getElementById('btn-ready');
       if (readyBtn) readyBtn.disabled = true;
     }
-    showNotification('Ships placed! Waiting for opponent...');
+    showNotification('FLEET DEPLOYED — AWAITING ENEMY CONTACT');
   });
 
   // ---- game-start: both players ready, game begins --------------------------
@@ -467,10 +555,7 @@ function connectSocket() {
     }
 
     // Update status message
-    var statusMsg = document.getElementById('status-message');
-    if (statusMsg) {
-      statusMsg.textContent = myTurn ? 'Your turn — pick a target' : 'Waiting for opponent...';
-    }
+    // status-message updated by updateTurnIndicator
   });
 
   // ---- fire-result: a shot was resolved ------------------------------------
@@ -501,10 +586,10 @@ function connectSocket() {
 
     // Show notification if a ship was sunk
     if (data.sunk && data.shipName) {
-      var who = isMyShot ? 'You sunk the enemy' : 'Your';
+      var shipUpper = data.shipName.toUpperCase();
       var msg = isMyShot
-        ? 'You sunk the enemy ' + data.shipName + '!'
-        : 'Your ' + data.shipName + ' was sunk!';
+        ? 'ENEMY ' + shipUpper + ' DESTROYED'
+        : shipUpper + ' LOST — HULL BREACH';
       showNotification(msg);
     }
   });
@@ -539,10 +624,7 @@ function connectSocket() {
       });
     }
 
-    var statusMsg = document.getElementById('status-message');
-    if (statusMsg) {
-      statusMsg.textContent = myTurn ? 'Your turn — pick a target' : 'Waiting for opponent...';
-    }
+    // status-message updated by updateTurnIndicator
   });
 
   // ---- game-over ------------------------------------------------------------
