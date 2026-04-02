@@ -125,6 +125,35 @@ function updateBoard(containerId, gridState) {
 // ---------------------------------------------------------------------------
 
 /**
+ * _shakeScreen(intensity)
+ * Shakes the game screen with random jitter.
+ * intensity: 'light' (hit) or 'heavy' (sunk)
+ */
+function _shakeScreen(intensity) {
+  var el = document.getElementById('screen-game');
+  if (!el) return;
+
+  var frames = intensity === 'heavy' ? 12 : 6;
+  var maxOffset = intensity === 'heavy' ? 8 : 3;
+  var i = 0;
+
+  function jitter() {
+    if (i >= frames) {
+      el.style.transform = '';
+      return;
+    }
+    var decay = 1 - (i / frames);
+    var x = (Math.random() * 2 - 1) * maxOffset * decay;
+    var y = (Math.random() * 2 - 1) * maxOffset * decay;
+    el.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+    i++;
+    requestAnimationFrame(jitter);
+  }
+
+  requestAnimationFrame(jitter);
+}
+
+/**
  * fireAt(row, col)
  * Emits a 'fire' event if it is this player's turn.
  * Temporarily disables the enemy board to prevent double-fire.
@@ -395,6 +424,7 @@ function connectSocket() {
       updateSingleCell('board-enemy', data.row, data.col, data.result);
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
+        _shakeScreen(data.sunk ? 'heavy' : 'light');
       } else {
         SoundManager.play('miss');
       }
@@ -403,6 +433,7 @@ function connectSocket() {
       updateSingleCell('board-player', data.row, data.col, data.result);
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
+        _shakeScreen(data.sunk ? 'heavy' : 'light');
       } else {
         SoundManager.play('miss');
       }
