@@ -37,9 +37,65 @@ var SoundManager = {
   },
 
   play: function (name) {
-    if (this.muted || !this.sounds[name]) return;
+    if (this.muted) return;
+    // Synthesized explosion for sunk events
+    if (name === 'explosion') {
+      this._playExplosion();
+      return;
+    }
+    if (!this.sounds[name]) return;
     this.sounds[name].currentTime = 0;
     this.sounds[name].play().catch(function () {});
+  },
+
+  _playExplosion: function () {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var t = ctx.currentTime;
+
+      // White noise burst
+      var bufferSize = ctx.sampleRate * 0.4;
+      var noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      var data = noiseBuffer.getChannelData(0);
+      for (var i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
+      var noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      // Low-pass filter for rumble
+      var filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(800, t);
+      filter.frequency.exponentialRampToValueAtTime(100, t + 0.3);
+
+      // Noise gain envelope
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.6, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+
+      noise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+
+      // Bass punch oscillator
+      var osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(80, t);
+      osc.frequency.exponentialRampToValueAtTime(20, t + 0.3);
+
+      var oscGain = ctx.createGain();
+      oscGain.gain.setValueAtTime(0.5, t);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+
+      noise.start(t);
+      noise.stop(t + 0.4);
+      osc.start(t);
+      osc.stop(t + 0.35);
+    } catch (e) { /* ignore audio errors */ }
   },
 
   toggle: function () {
@@ -426,6 +482,7 @@ function connectSocket() {
       updateSingleCell('board-enemy', data.row, data.col, data.result);
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
+        if (data.sunk) SoundManager.play('explosion');
         _shakeScreen(data.sunk ? 'heavy' : 'light');
       } else {
         SoundManager.play('miss');
@@ -435,6 +492,7 @@ function connectSocket() {
       updateSingleCell('board-player', data.row, data.col, data.result);
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
+        if (data.sunk) SoundManager.play('explosion');
         _shakeScreen(data.sunk ? 'heavy' : 'light');
       } else {
         SoundManager.play('miss');
