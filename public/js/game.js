@@ -133,8 +133,8 @@ function _shakeScreen(intensity) {
   var el = document.getElementById('screen-game');
   if (!el) return;
 
-  var frames = intensity === 'heavy' ? 12 : 6;
-  var maxOffset = intensity === 'heavy' ? 8 : 3;
+  var frames = intensity === 'heavy' ? 40 : 18;
+  var maxOffset = intensity === 'heavy' ? 14 : 6;
   var i = 0;
 
   function jitter() {
