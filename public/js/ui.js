@@ -801,28 +801,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- Sound toggle (inside settings) ---
   var btnSound = document.getElementById('btn-sound');
+  var soundIcon = '<svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/>';
+  var iconOn = soundIcon + '<path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>';
+  var iconOff = soundIcon + '<line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>';
+
+  function _updateSoundButton(muted) {
+    if (!btnSound) return;
+    var textEl = btnSound.querySelector('.toggle-text');
+    if (textEl) textEl.textContent = muted ? 'OFF' : 'ON';
+    var iconEl = btnSound.querySelector('.toggle-icon');
+    if (iconEl) iconEl.outerHTML = muted ? iconOff : iconOn;
+    btnSound.classList.toggle('toggle-off', muted);
+  }
+
   // Restore saved preference
   var savedSound = localStorage.getItem('battleship-sound');
   if (savedSound === 'on') {
     SoundManager.muted = false;
-    if (btnSound) btnSound.textContent = 'ON';
   }
+  _updateSoundButton(SoundManager.muted);
 
   if (btnSound) {
     btnSound.addEventListener('click', function () {
       var muted = SoundManager.toggle();
-      btnSound.textContent = muted ? 'OFF' : 'ON';
+      _updateSoundButton(muted);
       localStorage.setItem('battleship-sound', muted ? 'off' : 'on');
     });
   }
 
   // --- Motion toggle (inside settings) ---
   var btnMotion = document.getElementById('btn-motion');
+  function _updateMotionButton(enabled) {
+    if (!btnMotion) return;
+    var textEl = btnMotion.querySelector('.toggle-text');
+    if (textEl) textEl.textContent = enabled ? 'ON' : 'OFF';
+    btnMotion.classList.toggle('toggle-off', !enabled);
+  }
+
   if (btnMotion) {
-    btnMotion.textContent = MotionSettings.enabled ? 'ON' : 'OFF';
+    _updateMotionButton(MotionSettings.enabled);
     btnMotion.addEventListener('click', function () {
       var enabled = MotionSettings.toggle();
-      btnMotion.textContent = enabled ? 'ON' : 'OFF';
+      _updateMotionButton(enabled);
     });
   }
 

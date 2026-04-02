@@ -857,9 +857,29 @@ body::after {
 }
 
 .settings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 16px;
   font-size: 12px;
-  min-width: 60px;
+  min-width: 70px;
+  border-color: #00ff8066;
+  color: #00ff80;
+  transition: all 0.2s;
+}
+
+.settings-toggle.toggle-off {
+  border-color: #ff444466;
+  color: #ff4444;
+}
+
+.toggle-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.toggle-text {
+  letter-spacing: 1px;
 }
 
 .settings-hint {
