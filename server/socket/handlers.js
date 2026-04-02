@@ -282,6 +282,9 @@ function setupSocketHandlers(io) {
             for (const player of room.players) {
               socketToRoom.delete(player.socketId);
             }
+          } else {
+            // AI didn't win — return turn to human
+            io.to(roomId).emit('turn-change', { currentTurn: room.currentTurn });
           }
         }, aiDelay);
       } else if (result.gameOver) {
