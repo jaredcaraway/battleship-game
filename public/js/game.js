@@ -440,6 +440,8 @@ function updateTurnIndicator(isMyTurn) {
  * Renders ship name + sunk indicators into #ship-status.
  * ships is an array of { name, sunk } objects.
  */
+var FLEET_SIZES = { carrier: 5, battleship: 4, cruiser: 3, submarine: 3, destroyer: 2 };
+
 function updateEnemySunkTracker() {
   var container = document.getElementById('enemy-sunk');
   if (!container) return;
@@ -448,7 +450,15 @@ function updateEnemySunkTracker() {
     return;
   }
   container.innerHTML = enemySunkShips.map(function (name) {
-    return '<span class="sunk-ship-tag">' + name.toUpperCase() + '</span>';
+    var size = FLEET_SIZES[name.toLowerCase()] || 3;
+    var blocks = '';
+    for (var i = 0; i < size; i++) {
+      blocks += '<span class="sunk-block"></span>';
+    }
+    return '<div class="sunk-ship-card">' +
+      '<div class="sunk-ship-blocks">' + blocks + '</div>' +
+      '<div class="sunk-ship-name">' + name.toUpperCase() + '</div>' +
+      '</div>';
   }).join('');
 }
 
