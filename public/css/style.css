@@ -518,13 +518,17 @@ body::after {
 }
 
 #status-bar .status-line {
-  width: 80%;
-  height: 2px;
-  background: #00ff80;
-  box-shadow: 0 0 8px #00ff80, 0 0 16px #00ff8044;
-  border-radius: 1px;
-  animation: lineFlicker 0.3s ease-in-out;
   position: absolute;
+  width: 80%;
+  height: 20px;
+  overflow: visible;
+  animation: lineFlicker 0.3s ease-in-out;
+}
+
+#status-bar .status-line svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 @keyframes lineFlicker {

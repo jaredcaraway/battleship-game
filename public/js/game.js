@@ -354,9 +354,23 @@ function updateTurnIndicator(isMyTurn) {
 
   // Phase 2: show scanline, swap text while collapsed
   _turnTransitionTimer = setTimeout(function () {
-    // Add the line
+    // Add the wavy scanline
     var line = document.createElement('div');
     line.className = 'status-line';
+    // Generate SVG sine wave path
+    var points = [];
+    var segments = 60;
+    for (var s = 0; s <= segments; s++) {
+      var x = (s / segments) * 100;
+      var y = 10 + Math.sin(s * 0.5) * 4 * (1 + Math.random() * 0.3);
+      points.push(x.toFixed(1) + ',' + y.toFixed(1));
+    }
+    line.innerHTML = '<svg viewBox="0 0 100 20" preserveAspectRatio="none">' +
+      '<path d="M' + points.join(' L') + '" fill="none" stroke="#00ff80" stroke-width="0.8" ' +
+      'filter="url(#scanline-glow)"/>' +
+      '<defs><filter id="scanline-glow"><feGaussianBlur stdDeviation="0.8" result="blur"/>' +
+      '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+      '</svg>';
     bar.appendChild(line);
 
     // Swap content while hidden
