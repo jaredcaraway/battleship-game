@@ -674,9 +674,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // --- Copy room code on click ---
   var roomCodeDisplay = document.getElementById('room-code-display');
+  var roomCodeWrapper = roomCodeDisplay && roomCodeDisplay.closest('.room-code-wrapper');
   var roomCodeCopied = document.getElementById('room-code-copied');
-  if (roomCodeDisplay) {
-    roomCodeDisplay.addEventListener('click', function () {
+  if (roomCodeWrapper) {
+    roomCodeWrapper.addEventListener('click', function () {
       var code = roomCodeDisplay.textContent.trim();
       if (!code) return;
       navigator.clipboard.writeText(code).then(function () {

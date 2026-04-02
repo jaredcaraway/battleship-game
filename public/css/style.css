@@ -589,6 +589,29 @@ body::after {
   user-select: all;
 }
 
+.room-code-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: crosshair;
+  transition: opacity 0.2s;
+}
+
+.room-code-wrapper:hover {
+  opacity: 0.8;
+}
+
+.copy-icon {
+  width: 20px;
+  height: 20px;
+  color: #00ff8055;
+  transition: color 0.2s;
+}
+
+.room-code-wrapper:hover .copy-icon {
+  color: #00ff80;
+}
+
 .copy-confirm {
   font-size: 11px;
   letter-spacing: 2px;
