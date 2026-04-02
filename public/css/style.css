@@ -1040,22 +1040,53 @@ body::after {
   letter-spacing: 1px;
 }
 
-.seo-content dl {
+.difficulty-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.difficulty-card {
+  border: 1px solid;
+  border-radius: 2px;
+  padding: 10px 14px;
   margin: 0;
 }
 
-.seo-content dt {
-  color: #00ff8077;
+.difficulty-card legend {
   font-size: 11px;
-  letter-spacing: 1px;
-  margin-top: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0 6px;
 }
 
-.seo-content dd {
-  margin-left: 16px;
-  padding-left: 8px;
-  border-left: 1px solid #00ff8018;
-  margin-bottom: 4px;
+.difficulty-card p {
+  margin: 0;
+}
+
+.difficulty-card-easy {
+  border-color: #00ff8033;
+}
+
+.difficulty-card-easy legend {
+  color: #00ff80;
+}
+
+.difficulty-card-medium {
+  border-color: #ffaa0033;
+}
+
+.difficulty-card-medium legend {
+  color: #ffaa00;
+}
+
+.difficulty-card-hard {
+  border-color: #ff444433;
+}
+
+.difficulty-card-hard legend {
+  color: #ff4444;
 }
 
 .fleet-list {
