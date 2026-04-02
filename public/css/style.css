@@ -548,6 +548,16 @@ body::after {
   color: #00ff80;
   text-shadow: 0 0 8px #00ff80;
   margin: 16px 0;
+  cursor: crosshair;
+  user-select: all;
+}
+
+.copy-confirm {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #00ff8088;
+  margin-top: -8px;
+  transition: opacity 0.3s;
 }
 
 .room-container,
