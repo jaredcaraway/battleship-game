@@ -586,7 +586,11 @@ body::after {
 }
 
 .ship-item {
-  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 10px;
   margin-bottom: 4px;
   border: 1px solid #00ff8033;
   cursor: crosshair;
@@ -604,8 +608,33 @@ body::after {
   text-shadow: 0 0 8px #00ff80;
 }
 
+.ship-item.selected .ship-block {
+  background: #00ff80;
+  box-shadow: 0 0 4px #00ff80;
+}
+
 .ship-item.placed {
   opacity: 0.5;
+}
+
+.ship-item.placed .ship-block {
+  background: #00ff8044;
+  border-color: #00ff8022;
+  box-shadow: none;
+}
+
+.ship-blocks {
+  display: flex;
+  gap: 2px;
+}
+
+.ship-block {
+  width: 14px;
+  height: 14px;
+  background: #00ff8066;
+  border: 1px solid #00ff8044;
+  border-radius: 1px;
+  transition: all 0.15s;
 }
 
 /* ===== Game Over ===== */
