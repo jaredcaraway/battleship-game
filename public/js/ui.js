@@ -202,6 +202,11 @@ function showGameOver(data) {
     }
     if (data.accuracy !== undefined) {
       lines.push('Accuracy: ' + data.accuracy + '%');
+      var career = GameStats.load();
+      var careerRate = career.totalShots > 0 ? Math.round((career.totalHits / career.totalShots) * 100) : null;
+      if (careerRate !== null) {
+        lines.push('Career Hit Rate: ' + careerRate + '%');
+      }
     }
     if (data.reason) {
       var reasons = { opponent_disconnected: 'Opponent disconnected' };
