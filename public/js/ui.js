@@ -155,6 +155,10 @@ var GameStats = {
     }
     if (data.turns) s.totalTurns += data.turns;
     if (data.duration) s.totalDuration += data.duration;
+    if (data.accuracy !== undefined) {
+      s.totalShots += (data.turns || 0);
+      s.totalHits += Math.round(((data.accuracy || 0) / 100) * (data.turns || 0));
+    }
     // Track by mode
     var mode = data.mode || 'unknown';
     if (!s.byMode[mode]) s.byMode[mode] = { played: 0, wins: 0 };
@@ -677,6 +681,8 @@ function _renderStatsScreen() {
   html += _statCard('LOSSES', s.losses);
   html += _statCard('WIN RATE', winRate + '%');
   html += _statCard('AVG TURNS', avgTurns);
+  var avgAccuracy = s.totalShots > 0 ? Math.round((s.totalHits / s.totalShots) * 100) : '—';
+  html += _statCard('HIT RATE', avgAccuracy !== '—' ? avgAccuracy + '%' : '—');
   html += _statCard('FASTEST WIN', s.fastestWin !== null ? s.fastestWin + ' turns' : '—');
   html += _statCard('WIN STREAK', s.currentStreak);
   html += _statCard('BEST STREAK', s.bestStreak);
