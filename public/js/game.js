@@ -338,32 +338,49 @@ function _randomMessage(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+var _turnTransitionTimer = null;
+
 function updateTurnIndicator(isMyTurn) {
+  var bar = document.getElementById('status-bar');
   var turnEl = document.getElementById('status-turn');
   var msgEl = document.getElementById('status-message');
+  if (!bar) return;
 
-  if (isMyTurn) {
-    if (turnEl) {
-      turnEl.textContent = 'YOUR TURN';
-      turnEl.style.color = '#00ff80';
-    }
-    if (msgEl) msgEl.textContent = _randomMessage(_myTurnMessages);
-    _playTurnBeep();
-  } else {
-    if (turnEl) {
-      turnEl.textContent = "OPPONENT'S TURN";
-      turnEl.style.color = '#ff6b6b';
-    }
-    if (msgEl) msgEl.textContent = _randomMessage(_opponentTurnMessages);
-  }
+  // Clear any pending transition
+  if (_turnTransitionTimer) clearTimeout(_turnTransitionTimer);
 
-  // Pulse the status bar
-  var bar = document.getElementById('status-bar');
-  if (bar) {
-    bar.classList.remove('pulse');
-    void bar.offsetWidth;
-    bar.classList.add('pulse');
-  }
+  // Phase 1: collapse text
+  bar.classList.add('collapsing');
+
+  // Phase 2: show scanline, swap text while collapsed
+  _turnTransitionTimer = setTimeout(function () {
+    // Add the line
+    var line = document.createElement('div');
+    line.className = 'status-line';
+    bar.appendChild(line);
+
+    // Swap content while hidden
+    if (isMyTurn) {
+      if (turnEl) { turnEl.textContent = 'YOUR TURN'; turnEl.style.color = '#00ff80'; }
+      if (msgEl) msgEl.textContent = _randomMessage(_myTurnMessages);
+    } else {
+      if (turnEl) { turnEl.textContent = "OPPONENT'S TURN"; turnEl.style.color = '#ff6b6b'; }
+      if (msgEl) msgEl.textContent = _randomMessage(_opponentTurnMessages);
+    }
+
+    // Phase 3: remove line, expand text
+    _turnTransitionTimer = setTimeout(function () {
+      if (line.parentNode) line.parentNode.removeChild(line);
+      bar.classList.remove('collapsing');
+
+      // Pulse
+      bar.classList.remove('pulse');
+      void bar.offsetWidth;
+      bar.classList.add('pulse');
+    }, 300);
+  }, 150);
+
+  if (isMyTurn) _playTurnBeep();
 }
 
 /**
