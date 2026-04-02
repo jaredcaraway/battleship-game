@@ -602,10 +602,11 @@ body::after {
 
 .placement-hint {
   text-align: center;
+  text-wrap: balance;
   font-size: 11px;
   letter-spacing: 1px;
   color: #00ff8033;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .placement-container,
