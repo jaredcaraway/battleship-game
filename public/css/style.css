@@ -1066,8 +1066,12 @@ body::after {
 .fleet-list li {
   display: flex;
   align-items: center;
-  gap: 10px;
   padding: 4px 0;
+}
+
+.fleet-list li strong {
+  display: inline-block;
+  width: 120px;
 }
 
 .fleet-list li::before {
