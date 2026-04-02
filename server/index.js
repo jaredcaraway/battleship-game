@@ -37,11 +37,8 @@ async function initDatabase() {
       console.warn('Database unavailable (' + err.message + ') — using in-memory store.');
       console.warn('Auth will work but data is lost on restart.');
       const memoryStore = require('./db/memory-store');
-      // Hot-swap the queries module exports
-      const queries = require('./db/queries');
-      Object.keys(memoryStore).forEach(key => {
-        queries[key] = memoryStore[key];
-      });
+      const { useMemoryBackend } = require('./db/queries');
+      useMemoryBackend(memoryStore);
     }
   }
 }
