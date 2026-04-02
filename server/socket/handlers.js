@@ -261,10 +261,22 @@ function setupSocketHandlers(io) {
       }
 
       if (result.gameOver) {
-        io.to(roomId).emit('game-over', {
-          winner: result.winner,
-          roomId,
-        });
+        const stats = room.getStats();
+        // Send per-player stats
+        for (const player of room.players) {
+          const isP1 = room.players[0] && room.players[0].socketId === player.socketId;
+          const playerSocket = io.sockets.sockets.get(player.socketId);
+          if (playerSocket) {
+            playerSocket.emit('game-over', {
+              winner: result.winner,
+              roomId,
+              turns: stats.turns,
+              duration: stats.duration_seconds ? stats.duration_seconds * 1000 : null,
+              accuracy: Math.round((isP1 ? stats.player1_accuracy : stats.player2_accuracy) * 100),
+              mode: stats.mode,
+            });
+          }
+        }
         await saveGameResult(room);
         // Clean up room
         rooms.delete(roomId);
@@ -336,10 +348,14 @@ function setupSocketHandlers(io) {
         if (opponent) {
           const opponentSocket = io.sockets.sockets.get(opponent.socketId);
           if (opponentSocket) {
+            const dcStats = currentRoom.getStats();
             opponentSocket.emit('game-over', {
               winner: opponent.socketId,
               roomId,
               reason: 'opponent_disconnected',
+              turns: dcStats.turns,
+              duration: dcStats.duration_seconds ? dcStats.duration_seconds * 1000 : null,
+              mode: dcStats.mode,
             });
           }
           // Save forfeit result if game had started

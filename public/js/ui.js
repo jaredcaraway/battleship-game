@@ -112,6 +112,60 @@ function _fireVictoryConfetti() {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Local Stats — localStorage persistence for anonymous users
+// ---------------------------------------------------------------------------
+var GameStats = {
+  _key: 'cyber-ship-battle-stats',
+
+  _defaults: function () {
+    return {
+      gamesPlayed: 0, wins: 0, losses: 0,
+      totalTurns: 0, totalDuration: 0,
+      totalShots: 0, totalHits: 0,
+      fastestWin: null, currentStreak: 0, bestStreak: 0,
+      byMode: {}
+    };
+  },
+
+  load: function () {
+    try {
+      var raw = localStorage.getItem(this._key);
+      return raw ? JSON.parse(raw) : this._defaults();
+    } catch (e) { return this._defaults(); }
+  },
+
+  save: function (stats) {
+    try { localStorage.setItem(this._key, JSON.stringify(stats)); } catch (e) {}
+  },
+
+  record: function (data) {
+    var s = this.load();
+    s.gamesPlayed++;
+    if (data.won) {
+      s.wins++;
+      s.currentStreak++;
+      if (s.currentStreak > s.bestStreak) s.bestStreak = s.currentStreak;
+      if (data.turns && (s.fastestWin === null || data.turns < s.fastestWin)) {
+        s.fastestWin = data.turns;
+      }
+    } else {
+      s.losses++;
+      s.currentStreak = 0;
+    }
+    if (data.turns) s.totalTurns += data.turns;
+    if (data.duration) s.totalDuration += data.duration;
+    // Track by mode
+    var mode = data.mode || 'unknown';
+    if (!s.byMode[mode]) s.byMode[mode] = { played: 0, wins: 0 };
+    s.byMode[mode].played++;
+    if (data.won) s.byMode[mode].wins++;
+
+    this.save(s);
+    return s;
+  }
+};
+
 /**
  * showGameOver(data)
  * Populates and shows the game over screen.
@@ -153,6 +207,9 @@ function showGameOver(data) {
       return '<div>' + l + '</div>';
     }).join('');
   }
+
+  // Record to local stats
+  GameStats.record(data);
 
   showScreen('screen-gameover');
 
@@ -606,6 +663,52 @@ function _randomizePlacement() {
 // Leaderboard
 // ---------------------------------------------------------------------------
 
+function _renderStatsScreen() {
+  var el = document.getElementById('stats-dashboard');
+  if (!el) return;
+
+  var s = GameStats.load();
+  var winRate = s.gamesPlayed > 0 ? Math.round((s.wins / s.gamesPlayed) * 100) : 0;
+  var avgTurns = s.wins > 0 ? Math.round(s.totalTurns / s.gamesPlayed) : '—';
+
+  var html = '<div class="stats-grid">';
+  html += _statCard('GAMES', s.gamesPlayed);
+  html += _statCard('WINS', s.wins);
+  html += _statCard('LOSSES', s.losses);
+  html += _statCard('WIN RATE', winRate + '%');
+  html += _statCard('AVG TURNS', avgTurns);
+  html += _statCard('FASTEST WIN', s.fastestWin !== null ? s.fastestWin + ' turns' : '—');
+  html += _statCard('WIN STREAK', s.currentStreak);
+  html += _statCard('BEST STREAK', s.bestStreak);
+  html += '</div>';
+
+  // Per-mode breakdown
+  var modes = Object.keys(s.byMode);
+  if (modes.length > 0) {
+    html += '<h3 class="stats-section-heading">BY MODE</h3>';
+    html += '<div class="stats-modes">';
+    modes.forEach(function (mode) {
+      var m = s.byMode[mode];
+      var mWinRate = m.played > 0 ? Math.round((m.wins / m.played) * 100) : 0;
+      var label = mode.replace('ai_', '').toUpperCase();
+      html += '<div class="stats-mode-row">';
+      html += '<span class="stats-mode-label">' + label + '</span>';
+      html += '<span class="stats-mode-value">' + m.wins + '/' + m.played + ' (' + mWinRate + '%)</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  el.innerHTML = html;
+}
+
+function _statCard(label, value) {
+  return '<div class="stat-card">' +
+    '<div class="stat-value">' + value + '</div>' +
+    '<div class="stat-label">' + label + '</div>' +
+    '</div>';
+}
+
 function fetchLeaderboard() {
   var tbody = document.getElementById('leaderboard-body');
   if (tbody) tbody.innerHTML = '<tr><td colspan="5">Loading...</td></tr>';
@@ -774,6 +877,22 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnBackLeaderboard = document.getElementById('btn-back-leaderboard');
   if (btnBackLeaderboard) {
     btnBackLeaderboard.addEventListener('click', function () {
+      showScreen('screen-menu');
+    });
+  }
+
+  // --- Stats screen ---
+  var btnStats = document.getElementById('btn-stats');
+  if (btnStats) {
+    btnStats.addEventListener('click', function () {
+      _renderStatsScreen();
+      showScreen('screen-stats');
+    });
+  }
+
+  var btnBackStats = document.getElementById('btn-back-stats');
+  if (btnBackStats) {
+    btnBackStats.addEventListener('click', function () {
       showScreen('screen-menu');
     });
   }

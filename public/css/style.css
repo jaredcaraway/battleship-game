@@ -1153,6 +1153,76 @@ body::after {
   border-radius: 1px;
 }
 
+/* ===== Stats Dashboard ===== */
+.stats-dashboard {
+  width: 100%;
+  max-width: 400px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  border: 1px solid #00ff8022;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 22px;
+  color: #00ff80;
+  text-shadow: 0 0 6px #00ff8033;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #00ff8044;
+  text-transform: uppercase;
+}
+
+.stats-section-heading {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #00ff8055;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #00ff8011;
+}
+
+.stats-modes {
+  margin-bottom: 20px;
+}
+
+.stats-mode-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+  border-bottom: 1px solid #00ff800a;
+}
+
+.stats-mode-label {
+  color: #00ff8066;
+  letter-spacing: 1px;
+}
+
+.stats-mode-value {
+  color: #00ff8088;
+}
+
+.menu-secondary-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 /* ===== Footer ===== */
 .site-footer {
   text-align: center;
