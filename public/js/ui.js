@@ -178,9 +178,7 @@ var placementState = {
   // 10x10 grid tracking which cells are occupied
   occupiedGrid: null,
   lastHoverRow: -1,
-  lastHoverCol: -1,
-  // Index into placedShips of the focused (first-click highlighted) ship, or -1
-  focusedPlacedShip: -1
+  lastHoverCol: -1
 };
 
 function _initOccupiedGrid() {
@@ -277,28 +275,17 @@ function _renderShipList() {
       });
 
       if (placedIdx !== -1) {
-        if (placementState.focusedPlacedShip === placedIdx) {
-          // Second click on focused ship — pick it up
-          placementState.focusedPlacedShip = -1;
-          _pickUpPlacedShip(placedIdx);
-        } else {
-          // First click on placed ship — focus/highlight it
-          placementState.focusedPlacedShip = placedIdx;
-          _updateShipListUI();
-          _redrawPlacedShips();
-        }
+        // Clicking a placed ship — pick it up immediately
+        _pickUpPlacedShip(placedIdx);
       } else if (placementState.selectedShip === idx) {
         // Clicking the currently selected ship — deselect (drop it)
         placementState.selectedShip = -1;
-        placementState.focusedPlacedShip = -1;
         _updateShipListUI();
         _clearPreview();
       } else {
         // Clicking an unplaced, unselected ship — select it
         placementState.selectedShip = idx;
-        placementState.focusedPlacedShip = -1;
         _updateShipListUI();
-        _redrawPlacedShips();
       }
     });
 
@@ -312,21 +299,13 @@ function _updateShipListUI() {
   var items = document.querySelectorAll('.ship-item');
   items.forEach(function (item) {
     var idx = parseInt(item.getAttribute('data-ship-index'), 10);
-    item.classList.remove('selected', 'placed', 'focused');
+    item.classList.remove('selected', 'placed');
 
-    var placedIdx = -1;
-    for (var p = 0; p < placementState.placedShips.length; p++) {
-      if (placementState.placedShips[p].name === FLEET[idx].name.toLowerCase()) {
-        placedIdx = p;
-        break;
-      }
-    }
-
-    if (placedIdx !== -1) {
+    var isPlaced = placementState.placedShips.some(function (p) {
+      return p.name === FLEET[idx].name.toLowerCase();
+    });
+    if (isPlaced) {
       item.classList.add('placed');
-      if (placementState.focusedPlacedShip === placedIdx) {
-        item.classList.add('focused');
-      }
     } else if (idx === placementState.selectedShip) {
       item.classList.add('selected');
     }
@@ -425,22 +404,7 @@ function _handlePlacementClick(row, col) {
 
   if (!holdingShip) {
     var placedIdx = _findPlacedShipAt(row, col);
-    if (placedIdx !== -1) {
-      if (placementState.focusedPlacedShip === placedIdx) {
-        // Second click — pick it up
-        placementState.focusedPlacedShip = -1;
-        _pickUpPlacedShip(placedIdx);
-      } else {
-        // First click — focus/highlight
-        placementState.focusedPlacedShip = placedIdx;
-        _updateShipListUI();
-        _redrawPlacedShips();
-      }
-    } else {
-      // Clicked empty cell with no ship held — clear focus
-      placementState.focusedPlacedShip = -1;
-      _redrawPlacedShips();
-    }
+    if (placedIdx !== -1) _pickUpPlacedShip(placedIdx);
     return;
   }
 
@@ -451,7 +415,6 @@ function _handlePlacementClick(row, col) {
 
   // Mark on grid
   _markCells(col, row, ship.size, placementState.orientation, placementState.occupiedGrid);
-  placementState.focusedPlacedShip = -1;
 
   // Record placement
   placementState.placedShips.push({
@@ -562,21 +525,17 @@ function _redrawPlacedShips() {
   // Clear ship class from all cells first
   var allCells = board.querySelectorAll('.cell');
   allCells.forEach(function (cell) {
-    cell.classList.remove('ship', 'ship-focused');
+    cell.classList.remove('ship');
   });
 
   // Re-apply ship class for each placed ship
-  placementState.placedShips.forEach(function (placed, i) {
+  placementState.placedShips.forEach(function (placed) {
     var cells = _getShipCells(placed.col, placed.row, placed.size, placed.orientation);
-    var isFocused = (placementState.focusedPlacedShip === i);
     cells.forEach(function (pos) {
       var cell = board.querySelector(
         '.cell[data-row="' + pos.row + '"][data-col="' + pos.col + '"]'
       );
-      if (cell) {
-        cell.classList.add('ship');
-        if (isFocused) cell.classList.add('ship-focused');
-      }
+      if (cell) cell.classList.add('ship');
     });
   });
 }
@@ -585,7 +544,6 @@ function _randomizePlacement() {
   // Reset
   placementState.placedShips = [];
   placementState.occupiedGrid = _initOccupiedGrid();
-  placementState.focusedPlacedShip = -1;
 
   for (var i = 0; i < FLEET.length; i++) {
     var ship = FLEET[i];

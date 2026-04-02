@@ -431,11 +431,6 @@ body::after {
   border-color: #00ff8044;
 }
 
-.cell.ship-focused {
-  background: #ffaa0022;
-  border-color: #ffaa00aa;
-  animation: focusPulse 1s ease-in-out infinite alternate;
-}
 
 .cell.preview-valid {
   background: #00ff8025;
@@ -655,16 +650,6 @@ body::after {
   opacity: 0.5;
 }
 
-.ship-item.placed.focused {
-  opacity: 1;
-  border-color: #ffaa00;
-  animation: focusPulse 1s ease-in-out infinite alternate;
-}
-
-.ship-item.placed.focused .ship-block {
-  background: #ffaa0088;
-  border-color: #ffaa0066;
-}
 
 .ship-item.placed .ship-block {
   background: #00ff8044;
@@ -1191,10 +1176,6 @@ body::after {
   to   { opacity: 0.3; }
 }
 
-@keyframes focusPulse {
-  from { opacity: 1; }
-  to   { opacity: 0.6; }
-}
 
 @keyframes fadeOut {
   0%   { opacity: 1; }
