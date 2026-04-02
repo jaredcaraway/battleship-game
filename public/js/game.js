@@ -354,24 +354,54 @@ function updateTurnIndicator(isMyTurn) {
 
   // Phase 2: show scanline, swap text while collapsed
   _turnTransitionTimer = setTimeout(function () {
-    // Add the wavy scanline
-    var line = document.createElement('div');
+    // Add animated oscilloscope canvas
+    var line = document.createElement('canvas');
     line.className = 'status-line';
-    // Generate SVG sine wave path
-    var points = [];
-    var segments = 60;
-    for (var s = 0; s <= segments; s++) {
-      var x = (s / segments) * 100;
-      var y = 10 + Math.sin(s * 0.5) * 4 * (1 + Math.random() * 0.3);
-      points.push(x.toFixed(1) + ',' + y.toFixed(1));
-    }
-    line.innerHTML = '<svg viewBox="0 0 100 20" preserveAspectRatio="none">' +
-      '<path d="M' + points.join(' L') + '" fill="none" stroke="#00ff80" stroke-width="0.8" ' +
-      'filter="url(#scanline-glow)"/>' +
-      '<defs><filter id="scanline-glow"><feGaussianBlur stdDeviation="0.8" result="blur"/>' +
-      '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
-      '</svg>';
+    line.width = bar.offsetWidth * 0.8;
+    line.height = 24;
     bar.appendChild(line);
+
+    var ctx2d = line.getContext('2d');
+    var phase = 0;
+    var animId = null;
+
+    function drawWave() {
+      var w = line.width;
+      var h = line.height;
+      ctx2d.clearRect(0, 0, w, h);
+
+      // Glow layer
+      ctx2d.shadowColor = '#00ff80';
+      ctx2d.shadowBlur = 6;
+      ctx2d.strokeStyle = '#00ff80';
+      ctx2d.lineWidth = 1.5;
+      ctx2d.beginPath();
+
+      for (var x = 0; x < w; x++) {
+        var t = x / w;
+        var noise = (Math.random() - 0.5) * 3;
+        var wave = Math.sin(t * 12 + phase) * 4;
+        var spike = Math.random() < 0.03 ? (Math.random() - 0.5) * 10 : 0;
+        var y = h / 2 + wave + noise + spike;
+        if (x === 0) ctx2d.moveTo(x, y);
+        else ctx2d.lineTo(x, y);
+      }
+      ctx2d.stroke();
+
+      // Dimmer second pass for thickness
+      ctx2d.shadowBlur = 0;
+      ctx2d.globalAlpha = 0.3;
+      ctx2d.lineWidth = 3;
+      ctx2d.stroke();
+      ctx2d.globalAlpha = 1;
+
+      phase += 0.8;
+      animId = requestAnimationFrame(drawWave);
+    }
+    drawWave();
+
+    // Store animId for cleanup
+    line._animId = animId;
 
     // Swap content while hidden
     if (isMyTurn) {
@@ -384,6 +414,7 @@ function updateTurnIndicator(isMyTurn) {
 
     // Phase 3: remove line, expand text
     _turnTransitionTimer = setTimeout(function () {
+      if (line._animId) cancelAnimationFrame(line._animId);
       if (line.parentNode) line.parentNode.removeChild(line);
       bar.classList.remove('collapsing');
 
