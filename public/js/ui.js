@@ -451,10 +451,29 @@ function _handlePlacementClick(row, col) {
     placementState.selectedShip = nextIdx;
     _updateShipListUI();
   } else {
-    // All ships placed — enable ready button
-    var readyBtn = document.getElementById('btn-ready');
-    if (readyBtn) readyBtn.disabled = false;
+    _onAllShipsPlaced();
   }
+}
+
+function _onAllShipsPlaced() {
+  var readyBtn = document.getElementById('btn-ready');
+  if (readyBtn) readyBtn.disabled = false;
+
+  // Flash all placed ship cells
+  var board = document.getElementById('board-placement');
+  if (board) {
+    var shipCells = board.querySelectorAll('.cell.ship');
+    shipCells.forEach(function (cell) {
+      cell.classList.add('ship-flash');
+    });
+    setTimeout(function () {
+      shipCells.forEach(function (cell) {
+        cell.classList.remove('ship-flash');
+      });
+    }, 800);
+  }
+
+  showNotification('FLEET READY — PRESS ENTER TO DEPLOY');
 }
 
 function _handlePlacementHover(row, col) {
@@ -580,9 +599,7 @@ function _randomizePlacement() {
   _renderPlacementBoardCells();
   _updateShipListUI();
 
-  // All ships placed — enable ready button
-  var readyBtn = document.getElementById('btn-ready');
-  if (readyBtn) readyBtn.disabled = false;
+  _onAllShipsPlaced();
 }
 
 // ---------------------------------------------------------------------------
