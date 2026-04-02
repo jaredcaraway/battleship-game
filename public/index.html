@@ -155,11 +155,15 @@
         <div id="status-bar" class="status-bar" aria-live="polite">
           <span id="status-message">INITIALIZING...</span>
           <span id="status-turn"></span>
+          <span id="difficulty-badge" class="difficulty-badge" hidden></span>
         </div>
         <div class="game-layout">
           <div class="board-column board-column-primary">
             <h2 class="board-label">Enemy Waters</h2>
             <div id="board-enemy" class="board board-large" role="grid" aria-label="Enemy board — click to attack"></div>
+            <div id="enemy-sunk" class="sunk-tracker" aria-label="Enemy ships destroyed">
+              <!-- Rendered by JS -->
+            </div>
           </div>
           <div class="board-column board-column-secondary">
             <h2 class="board-label">Your Fleet</h2>
