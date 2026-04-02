@@ -105,6 +105,43 @@ body::after {
   display: block;
 }
 
+/*
+ * STYLE GUIDE — Shared patterns for visual consistency
+ *
+ * Centered screen:    .screen-centered — flex column, centered, padded
+ * Screen heading:     .screen-heading  — uppercase, spaced, dimmed green
+ * Screen subtitle:    .screen-subtitle — small, dimmed, spaced
+ * Button groups:      .gameover-buttons, .placement-controls — flex row, gap
+ * Max-width screens:  max-width 500-700px, margin: 0 auto, padding: 20px
+ * Colors:             #00ff80 (primary), #00ff8088 (dimmed), #ff4444 (danger)
+ */
+
+.screen-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  gap: 12px;
+}
+
+.screen-heading {
+  font-size: 14px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #00ff80;
+  text-shadow: 0 0 8px #00ff80;
+  margin-bottom: 4px;
+}
+
+.screen-subtitle {
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #00ff8066;
+}
+
 /* ===== Menu ===== */
 .menu-container {
   max-width: 500px;

@@ -104,7 +104,7 @@
 
     <!-- Screen: Waiting / Matchmaking -->
     <section id="screen-waiting" class="screen" aria-label="Matchmaking">
-      <div class="waiting-content">
+      <div class="screen-centered">
         <p class="blink">Searching for opponent...</p>
         <button id="btn-cancel-wait" class="btn-terminal">Cancel</button>
       </div>
@@ -112,12 +112,14 @@
 
     <!-- Screen: Room Lobby -->
     <section id="screen-room" class="screen" aria-label="Room lobby">
-      <h2>Room Created</h2>
-      <p>Share this code with your opponent:</p>
-      <p id="room-code-display" class="room-code" aria-live="polite" title="Click to copy"></p>
-      <p id="room-code-copied" class="copy-confirm" hidden>Copied!</p>
-      <p class="waiting-text blink">Waiting for opponent to join...</p>
-      <button id="btn-cancel-room" class="btn-terminal">Cancel</button>
+      <div class="screen-centered">
+        <h2 class="screen-heading">Room Created</h2>
+        <p class="screen-subtitle">Share this code with your opponent:</p>
+        <p id="room-code-display" class="room-code" aria-live="polite" title="Click to copy"></p>
+        <p id="room-code-copied" class="copy-confirm" hidden>Copied!</p>
+        <p class="screen-subtitle blink">Waiting for opponent to join...</p>
+        <button id="btn-cancel-room" class="btn-terminal">Cancel</button>
+      </div>
     </section>
 
     <!-- Screen: Ship Placement -->
