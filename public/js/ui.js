@@ -257,12 +257,16 @@ function _renderShipList() {
     nameSpan.className = 'ship-name';
     nameSpan.textContent = ship.name;
 
-    var sizeSpan = document.createElement('span');
-    sizeSpan.className = 'ship-size';
-    sizeSpan.textContent = '[' + ship.size + ']';
+    var blocksDiv = document.createElement('div');
+    blocksDiv.className = 'ship-blocks';
+    for (var b = 0; b < ship.size; b++) {
+      var block = document.createElement('span');
+      block.className = 'ship-block';
+      blocksDiv.appendChild(block);
+    }
 
     item.appendChild(nameSpan);
-    item.appendChild(sizeSpan);
+    item.appendChild(blocksDiv);
 
     item.addEventListener('click', function () {
       var shipNameLower = ship.name.toLowerCase();
