@@ -66,13 +66,13 @@ var SoundManager = {
       // Low-pass filter for rumble
       var filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(800, t);
-      filter.frequency.exponentialRampToValueAtTime(100, t + 0.3);
+      filter.frequency.setValueAtTime(2000, t);
+      filter.frequency.exponentialRampToValueAtTime(150, t + 0.5);
 
       // Noise gain envelope
       var noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.6, t);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
+      noiseGain.gain.setValueAtTime(1.0, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
 
       noise.connect(filter);
       filter.connect(noiseGain);
@@ -81,20 +81,20 @@ var SoundManager = {
       // Bass punch oscillator
       var osc = ctx.createOscillator();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(80, t);
-      osc.frequency.exponentialRampToValueAtTime(20, t + 0.3);
+      osc.frequency.setValueAtTime(150, t);
+      osc.frequency.exponentialRampToValueAtTime(30, t + 0.4);
 
       var oscGain = ctx.createGain();
-      oscGain.gain.setValueAtTime(0.5, t);
-      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+      oscGain.gain.setValueAtTime(0.8, t);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.5);
 
       osc.connect(oscGain);
       oscGain.connect(ctx.destination);
 
       noise.start(t);
-      noise.stop(t + 0.4);
+      noise.stop(t + 0.6);
       osc.start(t);
-      osc.stop(t + 0.35);
+      osc.stop(t + 0.5);
     } catch (e) { /* ignore audio errors */ }
   },
 
