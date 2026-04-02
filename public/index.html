@@ -269,25 +269,31 @@
 
     <section aria-labelledby="fleet-heading">
       <h3 id="fleet-heading">Fleet Composition</h3>
-      <ul>
-        <li><strong>Carrier</strong> — 5 cells</li>
-        <li><strong>Battleship</strong> — 4 cells</li>
-        <li><strong>Cruiser</strong> — 3 cells</li>
-        <li><strong>Submarine</strong> — 3 cells</li>
-        <li><strong>Destroyer</strong> — 2 cells</li>
+      <ul class="fleet-list">
+        <li><strong>Carrier</strong><span class="seo-blocks"><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span></span></li>
+        <li><strong>Battleship</strong><span class="seo-blocks"><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span></span></li>
+        <li><strong>Cruiser</strong><span class="seo-blocks"><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span></span></li>
+        <li><strong>Submarine</strong><span class="seo-blocks"><span class="seo-block"></span><span class="seo-block"></span><span class="seo-block"></span></span></li>
+        <li><strong>Destroyer</strong><span class="seo-blocks"><span class="seo-block"></span><span class="seo-block"></span></span></li>
       </ul>
     </section>
 
     <section aria-labelledby="ai-heading">
       <h3 id="ai-heading">AI Difficulty Levels</h3>
-      <dl>
-        <dt>Easy</dt>
-        <dd>The AI fires at random coordinates each turn — great for beginners learning the basics.</dd>
-        <dt>Medium</dt>
-        <dd>After scoring a hit, the AI hunts adjacent cells to finish off the ship before returning to random fire.</dd>
-        <dt>Hard</dt>
-        <dd>The AI uses a probability-density algorithm to target the most likely ship positions, making it a formidable opponent.</dd>
-      </dl>
+      <div class="difficulty-cards">
+        <fieldset class="difficulty-card difficulty-card-easy">
+          <legend>Easy</legend>
+          <p>The AI fires at random coordinates each turn — great for beginners learning the basics.</p>
+        </fieldset>
+        <fieldset class="difficulty-card difficulty-card-medium">
+          <legend>Medium</legend>
+          <p>After scoring a hit, the AI hunts adjacent cells to finish off the ship before returning to random fire.</p>
+        </fieldset>
+        <fieldset class="difficulty-card difficulty-card-hard">
+          <legend>Hard</legend>
+          <p>The AI uses a probability-density algorithm to target the most likely ship positions, making it a formidable opponent.</p>
+        </fieldset>
+      </div>
     </section>
 
     <section aria-labelledby="multiplayer-heading">
