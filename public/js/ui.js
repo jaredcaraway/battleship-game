@@ -5,6 +5,9 @@
 
 'use strict';
 
+// Track last game mode for Play Again
+var _lastGameMode = null; // { type: 'ai', difficulty: 'easy' } or { type: 'multiplayer' }
+
 // ---------------------------------------------------------------------------
 // Screen management
 // ---------------------------------------------------------------------------
@@ -633,6 +636,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var mode = btn.getAttribute('data-mode');
       // Extract difficulty: ai_easy → easy, ai_medium → medium, ai_hard → hard
       var difficulty = mode.replace('ai_', '');
+      _lastGameMode = { type: 'ai', difficulty: difficulty };
       if (socket) socket.emit('create-ai-game', { difficulty: difficulty });
     });
   });
@@ -785,7 +789,11 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnPlayAgain = document.getElementById('btn-play-again');
   if (btnPlayAgain) {
     btnPlayAgain.addEventListener('click', function () {
-      showScreen('screen-menu');
+      if (_lastGameMode && _lastGameMode.type === 'ai' && socket) {
+        socket.emit('create-ai-game', { difficulty: _lastGameMode.difficulty });
+      } else {
+        showScreen('screen-menu');
+      }
     });
   }
 
