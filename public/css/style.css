@@ -496,6 +496,46 @@ body::after {
   }
 }
 
+.game-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 16px 20px;
+}
+
+.game-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-column-primary {
+  flex: 0 0 auto;
+}
+
+.board-column-secondary {
+  flex: 0 0 auto;
+}
+
+.board-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #00ff8066;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.board-column-primary .board-label {
+  color: #00ff80aa;
+  text-shadow: 0 0 4px #00ff8022;
+}
+
 .game-container {
   max-width: 500px;
   margin: 0 auto;
@@ -876,11 +916,10 @@ body::after {
 /* ===== Ship Status ===== */
 .ship-status {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
   font-size: 11px;
-  margin-top: 8px;
+  margin-top: 12px;
   color: #00ff8088;
 }
 
@@ -911,6 +950,12 @@ body::after {
   .room-code {
     font-size: 28px;
     letter-spacing: 6px;
+  }
+
+  .game-layout {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
   }
 
   .board-large {
