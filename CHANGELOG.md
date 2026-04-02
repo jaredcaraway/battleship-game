@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - **Pixel-block ship visuals**: placement ship list and How to Play fleet section show block representations
 - **Placement instruction hint**: subtle text explaining click-to-place and click-to-reposition
 - **How to Play restyle**: terminal-themed headings, custom counters, `>` prompt markers, color-coded difficulty fieldset cards with legend borders
+- **Ship flash animation**: all placed ship cells flash green when fleet is complete, with 'FLEET READY' notification
+- **Escape key**: drops held ship back to ship list during placement
 - Immediate ship pickup with hover preview refresh on reposition
 
 ### Fixed
