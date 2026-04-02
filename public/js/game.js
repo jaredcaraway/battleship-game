@@ -167,6 +167,23 @@ function showNotification(message) {
  * updateTurnIndicator(isMyTurn)
  * Updates #status-turn text and styling.
  */
+function _playTurnBeep() {
+  if (SoundManager.muted) return;
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.15);
+  } catch (e) { /* ignore audio errors */ }
+}
+
 function updateTurnIndicator(isMyTurn) {
   var el = document.getElementById('status-turn');
   if (!el) return;
@@ -174,9 +191,18 @@ function updateTurnIndicator(isMyTurn) {
   if (isMyTurn) {
     el.textContent = 'YOUR TURN';
     el.style.color = '#00ff80';
+    _playTurnBeep();
   } else {
     el.textContent = "OPPONENT'S TURN";
     el.style.color = '#ff6b6b';
+  }
+
+  // Pulse the status bar
+  var bar = document.getElementById('status-bar');
+  if (bar) {
+    bar.classList.remove('pulse');
+    void bar.offsetWidth;
+    bar.classList.add('pulse');
   }
 }
 
