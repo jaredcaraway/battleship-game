@@ -1,4 +1,4 @@
-/* game.js — Battleship client: Socket.io + board rendering + game loop
+/* game.js — Cyber Ship Battle client: Socket.io + board rendering + game loop
  * Loaded BEFORE ui.js. Exposes globals consumed by ui.js.
  */
 

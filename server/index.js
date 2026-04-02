@@ -70,7 +70,7 @@ setupSocketHandlers(io);
 // ---------------------------------------------------------------------------
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Battleship server listening on port ${PORT}`);
+  console.log(`Cyber Ship Battle server listening on port ${PORT}`);
 });
 
 module.exports = { app, server, io };
