@@ -632,39 +632,16 @@ function connectSocket() {
     var iWon = (data.winner === socket.id);
     myTurn = false;
 
-    var title = document.getElementById('gameover-title');
-    if (title) {
-      title.textContent = iWon ? 'VICTORY!' : 'DEFEAT';
-      title.classList.remove('victory', 'defeat');
-      void title.offsetWidth;
-      title.classList.add(iWon ? 'victory' : 'defeat');
-
-      if (!iWon && typeof MotionSettings !== 'undefined' && MotionSettings.enabled) {
-        var anims = document.querySelectorAll('#defeat-wave animate');
-        anims.forEach(function (a) { a.beginElement(); });
-      }
+    if (typeof showGameOver === 'function') {
+      showGameOver({
+        won: iWon,
+        turns: data.turns,
+        duration: data.duration,
+        accuracy: data.accuracy,
+        reason: data.reason,
+        mode: data.mode
+      });
     }
-
-    var statsEl = document.getElementById('gameover-stats');
-    if (statsEl) {
-      var lines = [];
-      if (data.turns !== undefined) lines.push('Turns: ' + data.turns);
-      if (data.duration !== undefined) {
-        lines.push('Duration: ' + Math.round(data.duration / 1000) + 's');
-      }
-      if (data.reason) {
-        var reasons = {
-          opponent_disconnected: 'Opponent disconnected'
-        };
-        lines.push('Reason: ' + (reasons[data.reason] || data.reason));
-      }
-      statsEl.innerHTML = lines.map(function (l) {
-        return '<div>' + l + '</div>';
-      }).join('');
-    }
-
-    if (typeof showScreen === 'function') showScreen('screen-gameover');
-    if (iWon && typeof _fireVictoryConfetti === 'function') _fireVictoryConfetti();
   });
 
   // ---- opponent-disconnected: opponent left, countdown to forfeit ----------
