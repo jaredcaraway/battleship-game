@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.4.0] - 2026-04-02
+
+### Added
+- **Thematic micro copy**: rotating military/cyber turn messages, oscilloscope canvas transition between turns, styled status bar with separated flavor text and turn indicator
+- **Explosion sound**: synthesized Web Audio API explosion (noise burst + bass punch) on ship sinking
+- **Motion toggle**: settings option to disable all animations, respects `prefers-reduced-motion`
+- **Sound/motion toggle visuals**: speaker SVG icon, red/green state colors
+- **Pixel-block ship visuals**: placement ship list and How to Play fleet section show block representations
+- **Placement instruction hint**: subtle text explaining click-to-place and click-to-reposition
+- **How to Play restyle**: terminal-themed headings, custom counters, `>` prompt markers, color-coded difficulty fieldset cards with legend borders
+- Immediate ship pickup with hover preview refresh on reposition
+
+### Fixed
+- Hover preview refreshes after picking up a ship (no stale 1-cell preview)
+- SEO content font sizes bumped for readability (14px body, 16px/13px headings)
+- Fleet block alignment with fixed-width name column
+
 ## [1.3.0] - 2026-04-02
 
 ### Added
