@@ -308,6 +308,48 @@ body::after {
   background: #00ff8011;
 }
 
+.cell.ripple {
+  position: relative;
+  overflow: visible;
+}
+
+.cell.ripple::before,
+.cell.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #00ff8088;
+  transform: translate(-50%, -50%) scale(0);
+  animation: waterRipple 0.8s ease-out forwards;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cell.ripple::after {
+  animation-delay: 0.15s;
+}
+
+@keyframes waterRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+    border-width: 2px;
+  }
+  50% {
+    opacity: 0.4;
+    border-width: 1px;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(8);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+
 .cell.hit {
   background: #ff003322;
   border-color: #ff003366;

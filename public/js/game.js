@@ -129,6 +129,41 @@ function updateBoard(containerId, gridState) {
  * Emits a 'fire' event if it is this player's turn.
  * Temporarily disables the enemy board to prevent double-fire.
  */
+function _spawnRipple(row, col) {
+  var board = document.getElementById('board-enemy');
+  if (!board) return;
+  var cell = board.querySelector('.cell[data-row="' + row + '"][data-col="' + col + '"]');
+  if (!cell) return;
+
+  cell.classList.remove('ripple');
+  void cell.offsetWidth;
+  cell.classList.add('ripple');
+
+  // Spawn extra ripple rings on neighboring cells for spread effect
+  var neighbors = [
+    [row - 1, col], [row + 1, col], [row, col - 1], [row, col + 1]
+  ];
+  neighbors.forEach(function (pos, i) {
+    var n = board.querySelector('.cell[data-row="' + pos[0] + '"][data-col="' + pos[1] + '"]');
+    if (n) {
+      setTimeout(function () {
+        n.classList.remove('ripple');
+        void n.offsetWidth;
+        n.classList.add('ripple');
+      }, 100 + i * 60);
+    }
+  });
+
+  // Clean up classes after animation
+  setTimeout(function () {
+    cell.classList.remove('ripple');
+    neighbors.forEach(function (pos) {
+      var n = board.querySelector('.cell[data-row="' + pos[0] + '"][data-col="' + pos[1] + '"]');
+      if (n) n.classList.remove('ripple');
+    });
+  }, 1200);
+}
+
 function fireAt(row, col) {
   if (!myTurn) return;
   if (!socket) return;
@@ -137,6 +172,7 @@ function fireAt(row, col) {
   myTurn = false;
   updateTurnIndicator(false);
 
+  _spawnRipple(row, col);
   socket.emit('fire', { row: row, col: col });
   SoundManager.play('fire');
 }
