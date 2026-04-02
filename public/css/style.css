@@ -1269,6 +1269,48 @@ body::after {
   color: #00ff8088;
 }
 
+/* Sunk tracker under enemy board */
+.sunk-tracker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+.sunk-ship-tag {
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border: 1px solid #ff444444;
+  color: #ff4444;
+  background: #ff444411;
+}
+
+/* Difficulty badge in status bar */
+.difficulty-badge {
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 1px 8px;
+  border: 1px solid;
+  margin-top: 2px;
+}
+
+.badge-easy {
+  color: #00ff80;
+  border-color: #00ff8044;
+}
+
+.badge-medium {
+  color: #ffaa00;
+  border-color: #ffaa0044;
+}
+
+.badge-hard {
+  color: #ff4444;
+  border-color: #ff444444;
+}
+
 /* ===== Animations ===== */
 @keyframes blink {
   from { opacity: 1; }

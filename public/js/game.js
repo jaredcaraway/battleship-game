@@ -11,6 +11,7 @@ var socket = null;
 var currentRoomId = null;
 var myTurn = false;
 var mySocketId = null;
+var enemySunkShips = [];
 
 // ---------------------------------------------------------------------------
 // SoundManager
@@ -439,6 +440,30 @@ function updateTurnIndicator(isMyTurn) {
  * Renders ship name + sunk indicators into #ship-status.
  * ships is an array of { name, sunk } objects.
  */
+function updateEnemySunkTracker() {
+  var container = document.getElementById('enemy-sunk');
+  if (!container) return;
+  if (enemySunkShips.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+  container.innerHTML = enemySunkShips.map(function (name) {
+    return '<span class="sunk-ship-tag">' + name.toUpperCase() + '</span>';
+  }).join('');
+}
+
+function showDifficultyBadge() {
+  var badge = document.getElementById('difficulty-badge');
+  if (!badge) return;
+  if (typeof _lastGameMode !== 'undefined' && _lastGameMode && _lastGameMode.type === 'ai') {
+    badge.textContent = _lastGameMode.difficulty.toUpperCase();
+    badge.className = 'difficulty-badge badge-' + _lastGameMode.difficulty;
+    badge.removeAttribute('hidden');
+  } else {
+    badge.setAttribute('hidden', '');
+  }
+}
+
 function updateShipStatus(ships) {
   var container = document.getElementById('ship-status');
   if (!container || !Array.isArray(ships)) return;
@@ -531,7 +556,10 @@ function connectSocket() {
 
   // ---- game-start: both players ready, game begins --------------------------
   socket.on('game-start', function (data) {
+    enemySunkShips = [];
     if (typeof showScreen === 'function') showScreen('screen-game');
+    showDifficultyBadge();
+    updateEnemySunkTracker();
     // Request full state after showing game screen
     if (socket) socket.emit('get-state');
   });
@@ -590,8 +618,12 @@ function connectSocket() {
       }
     }
 
-    // Show notification if a ship was sunk
+    // Track and show sunk ships
     if (data.sunk && data.shipName) {
+      if (isMyShot) {
+        enemySunkShips.push(data.shipName);
+        updateEnemySunkTracker();
+      }
       var shipUpper = data.shipName.toUpperCase();
       var msg = isMyShot
         ? 'ENEMY ' + shipUpper + ' DESTROYED'
