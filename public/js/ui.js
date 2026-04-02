@@ -672,6 +672,25 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // --- Copy room code on click ---
+  var roomCodeDisplay = document.getElementById('room-code-display');
+  var roomCodeCopied = document.getElementById('room-code-copied');
+  if (roomCodeDisplay) {
+    roomCodeDisplay.addEventListener('click', function () {
+      var code = roomCodeDisplay.textContent.trim();
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(function () {
+        if (roomCodeCopied) {
+          roomCodeCopied.removeAttribute('hidden');
+          clearTimeout(roomCodeCopied._timer);
+          roomCodeCopied._timer = setTimeout(function () {
+            roomCodeCopied.setAttribute('hidden', '');
+          }, 1500);
+        }
+      });
+    });
+  }
+
   // --- Cancel room ---
   var btnCancelRoom = document.getElementById('btn-cancel-room');
   if (btnCancelRoom) {
