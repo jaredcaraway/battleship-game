@@ -389,6 +389,11 @@ function _pickUpPlacedShip(placedIdx) {
   _redrawPlacedShips();
   _updateShipListUI();
 
+  // Refresh hover preview so the picked-up ship shows at cursor
+  if (placementState.lastHoverRow >= 0 && placementState.lastHoverCol >= 0) {
+    _handlePlacementHover(placementState.lastHoverRow, placementState.lastHoverCol);
+  }
+
   var readyBtn = document.getElementById('btn-ready');
   if (readyBtn) readyBtn.disabled = true;
 }
