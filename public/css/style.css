@@ -215,53 +215,7 @@ body::after {
   text-transform: uppercase;
 }
 
-.btn-easy {
-  border-color: #00ff8066;
-  color: #00ff80;
-}
-
-.btn-easy:hover {
-  background: #00ff8015;
-  border-color: #00ff80;
-  text-shadow: 0 0 8px #00ff80;
-}
-
-.btn-medium {
-  border-color: #ffaa0066;
-  color: #ffaa00;
-}
-
-.btn-medium:hover {
-  background: #ffaa0012;
-  border-color: #ffaa00;
-  text-shadow: 0 0 8px #ffaa00;
-}
-
-.btn-hard {
-  border-color: #ff444466;
-  color: #ff4444;
-}
-
-.btn-hard:hover {
-  background: #ff444412;
-  border-color: #ff4444;
-  text-shadow: 0 0 8px #ff4444;
-}
-
-/* Secondary button (leaderboard, etc.) */
-.btn-secondary {
-  border-color: #00ff8022;
-  color: #00ff8055;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-.btn-secondary:hover {
-  border-color: #00ff8055;
-  color: #00ff8099;
-  background: transparent;
-  text-shadow: none;
-}
+/* Difficulty + secondary overrides moved after .btn-terminal for specificity */
 
 .menu-section h2, .menu-section h3 {
   font-size: 11px;
@@ -294,6 +248,55 @@ body::after {
   border-color: #00ff80;
   text-shadow: 0 0 8px #00ff80;
   background: #00ff8011;
+}
+
+/* Difficulty color overrides */
+.btn-terminal.btn-easy {
+  border-color: #00ff8066;
+  color: #00ff80;
+}
+
+.btn-terminal.btn-easy:hover {
+  background: #00ff8015;
+  border-color: #00ff80;
+  text-shadow: 0 0 8px #00ff80;
+}
+
+.btn-terminal.btn-medium {
+  border-color: #ffaa0066;
+  color: #ffaa00;
+}
+
+.btn-terminal.btn-medium:hover {
+  background: #ffaa0012;
+  border-color: #ffaa00;
+  text-shadow: 0 0 8px #ffaa00;
+}
+
+.btn-terminal.btn-hard {
+  border-color: #ff444466;
+  color: #ff4444;
+}
+
+.btn-terminal.btn-hard:hover {
+  background: #ff444412;
+  border-color: #ff4444;
+  text-shadow: 0 0 8px #ff4444;
+}
+
+/* Secondary button (leaderboard, etc.) */
+.btn-terminal.btn-secondary {
+  border-color: #00ff8022;
+  color: #00ff8055;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.btn-terminal.btn-secondary:hover {
+  border-color: #00ff8055;
+  color: #00ff8099;
+  background: transparent;
+  text-shadow: none;
 }
 
 /* ===== Terminal Input ===== */
