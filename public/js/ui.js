@@ -946,6 +946,10 @@ document.addEventListener('DOMContentLoaded', function () {
       _randomizePlacement();
     } else if (e.key === 'z' || e.key === 'Z') {
       _undoLastPlacement();
+    } else if (e.key === 'Escape') {
+      placementState.selectedShip = -1;
+      _updateShipListUI();
+      _clearPreview();
     } else if (e.key === 'Enter') {
       _submitReady();
     }
