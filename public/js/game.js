@@ -346,8 +346,14 @@ function updateTurnIndicator(isMyTurn) {
   var msgEl = document.getElementById('status-message');
   if (!bar) return;
 
-  // Clear any pending transition
+  // Clear any pending transition and orphaned canvases
   if (_turnTransitionTimer) clearTimeout(_turnTransitionTimer);
+  var oldLines = bar.querySelectorAll('.status-line');
+  oldLines.forEach(function (ol) {
+    if (ol._animId) cancelAnimationFrame(ol._animId);
+    ol.parentNode.removeChild(ol);
+  });
+  bar.classList.remove('collapsing');
 
   // Phase 1: collapse text
   bar.classList.add('collapsing');
