@@ -22,20 +22,26 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'change-me-to-a-random
   process.exit(1);
 }
 
-// Auto-init database tables
+// Auto-init database — fall back to in-memory store if unavailable
 async function initDatabase() {
   try {
     await pool.query('SELECT 1 FROM users LIMIT 0');
+    console.log('Database connected.');
   } catch (err) {
     if (err.code === '42P01') { // table does not exist
       console.log('Initializing database schema...');
       const schema = fs.readFileSync(path.join(__dirname, 'db', 'schema.sql'), 'utf8');
       await pool.query(schema);
       console.log('Database schema initialized.');
-    } else if (err.code === 'ECONNREFUSED' || err.code === '28P01') {
-      console.warn('Database unavailable — auth and leaderboard features disabled.');
     } else {
-      console.warn('Database check failed:', err.message);
+      console.warn('Database unavailable (' + err.message + ') — using in-memory store.');
+      console.warn('Auth will work but data is lost on restart.');
+      const memoryStore = require('./db/memory-store');
+      // Hot-swap the queries module exports
+      const queries = require('./db/queries');
+      Object.keys(memoryStore).forEach(key => {
+        queries[key] = memoryStore[key];
+      });
     }
   }
 }
