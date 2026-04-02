@@ -431,6 +431,26 @@ body::after {
   border-color: #00ff8044;
 }
 
+.cell.ship-flash {
+  animation: shipFlash 0.8s ease-out;
+}
+
+@keyframes shipFlash {
+  0% {
+    background: #00ff8066;
+    border-color: #00ff80;
+    box-shadow: 0 0 8px #00ff8044;
+  }
+  50% {
+    background: #00ff8033;
+    border-color: #00ff80aa;
+  }
+  100% {
+    background: #00ff8015;
+    border-color: #00ff8044;
+    box-shadow: none;
+  }
+}
 
 .cell.preview-valid {
   background: #00ff8025;
