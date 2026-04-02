@@ -805,7 +805,7 @@ document.addEventListener('DOMContentLoaded', function () {
     placementState.orientation =
       placementState.orientation === 'horizontal' ? 'vertical' : 'horizontal';
     if (btnRotate) {
-      btnRotate.textContent = 'Rotate Ship [R]';
+      btnRotate.textContent = 'Rotate [R]';
     }
     // Refresh hover preview so the rotated orientation is visible immediately
     if (placementState.lastHoverRow >= 0 && placementState.lastHoverCol >= 0) {
@@ -817,15 +817,6 @@ document.addEventListener('DOMContentLoaded', function () {
     btnRotate.addEventListener('click', _rotateShip);
   }
 
-  // R key shortcut for rotate
-  document.addEventListener('keydown', function (e) {
-    var activeScreen = document.querySelector('#screen-placement.active');
-    if (!activeScreen) return;
-    if (e.key === 'r' || e.key === 'R') {
-      _rotateShip();
-    }
-  });
-
   // Randomize button
   var btnRandomize = document.getElementById('btn-randomize');
   if (btnRandomize) {
@@ -836,14 +827,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Ready button
   var btnReady = document.getElementById('btn-ready');
-  if (btnReady) {
-    btnReady.addEventListener('click', function () {
-      if (placementState.placedShips.length < FLEET.length) return;
-      if (socket) {
-        socket.emit('place-ships', { ships: placementState.placedShips });
-      }
-    });
+  function _submitReady() {
+    if (!btnReady || btnReady.disabled) return;
+    if (placementState.placedShips.length < FLEET.length) return;
+    if (socket) {
+      socket.emit('place-ships', { ships: placementState.placedShips });
+    }
   }
+  if (btnReady) {
+    btnReady.addEventListener('click', _submitReady);
+  }
+
+  // Keyboard shortcuts for placement screen
+  document.addEventListener('keydown', function (e) {
+    var activeScreen = document.querySelector('#screen-placement.active');
+    if (!activeScreen) return;
+    if (e.key === 'r' || e.key === 'R') {
+      _rotateShip();
+    } else if (e.key === 's' || e.key === 'S') {
+      _randomizePlacement();
+    } else if (e.key === 'Enter') {
+      _submitReady();
+    }
+  });
 
   // Initialize placement board when placement screen becomes active
   // game.js calls showScreen('screen-placement'), which we intercept by
