@@ -68,6 +68,8 @@ body::before {
 
 /* ===== Top Nav ===== */
 #top-nav {
+  position: relative;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -112,6 +114,11 @@ body::before {
 
 .ad-slot:empty {
   display: none;
+}
+
+main {
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== Main Title ===== */
@@ -1306,6 +1313,8 @@ body::before {
 
 /* ===== Footer ===== */
 .site-footer {
+  position: relative;
+  z-index: 1;
   text-align: center;
   padding: 20px;
   margin-top: 20px;
