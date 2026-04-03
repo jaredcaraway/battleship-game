@@ -12,7 +12,7 @@ console.log('[effects.js] loaded — matrix rain + cursor trail active');
 (function () {
   var canvas = document.createElement('canvas');
   canvas.id = 'matrix-rain';
-  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.15;';
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.06;';
   document.body.appendChild(canvas);
 
   var ctx = canvas.getContext('2d');
