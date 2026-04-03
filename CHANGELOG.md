@@ -4,181 +4,109 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - 2026-04-03
+
+### BREAKING
+- **PostgreSQL is dead, long live MySQL** — full database migration. Existing PG data is not compatible. Fresh start, fresh vibes.
+- **JWT tokens slimmed down** — removed email from the payload. Lighter tokens, less PII floating around in base64.
+- **Passwords got standards** — must now contain at least one letter and one number. Sorry, `00000000`.
+
+### Added
+- **Helmet security headers** — your browser now gets told to behave itself
+- **CORS lockdown** — configurable via `ALLOWED_ORIGINS` env var (defaults to wide open for dev, because we trust you... for now)
+- **Per-socket rate limiting** — 30 events/sec per connection. No more turbo-clicking your way to victory.
+- **Input validation on all socket events** — row/col must be integers 0-9, ships must be an array, difficulty must be real. No more sending `{row: "DROP TABLE"}`.
+- **Error message sanitization** — internal errors no longer leak to clients. You get "Something went wrong" like everyone else.
+- **Crypto-secure room codes** — replaced `Math.random()` with `crypto.randomBytes()` + collision checking. Your room codes are now unguessable.
+- **JWT algorithm pinning** — HS256 explicitly enforced on both signing and verification
+- **MySQL connection pool hardening** — connection limits, timeouts, and optional SSL support
+- **10kb body size limit** — in case someone tries to POST a novel
+
+### Fixed
+- Schema indexes now defined inline (no more failing re-init)
+- `.gitignore` expanded to catch `.DS_Store`, coverage reports, and env file variants
+- `.env.example` updated to reflect the MySQL reality
+
 ## [1.7.0] - 2026-04-03
 
 ### Added
-- **Typewriter notifications**: text types out at 30ms/char with blinking block cursor
-- **Glitch text**: RGB split effect on title (8s cycle) and screen headings (12s cycle)
-- **Shot queueing**: click during AI turn to queue next shot with amber pulse highlight
-- **Differentiated shake**: 4 styles — offense-hit (quick jolt), offense-sunk (green flash), defense-hit (red flash rumble), defense-sunk (heavy red flash)
-- **Player board ripple**: 3D water ripple on small board when opponent hits
-- **Ready button pulse**: green glow animation when all ships placed
-- **Login accepts username or email**
+- **Typewriter notifications** with blinking block cursor
+- **Glitch text** RGB split effect on title and headings
+- **Shot queueing** — click during AI turn to queue your next shot
+- **Juicier hit feedback** — 4 distinct shake styles, board ripple on incoming hits, ready button pulse
 
 ### Fixed
-- Matrix rain z-index (was behind body background), speed throttled to ~10fps, opacity tuned to 6%
-- Scanlines made static (removed flicker animation)
-- Notification cursor blink — was animating wrong CSS property (border-right-color instead of opacity)
-- Old notifications cleared before showing new ones (no stacking)
-- CRT effects visibility: radial-gradient vignette, scanline opacity, phosphor glow boosted
-- Ambient effects always-on (no longer gated by MotionSettings)
+- CRT effects tuned up (scanlines, vignette, phosphor glow were too subtle)
+- Matrix rain fixed (was hiding behind the background like a coward)
+- Various notification and animation glitches squashed
 
 ## [1.6.0] - 2026-04-03
 
 ### Added
-- **Login/auth system**: functional register/login with JWT, bcrypt, rate limiting (10 req/15 min), in-memory fallback when PostgreSQL unavailable
-- **Login accepts username or email**
-- **User icon** in nav with proper spacing
-- **CRT effects**: static scanline overlay, vignette (radial-gradient edge darkening), phosphor afterglow on cell hover, VHS tracking distortion on screen transitions
-- **Matrix rain**: dim falling katakana/digits background (canvas, 12% opacity)
-- **Crosshair breathing pulse**: 3s glow animation on heading icon
-- **Cursor trail**: green particles that shrink and fade behind the cursor
+- **Login/auth system** — register, login, JWT tokens, bcrypt, rate limiting, in-memory fallback
+- **Full CRT aesthetic overhaul** — scanlines, vignette, phosphor afterglow, VHS tracking distortion, matrix rain, cursor trail, crosshair pulse
 
 ### Security
-- JWT_SECRET validated at startup (rejects default placeholder)
-- Username restricted to alphanumeric + hyphens/underscores (XSS mitigation)
-- Username rendered via createTextNode (no innerHTML)
-- Password minimum raised to 8 characters
-- Email validated with proper regex
-- Rate limiting on auth endpoints
+- JWT_SECRET validated at startup, input sanitization, rate limiting on auth
 
 ## [1.5.0] - 2026-04-02
 
 ### Added
-- **Cumulative stats dashboard**: localStorage-persisted career stats (games, wins, losses, win rate, hit rate, fastest win, streaks, per-mode breakdown) with dedicated My Stats screen
-- **Sunk ships tracker**: red pixel-block cards appear under enemy board as ships are destroyed
-- **Difficulty badge**: color-coded EASY/MEDIUM/HARD label in status bar during AI games
-- **Career hit rate**: shown on both stats dashboard and game over screen
-- **AI turn delay**: 800-1500ms random delay before AI fires back for natural feel
+- **Stats dashboard** — career stats with per-mode breakdowns, streaks, hit rates
+- **Sunk ships tracker** — red pixel-block cards show destroyed enemy fleet
+- **Difficulty badge** and career hit rate display
+- **AI turn delay** — 800-1500ms for that "thinking..." feel
 
 ### Fixed
-- Game-over handler routed through shared showGameOver() — accuracy, stats recording, confetti, and defeat animation now all work correctly
-- Turn-change emitted after delayed AI move to re-enable player clicks
-- Orphaned oscilloscope canvases cleaned up on interrupted turn transitions
+- Game-over handling unified — accuracy, confetti, and defeat effects all work properly now
 
 ## [1.4.0] - 2026-04-02
 
 ### Added
-- **Thematic micro copy**: rotating military/cyber turn messages, oscilloscope canvas transition between turns, styled status bar with separated flavor text and turn indicator
-- **Explosion sound**: synthesized Web Audio API explosion (noise burst + bass punch) on ship sinking
-- **Motion toggle**: settings option to disable all animations, respects `prefers-reduced-motion`
-- **Sound/motion toggle visuals**: speaker SVG icon, red/green state colors
-- **Pixel-block ship visuals**: placement ship list and How to Play fleet section show block representations
-- **Placement instruction hint**: subtle text explaining click-to-place and click-to-reposition
-- **How to Play restyle**: terminal-themed headings, custom counters, `>` prompt markers, color-coded difficulty fieldset cards with legend borders
-- **Ship flash animation**: all placed ship cells flash green when fleet is complete, with 'FLEET READY' notification
-- **Escape key**: drops held ship back to ship list during placement
-- Immediate ship pickup with hover preview refresh on reposition
+- **Thematic micro copy** — rotating military/cyber messages with oscilloscope transitions
+- **Explosion sound** — synthesized boom on ship sinking (it slaps)
+- **Motion toggle** — respects `prefers-reduced-motion`
+- **Pixel-block ship visuals** throughout UI
+- **Keyboard shortcuts** — Escape drops held ship, plus existing R/S/Enter
 
 ### Fixed
-- Hover preview refreshes after picking up a ship (no stale 1-cell preview)
-- SEO content font sizes bumped for readability (14px body, 16px/13px headings)
-- Fleet block alignment with fixed-width name column
+- Hover preview, font sizes, fleet alignment polish
 
 ## [1.3.0] - 2026-04-02
 
 ### Added
-- **Game UI rework**: side-by-side desktop layout — enemy board (large, left) + player board (small, right) with ship status beneath
-- **3D water ripple effect**: perspective-based undulating wave radiates from impact point on each shot, amplitude decays with distance
-- **Screen shake**: light shake on hits, heavy shake on ship sinking — JS-driven decaying random jitter
-- **Turn change alerts**: 880Hz beep via Web Audio API + status bar green pulse on turn change
-- **Targeting highlight**: enemy board cells glow with inner/outer box-shadow on hover (excludes already-hit cells)
-- **Menu visual hierarchy**: underline-style tabs, color-coded difficulty buttons (green/amber/red), secondary leaderboard button
-- **Undo placement**: Undo [Z] button reverts last placed ship during placement phase
-- **Play Again shortcut**: replays same AI difficulty from game over screen without returning to menu
-- Board labels styled as subtle uppercase headers, enemy label brighter
-
-### Fixed
-- Player board thumbnail no longer resizes after first hit (explicit width instead of max-width only)
-- Difficulty button colors now properly override base `.btn-terminal` styles (specificity fix)
-- Screen shake duration increased for better feel (was too subtle)
+- **Side-by-side game layout** — big enemy board left, your fleet small on the right
+- **3D water ripple** on impacts, **screen shake** on hits/sinks
+- **Turn alerts** with audio beep and status pulse
+- **Undo placement** [Z], **Play Again** shortcut, improved menu hierarchy
 
 ## [1.2.0] - 2026-04-02
 
 ### Added
 - Rebranded to **Cyber Ship Battle**
-- Victory screen: confetti celebration (canvas-confetti, green-themed, lazy-loaded from CDN)
-- Victory screen: "VICTORY!" slam animation with triple-layer green glow
-- Defeat screen: SNES-style horizontal wave distortion via SVG turbulence filter
-- Defeat screen: red text with layered glow
-- Game over screen vertically centered with flexbox layout
-- Onsite changelog page at `/changelog` rendering from CHANGELOG.md
-- Changelog footer link with `>_ changelog` terminal prompt
-- Click-to-copy room code with SVG copy icon and "Copied!" confirmation
-- Room lobby and matchmaking screens centered with consistent styling
-- Reusable CSS style guide patterns (`.screen-centered`, `.screen-heading`, `.screen-subtitle`)
-- Keyboard shortcuts for all placement buttons: Rotate [R], Randomize [S], Ready [Enter]
-
-### Fixed
-- All links underlined for UX discoverability
-- Placement controls flush beneath game board
+- **Victory confetti** and slam animation, **defeat wave distortion**
+- Changelog page at `/changelog`
+- Click-to-copy room codes
+- Keyboard shortcuts for placement (R, S, Enter)
 
 ## [1.1.0] - 2026-04-01
 
 ### Added
-- Settings menu accessible from nav bar with modal overlay
-- Sound preference persisted in localStorage across sessions
-- Tabbed interface for AI vs Multiplayer mode selection
-- Crosshair reticle SVG favicon and heading icon with glow effect
-- Crosshair cursor site-wide to match visual theme
-- "Pick up" tooltip when hovering placed ships on board
-- Toggleable ship selection — click placed ships to pick up and reposition
-- Click board cells to pick up placed ships directly
-- Keyboard shortcut (R) for rotation with instant preview refresh
-- Rotate button shows persistent `[R]` shortcut label
-- Placement preview refreshes immediately on rotation (no mouse move needed)
-
-### Fixed
-- Placement controls now flush beneath the game board (not floating below)
-- Player ships visible on "Your Fleet" board during gameplay (server sends ship names, not literal 'ship' string)
-- Vertical spacing between multiplayer button groups
-- AI difficulty buttons centered with space-around layout
+- Settings menu, sound persistence, tabbed mode selection
+- Crosshair favicon/cursor/icon theme
+- Ship repositioning — click to pick up and move placed ships
 
 ## [1.0.0] - 2026-03-31
 
 ### Added
-- Complete battleship game — playable vs AI or multiplayer
-- Express server with Socket.io real-time game events
-- Board class with ship placement validation, attack logic, and state views
-- AIPlayer with three difficulty levels (Easy: random shots, Medium: hunt + target mode, Hard: probability-density targeting)
-- GameRoom with turn management, AI integration, and 30s reconnection grace period
-- PostgreSQL database integration for users, games, leaderboard, and stats
-- JWT authentication with register/login routes and middleware
-- Leaderboard, stats, and game history API routes
-- SEO-optimized HTML with schema.org markup and below-fold content
-- Retro terminal CSS theme with CRT scanline effects and responsive layout
-- Client-side game.js with board rendering, Socket.io client, and game loop
-- UI controls: ship placement, auth forms, and screen management
-- Sound effects (fire, hit, miss, sunk) with lazy loading and mute toggle
-- Green/red placement preview on hover showing ship size and validity
-- Private room creation with shareable room code
-- Matchmaking queue for random opponents
-- Game over screen with stats (turns, duration, accuracy)
-
-### Fixed
-- Scroll to top on screen change, hide SEO content during gameplay
-- Ship placement case mismatch allowing unlimited placements
-- Menu container padding
-- Leaderboard table styling with proper spacing and alignment
-- Placement screen layout — centered heading, proper board size, centered controls
+- The whole damn game — battleship vs AI (3 difficulties) or multiplayer
+- Express + Socket.io server, PostgreSQL backend, JWT auth
+- Retro terminal theme with CRT effects
+- Private rooms, matchmaking, game-over stats
+- Sound effects, placement previews, the works
 
 ## [0.2.0] - 2026-03-31
-
-### Added
-- Game client: board rendering, Socket.io connection, game loop
-- UI layer: ship placement interaction, auth modals, screen management
-- Sound effects with lazy loading (fire, hit, miss, sunk WAV files)
-- SEO-optimized HTML with all game screens and schema.org VideoGame markup
-- Retro terminal CSS theme with CRT scanline overlay and responsive breakpoints
+- Game client, UI, sound effects, SEO markup, retro CSS theme
 
 ## [0.1.0] - 2026-03-31
-
-### Added
-- Project scaffold with dependencies, database schema, directory structure
-- Board class with ship placement, attack resolution, and state serialization
-- AIPlayer with easy/medium/hard difficulty strategies
-- GameRoom with turn management, AI integration, and reconnection handling
-- Database query module for users, games, leaderboard, and stats
-- Auth routes (register/login) with JWT middleware
-- Leaderboard, stats, and game history API routes
-- Express server entrypoint with Socket.io game event handlers
+- Initial scaffold — board logic, AI, game rooms, database, auth, API routes
