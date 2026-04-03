@@ -25,8 +25,8 @@ body::after {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,255,128,0.06) 2px,
-    rgba(0,255,128,0.06) 4px
+    rgba(0,255,128,0.025) 2px,
+    rgba(0,255,128,0.025) 4px
   );
   pointer-events: none;
   z-index: 9999;
