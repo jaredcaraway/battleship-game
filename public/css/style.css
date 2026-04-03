@@ -1423,15 +1423,13 @@ body::before {
 }
 
 /* ===== Reduce Motion ===== */
-.reduce-motion *:not(body),
-.reduce-motion *:not(body)::before,
-.reduce-motion *:not(body)::after {
+.reduce-motion *:not(body):not(.heading-icon),
+.reduce-motion *:not(body):not(.heading-icon)::before,
+.reduce-motion *:not(body):not(.heading-icon)::after {
   animation-duration: 0.001s !important;
   animation-delay: 0s !important;
   transition-duration: 0.001s !important;
 }
-
-/* Keep CRT effects even with reduce-motion — they're ambient, not disorienting */
 
 .reduce-motion #gameover-title.defeat {
   filter: none;
