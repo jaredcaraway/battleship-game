@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * In-memory user/game store — fallback when PostgreSQL is unavailable.
+ * In-memory user/game store — fallback when MySQL is unavailable.
  * Data is lost on server restart. Suitable for local development only.
  */
 

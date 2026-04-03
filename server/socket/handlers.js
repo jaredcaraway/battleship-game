@@ -221,6 +221,9 @@ function setupSocketHandlers(io) {
     // cancel-matchmake
     // ------------------------------------------------------------------
     socket.on('cancel-matchmake', () => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
       const idx = matchmakingQueue.findIndex((e) => e.socketId === socket.id);
       if (idx !== -1) {
         matchmakingQueue.splice(idx, 1);
@@ -382,6 +385,9 @@ function setupSocketHandlers(io) {
     // get-state
     // ------------------------------------------------------------------
     socket.on('get-state', () => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
       const roomId = socketToRoom.get(socket.id);
       const room = roomId ? rooms.get(roomId) : null;
       if (!room) {
