@@ -1402,8 +1402,17 @@ main {
   letter-spacing: 1px;
   white-space: nowrap;
   animation: fadeOut 2s forwards;
-  border-right: 2px solid #00ff80;
-  animation: cursorBlink 0.6s step-end infinite, fadeOut 2s forwards;
+}
+
+.notification::after {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: #00ff80;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 0.6s step-end infinite;
 }
 
 /* ===== Ship Status ===== */
