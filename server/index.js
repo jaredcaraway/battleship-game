@@ -6,6 +6,7 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const helmet = require('helmet');
 const path = require('path');
 
 const fs = require('fs');
@@ -25,13 +26,17 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET === 'change-me-to-a-random
 // Auto-init database — fall back to in-memory store if unavailable
 async function initDatabase() {
   try {
-    await pool.query('SELECT 1 FROM users LIMIT 0');
+    await pool.execute('SELECT 1 FROM users LIMIT 0');
     console.log('Database connected.');
   } catch (err) {
-    if (err.code === '42P01') { // table does not exist
+    if (err.code === 'ER_NO_SUCH_TABLE') { // table does not exist
       console.log('Initializing database schema...');
       const schema = fs.readFileSync(path.join(__dirname, 'db', 'schema.sql'), 'utf8');
-      await pool.query(schema);
+      // MySQL doesn't support multi-statement by default; execute each statement separately
+      const statements = schema.split(';').map(s => s.trim()).filter(Boolean);
+      for (const stmt of statements) {
+        await pool.execute(stmt);
+      }
       console.log('Database schema initialized.');
     } else {
       console.warn('Database unavailable (' + err.message + ') — using in-memory store.');
@@ -47,11 +52,15 @@ initDatabase();
 // ---------------------------------------------------------------------------
 // App setup
 // ---------------------------------------------------------------------------
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : '*';
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
   },
 });
@@ -59,8 +68,9 @@ const io = new Server(server, {
 // ---------------------------------------------------------------------------
 // Middleware
 // ---------------------------------------------------------------------------
-app.use(cors());
-app.use(express.json());
+app.use(helmet());
+app.use(cors({ origin: allowedOrigins }));
+app.use(express.json({ limit: '10kb' }));
 
 // ---------------------------------------------------------------------------
 // Static files

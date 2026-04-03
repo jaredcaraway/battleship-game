@@ -1,2 +1,7 @@
 node_modules/
 .env
+.env.test
+.env*.local
+.DS_Store
+coverage/
+npm-debug.log

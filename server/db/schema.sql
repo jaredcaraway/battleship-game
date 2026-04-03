@@ -1,29 +1,29 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+CREATE TABLE IF NOT EXISTS users (
+    id CHAR(36) PRIMARY KEY,
     username VARCHAR(30) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    last_login TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE games (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    player1_id UUID REFERENCES users(id),
-    player2_id UUID REFERENCES users(id),
+CREATE TABLE IF NOT EXISTS games (
+    id CHAR(36) PRIMARY KEY,
+    player1_id CHAR(36),
+    player2_id CHAR(36),
     mode VARCHAR(20) NOT NULL,
-    winner_id UUID REFERENCES users(id),
+    winner_id CHAR(36),
     winner_anonymous BOOLEAN DEFAULT FALSE,
     turns INTEGER,
     player1_accuracy DECIMAL(5,2),
     player2_accuracy DECIMAL(5,2),
     duration_seconds INTEGER,
-    started_at TIMESTAMP DEFAULT NOW(),
-    ended_at TIMESTAMP
+    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ended_at TIMESTAMP NULL,
+    FOREIGN KEY (player1_id) REFERENCES users(id),
+    FOREIGN KEY (player2_id) REFERENCES users(id),
+    FOREIGN KEY (winner_id) REFERENCES users(id),
+    INDEX idx_games_player1 (player1_id),
+    INDEX idx_games_player2 (player2_id),
+    INDEX idx_games_mode (mode)
 );
-
-CREATE INDEX idx_games_player1 ON games(player1_id);
-CREATE INDEX idx_games_player2 ON games(player2_id);
-CREATE INDEX idx_games_mode ON games(mode);

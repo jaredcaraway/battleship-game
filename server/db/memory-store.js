@@ -18,13 +18,13 @@ async function createUser(username, email, passwordHash) {
   // Check uniqueness
   if (usersByEmail.has(email)) {
     const err = new Error('duplicate');
-    err.code = '23505';
+    err.code = 'ER_DUP_ENTRY';
     throw err;
   }
   for (const u of users.values()) {
     if (u.username === username) {
       const err = new Error('duplicate');
-      err.code = '23505';
+      err.code = 'ER_DUP_ENTRY';
       throw err;
     }
   }

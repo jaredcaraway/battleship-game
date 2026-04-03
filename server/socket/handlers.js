@@ -1,5 +1,6 @@
 'use strict';
 
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const GameRoom = require('../game/GameRoom');
 const queries = require('../db/queries');
@@ -14,23 +15,53 @@ const socketToRoom = new Map();    // socketId → roomId
 const userToSocket = new Map();    // userId  → socketId (for reconnection)
 
 // ---------------------------------------------------------------------------
+// Rate limiting
+// ---------------------------------------------------------------------------
+const RATE_LIMIT = { maxEvents: 30, windowMs: 1000 };
+const socketEventCounts = new Map(); // socketId -> { count, resetTime }
+
+function checkRateLimit(socketId) {
+  const now = Date.now();
+  let entry = socketEventCounts.get(socketId);
+  if (!entry || now > entry.resetTime) {
+    entry = { count: 0, resetTime: now + RATE_LIMIT.windowMs };
+    socketEventCounts.set(socketId, entry);
+  }
+  entry.count++;
+  return entry.count <= RATE_LIMIT.maxEvents;
+}
+
+// ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
 function generateRoomCode() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+  let code;
+  do {
+    code = crypto.randomBytes(4).toString('hex').toUpperCase().slice(0, 6);
+  } while (rooms.has(code));
   return code;
+}
+
+function safeError(err) {
+  const known = [
+    'Room not found',
+    'Room is full',
+    'Not in a room',
+    'Game has not started',
+    'Not your turn',
+  ];
+  const msg = err.message || err;
+  if (known.includes(msg)) return msg;
+  console.error('Socket error:', err);
+  return 'Something went wrong';
 }
 
 function getUserFromSocket(socket) {
   try {
     const token = socket.handshake.auth && socket.handshake.auth.token;
     if (!token) return null;
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] });
     return payload;
   } catch {
     return null;
@@ -63,6 +94,13 @@ function setupSocketHandlers(io) {
     // create-ai-game  { difficulty }
     // ------------------------------------------------------------------
     socket.on('create-ai-game', ({ difficulty } = {}) => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
+      const validDifficulties = ['easy', 'medium', 'hard'];
+      if (difficulty && !validDifficulties.includes(difficulty)) {
+        return socket.emit('error', { message: 'Invalid difficulty' });
+      }
       const mode = `ai_${difficulty || 'medium'}`;
       const roomId = generateRoomCode();
 
@@ -81,6 +119,9 @@ function setupSocketHandlers(io) {
     // create-room  — private PvP room
     // ------------------------------------------------------------------
     socket.on('create-room', () => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
       const roomId = generateRoomCode();
       const room = new GameRoom(roomId, 'pvp');
       room.addPlayer(socket.id, userId);
@@ -96,6 +137,12 @@ function setupSocketHandlers(io) {
     // join-room  { roomId }
     // ------------------------------------------------------------------
     socket.on('join-room', ({ roomId } = {}) => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
+      if (!roomId || typeof roomId !== 'string' || roomId.length > 10) {
+        return socket.emit('error', { message: 'Invalid room ID' });
+      }
       const room = rooms.get(roomId);
       if (!room) {
         socket.emit('error', { message: 'Room not found' });
@@ -105,7 +152,7 @@ function setupSocketHandlers(io) {
       try {
         room.addPlayer(socket.id, userId);
       } catch (err) {
-        socket.emit('error', { message: err.message });
+        socket.emit('error', { message: safeError(err) });
         return;
       }
 
@@ -118,6 +165,9 @@ function setupSocketHandlers(io) {
     // matchmake  — public matchmaking
     // ------------------------------------------------------------------
     socket.on('matchmake', () => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
       // Check if already in queue
       const alreadyQueued = matchmakingQueue.findIndex(
         (entry) => entry.socketId === socket.id
@@ -186,6 +236,12 @@ function setupSocketHandlers(io) {
     // place-ships  { ships }
     // ------------------------------------------------------------------
     socket.on('place-ships', ({ ships } = {}) => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
+      if (!Array.isArray(ships)) {
+        return socket.emit('error', { message: 'Invalid ships data' });
+      }
       const roomId = socketToRoom.get(socket.id);
       const room = roomId ? rooms.get(roomId) : null;
       if (!room) {
@@ -196,7 +252,7 @@ function setupSocketHandlers(io) {
       try {
         room.placeShips(socket.id, ships);
       } catch (err) {
-        socket.emit('error', { message: err.message });
+        socket.emit('error', { message: safeError(err) });
         return;
       }
 
@@ -219,6 +275,13 @@ function setupSocketHandlers(io) {
     // fire  { row, col }
     // ------------------------------------------------------------------
     socket.on('fire', async ({ row, col } = {}) => {
+      if (!checkRateLimit(socket.id)) {
+        return socket.emit('error', { message: 'Too many requests, slow down' });
+      }
+      if (!Number.isInteger(row) || row < 0 || row > 9 ||
+          !Number.isInteger(col) || col < 0 || col > 9) {
+        return socket.emit('error', { message: 'Invalid coordinates' });
+      }
       const roomId = socketToRoom.get(socket.id);
       const room = roomId ? rooms.get(roomId) : null;
       if (!room) {
@@ -230,7 +293,7 @@ function setupSocketHandlers(io) {
       try {
         result = room.fire(socket.id, row, col);
       } catch (err) {
-        socket.emit('error', { message: err.message });
+        socket.emit('error', { message: safeError(err) });
         return;
       }
 
@@ -332,6 +395,8 @@ function setupSocketHandlers(io) {
     // disconnect
     // ------------------------------------------------------------------
     socket.on('disconnect', () => {
+      socketEventCounts.delete(socket.id);
+
       // Remove from matchmaking queue (and clear its timer)
       const qIdx = matchmakingQueue.findIndex((e) => e.socketId === socket.id);
       if (qIdx !== -1) {

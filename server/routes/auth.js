@@ -25,7 +25,7 @@ router.use(authLimiter);
 
 function issueToken(user) {
   return jwt.sign(
-    { id: user.id, username: user.username, email: user.email },
+    { id: user.id, username: user.username },
     process.env.JWT_SECRET,
     { expiresIn: JWT_EXPIRY }
   );
@@ -48,6 +48,9 @@ router.post('/register', async (req, res) => {
   if (!password || typeof password !== 'string' || password.length < 8) {
     return res.status(400).json({ error: 'Password must be at least 8 characters' });
   }
+  if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+    return res.status(400).json({ error: 'Password must contain at least one letter and one number' });
+  }
 
   try {
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -55,8 +58,8 @@ router.post('/register', async (req, res) => {
     const token = issueToken(user);
     return res.status(201).json({ user, token });
   } catch (err) {
-    // PostgreSQL unique violation
-    if (err.code === '23505') {
+    // MySQL duplicate entry
+    if (err.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ error: 'Username or email already in use' });
     }
     console.error('Register error:', err);
