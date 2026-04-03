@@ -124,20 +124,20 @@ var AuthUI = {
       form.appendChild(usernameGroup);
     }
 
-    // Email field
+    // Email / identifier field
     var emailGroup = document.createElement('div');
     emailGroup.className = 'form-group';
 
     var emailLabel = document.createElement('label');
-    emailLabel.textContent = 'EMAIL';
+    emailLabel.textContent = mode === 'login' ? 'USERNAME OR EMAIL' : 'EMAIL';
     emailLabel.setAttribute('for', 'auth-email');
     emailGroup.appendChild(emailLabel);
 
     var emailInput = document.createElement('input');
-    emailInput.type = 'email';
+    emailInput.type = mode === 'login' ? 'text' : 'email';
     emailInput.id = 'auth-email';
     emailInput.className = 'input-terminal';
-    emailInput.placeholder = 'your@email.com';
+    emailInput.placeholder = mode === 'login' ? 'Username or email' : 'your@email.com';
     emailInput.required = true;
     emailInput.autocomplete = 'email';
     emailGroup.appendChild(emailInput);
