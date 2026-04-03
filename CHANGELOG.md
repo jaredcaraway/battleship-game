@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.7.0] - 2026-04-03
+
+### Added
+- **Typewriter notifications**: text types out at 30ms/char with blinking block cursor
+- **Glitch text**: RGB split effect on title (8s cycle) and screen headings (12s cycle)
+- **Shot queueing**: click during AI turn to queue next shot with amber pulse highlight
+- **Differentiated shake**: 4 styles — offense-hit (quick jolt), offense-sunk (green flash), defense-hit (red flash rumble), defense-sunk (heavy red flash)
+- **Player board ripple**: 3D water ripple on small board when opponent hits
+- **Ready button pulse**: green glow animation when all ships placed
+- **Login accepts username or email**
+
+### Fixed
+- Matrix rain z-index (was behind body background), speed throttled to ~10fps, opacity tuned to 6%
+- Scanlines made static (removed flicker animation)
+- Notification cursor blink — was animating wrong CSS property (border-right-color instead of opacity)
+- Old notifications cleared before showing new ones (no stacking)
+- CRT effects visibility: radial-gradient vignette, scanline opacity, phosphor glow boosted
+- Ambient effects always-on (no longer gated by MotionSettings)
+
 ## [1.6.0] - 2026-04-03
 
 ### Added
