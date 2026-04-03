@@ -50,6 +50,13 @@ async function getUserByEmail(email) {
   return users.get(id) || null;
 }
 
+async function getUserByUsername(username) {
+  for (const user of users.values()) {
+    if (user.username === username) return user;
+  }
+  return null;
+}
+
 async function getUserById(id) {
   const user = users.get(id);
   if (!user) return null;
@@ -82,6 +89,7 @@ async function getGameHistory() {
 module.exports = {
   createUser,
   getUserByEmail,
+  getUserByUsername,
   getUserById,
   updateLastLogin,
   saveGame,

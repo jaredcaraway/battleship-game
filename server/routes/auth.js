@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const { createUser, getUserByEmail, updateLastLogin } = require('../db/queries');
+const { createUser, getUserByEmail, getUserByUsername, updateLastLogin } = require('../db/queries');
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
@@ -67,13 +67,19 @@ router.post('/register', async (req, res) => {
 // POST /login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
+  // "email" field accepts either email or username
+  const identifier = email;
 
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
+  if (!identifier || !password) {
+    return res.status(400).json({ error: 'Username/email and password are required' });
   }
 
   try {
-    const user = await getUserByEmail(email.trim().toLowerCase());
+    const trimmed = identifier.trim();
+    const isEmail = EMAIL_REGEX.test(trimmed);
+    const user = isEmail
+      ? await getUserByEmail(trimmed.toLowerCase())
+      : await getUserByUsername(trimmed);
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }

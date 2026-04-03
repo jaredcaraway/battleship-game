@@ -29,6 +29,17 @@ async function getUserByEmail(email) {
   return result.rows[0] || null;
 }
 
+async function getUserByUsername(username) {
+  if (_backend) return _backend.getUserByUsername(username);
+  const result = await pool.query(
+    `SELECT id, username, email, password_hash
+     FROM users
+     WHERE username = $1`,
+    [username]
+  );
+  return result.rows[0] || null;
+}
+
 async function getUserById(id) {
   if (_backend) return _backend.getUserById(id);
   const result = await pool.query(
@@ -183,6 +194,7 @@ module.exports = {
   useMemoryBackend,
   createUser,
   getUserByEmail,
+  getUserByUsername,
   getUserById,
   updateLastLogin,
   saveGame,
