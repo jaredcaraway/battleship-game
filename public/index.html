@@ -50,7 +50,7 @@
 
   <!-- Top Navigation -->
   <nav id="top-nav" aria-label="Main navigation">
-    <span class="nav-brand">CYBER SHIP BATTLE v1.7.0</span>
+    <span class="nav-brand" id="nav-brand" role="button" tabindex="0" title="Return to main menu">CYBER SHIP BATTLE v1.7.0</span>
     <div class="nav-controls">
       <button id="btn-settings" class="nav-btn" aria-label="Open settings">SETTINGS</button>
       <button id="btn-login" class="nav-btn" aria-label="Login or register">LOGIN</button>
@@ -226,6 +226,18 @@
   </main>
 
   <!-- Auth Modal -->
+  <div id="modal-leave" class="modal" role="dialog" aria-modal="true" hidden>
+    <div class="modal-overlay" id="modal-leave-overlay"></div>
+    <div class="modal-content">
+      <h2 class="modal-title">Leave Game?</h2>
+      <p class="modal-body">Current game progress will be lost.</p>
+      <div class="modal-actions">
+        <button id="btn-leave-confirm" class="btn-terminal btn-hard">Leave</button>
+        <button id="btn-leave-cancel" class="btn-terminal">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <div id="modal-settings" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-settings-title" hidden>
     <div class="modal-overlay" id="modal-settings-overlay"></div>
     <div class="modal-content">

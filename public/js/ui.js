@@ -926,6 +926,51 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // --- Nav brand → home ---
+  var navBrand = document.getElementById('nav-brand');
+  var modalLeave = document.getElementById('modal-leave');
+  var btnLeaveConfirm = document.getElementById('btn-leave-confirm');
+  var btnLeaveCancel = document.getElementById('btn-leave-cancel');
+  var leaveOverlay = document.getElementById('modal-leave-overlay');
+
+  function _isInGame() {
+    return document.querySelector('#screen-placement.active, #screen-game.active') !== null;
+  }
+
+  function _showLeaveModal() {
+    if (modalLeave) {
+      modalLeave.removeAttribute('hidden');
+      modalLeave.classList.add('active');
+    }
+  }
+
+  function _hideLeaveModal() {
+    if (modalLeave) {
+      modalLeave.classList.remove('active');
+      modalLeave.setAttribute('hidden', '');
+    }
+  }
+
+  if (navBrand) {
+    navBrand.addEventListener('click', function () {
+      if (_isInGame()) {
+        _showLeaveModal();
+      } else {
+        showScreen('screen-menu');
+      }
+    });
+  }
+
+  if (btnLeaveConfirm) {
+    btnLeaveConfirm.addEventListener('click', function () {
+      _hideLeaveModal();
+      showScreen('screen-menu');
+    });
+  }
+
+  if (btnLeaveCancel) btnLeaveCancel.addEventListener('click', _hideLeaveModal);
+  if (leaveOverlay) leaveOverlay.addEventListener('click', _hideLeaveModal);
+
   // --- Auth modal ---
   var btnLogin = document.getElementById('btn-login');
   if (btnLogin) {
