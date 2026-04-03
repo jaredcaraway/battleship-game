@@ -944,9 +944,18 @@ body::after {
 }
 
 .nav-username {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
   letter-spacing: 1px;
   color: #00ff8088;
+  margin: 0 8px;
+}
+
+.nav-user-icon {
+  width: 14px;
+  height: 14px;
 }
 
 /* ===== Settings Modal ===== */
