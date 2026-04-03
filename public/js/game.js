@@ -232,9 +232,9 @@ function _shakeScreen(style) {
  * Emits a 'fire' event if it is this player's turn.
  * Temporarily disables the enemy board to prevent double-fire.
  */
-function _spawnRipple(row, col) {
+function _spawnRipple(row, col, boardId) {
   if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
-  var board = document.getElementById('board-enemy');
+  var board = document.getElementById(boardId || 'board-enemy');
   if (!board) return;
 
   var cells = board.querySelectorAll('.cell');
@@ -692,6 +692,7 @@ function connectSocket() {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
         if (data.sunk) SoundManager.play('explosion');
         _shakeScreen(data.sunk ? 'defense-sunk' : 'defense-hit');
+        _spawnRipple(data.row, data.col, 'board-player');
       } else {
         SoundManager.play('miss');
       }
