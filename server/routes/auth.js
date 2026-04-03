@@ -39,6 +39,9 @@ router.post('/register', async (req, res) => {
   if (!username || typeof username !== 'string' || username.length < 3 || username.length > 30) {
     return res.status(400).json({ error: 'Username must be between 3 and 30 characters' });
   }
+  if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+    return res.status(400).json({ error: 'Username may only contain letters, numbers, hyphens, and underscores' });
+  }
   if (!email || typeof email !== 'string' || !EMAIL_REGEX.test(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
