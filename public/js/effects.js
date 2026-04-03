@@ -52,7 +52,7 @@
     ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = '#00ff80';
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() || '#00ff80';
     ctx.font = fontSize + 'px monospace';
 
     for (var i = 0; i < columns.length; i++) {
@@ -103,7 +103,8 @@
 
       if (!p.el) {
         p.el = document.createElement('div');
-        p.el.style.cssText = 'position:fixed;pointer-events:none;z-index:9997;border-radius:50%;background:#00ff80;';
+        var fgColor = getComputedStyle(document.documentElement).getPropertyValue('--fg').trim() || '#00ff80';
+        p.el.style.cssText = 'position:fixed;pointer-events:none;z-index:9997;border-radius:50%;background:' + fgColor + ';';
         document.body.appendChild(p.el);
       }
 
