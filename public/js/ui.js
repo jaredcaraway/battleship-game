@@ -49,7 +49,16 @@ function showScreen(screenId) {
     s.classList.remove('active');
   });
   var target = document.getElementById(screenId);
-  if (target) target.classList.add('active');
+  if (target) {
+    target.classList.add('active');
+    // VHS tracking glitch on transition
+    if (MotionSettings.enabled) {
+      target.classList.remove('vhs-glitch');
+      void target.offsetWidth;
+      target.classList.add('vhs-glitch');
+      setTimeout(function () { target.classList.remove('vhs-glitch'); }, 350);
+    }
+  }
   window.scrollTo(0, 0);
 
   // Hide SEO content and ads during gameplay, show on menu

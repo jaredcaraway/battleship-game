@@ -16,7 +16,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* CRT scanline overlay */
+/* CRT scanline overlay (#94) */
 body::after {
   content: '';
   position: fixed;
@@ -25,11 +25,52 @@ body::after {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,255,128,0.02) 2px,
-    rgba(0,255,128,0.02) 4px
+    rgba(0,255,128,0.04) 2px,
+    rgba(0,255,128,0.04) 4px
   );
   pointer-events: none;
   z-index: 9999;
+  animation: scanlineFlicker 8s linear infinite;
+}
+
+@keyframes scanlineFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+  92% { opacity: 1; }
+  93% { opacity: 0.6; }
+  94% { opacity: 1; }
+}
+
+/* CRT screen curvature + vignette (#95) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 80px rgba(0,0,0,0.6),
+    inset 0 0 160px rgba(0,0,0,0.3);
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* VHS tracking distortion on screen transitions (#97) */
+.screen.vhs-glitch {
+  animation: vhsTracking 0.3s linear;
+}
+
+@keyframes vhsTracking {
+  0% { transform: translate(0); filter: none; }
+  10% { transform: translate(-3px, 1px); filter: hue-rotate(10deg); }
+  20% { transform: translate(2px, -1px) skewX(2deg); }
+  30% { transform: translate(-1px, 2px) skewX(-1deg); filter: hue-rotate(-5deg); }
+  40% { transform: translate(3px, 0); clip-path: inset(20% 0 30% 0); }
+  50% { transform: translate(-2px, -1px); clip-path: inset(40% 0 10% 0); filter: none; }
+  60% { transform: translate(1px, 1px) skewX(1deg); clip-path: none; }
+  70% { transform: translate(-1px, 0); }
+  80% { transform: translate(0, 1px); filter: hue-rotate(3deg); }
+  90% { transform: translate(1px, -1px); filter: none; }
+  100% { transform: translate(0); filter: none; clip-path: none; }
 }
 
 /* ===== Top Nav ===== */
@@ -357,16 +398,19 @@ body::after {
   border: 1px solid #00ff8022;
   border-radius: 2px;
   cursor: crosshair;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.8s ease-out;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
 }
 
+/* Phosphor afterglow — slow fade out after hover (#96) */
 .cell:hover {
   border-color: #00ff8088;
   background: #00ff8011;
+  box-shadow: inset 0 0 4px #00ff8022;
+  transition: background 0.05s, border-color 0.05s, box-shadow 0.05s;
 }
 
 /* Targeting highlight on enemy board */
