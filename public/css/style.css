@@ -16,9 +16,9 @@
 /* --- Dracula --- */
 [data-theme="dracula"] { --bg: #282A36; --fg: #BD93F9; --fg-dim: #BD93F988; --fg-faint: #BD93F944; --fg-ghost: #BD93F922; }
 /* --- Solarized --- */
-[data-theme="solarized"] { --bg: #002B36; --fg: #268BD2; --fg-dim: #268BD288; --fg-faint: #268BD244; --fg-ghost: #268BD222; }
+[data-theme="solarized"] { --bg: #002B36; --fg: #93A1A1; --fg-dim: #93A1A188; --fg-faint: #93A1A144; --fg-ghost: #93A1A122; }
 /* --- Monokai --- */
-[data-theme="monokai"] { --bg: #272822; --fg: #F92672; --fg-dim: #F9267288; --fg-faint: #F9267244; --fg-ghost: #F9267222; }
+[data-theme="monokai"] { --bg: #272822; --fg: #FF6188; --fg-dim: #FF618888; --fg-faint: #FF618844; --fg-ghost: #FF618822; }
 /* --- Nord --- */
 [data-theme="nord"] { --bg: #2E3440; --fg: #88C0D0; --fg-dim: #88C0D088; --fg-faint: #88C0D044; --fg-ghost: #88C0D022; }
 /* --- Catppuccin --- */
