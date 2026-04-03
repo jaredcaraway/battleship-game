@@ -10,7 +10,7 @@
 (function () {
   var canvas = document.createElement('canvas');
   canvas.id = 'matrix-rain';
-  canvas.style.cssText = 'position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.12;';
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0.4;';
   document.body.appendChild(canvas);
 
   var ctx = canvas.getContext('2d');
@@ -61,7 +61,7 @@
 // ---------------------------------------------------------------------------
 (function () {
   var particles = [];
-  var maxParticles = 15;
+  var maxParticles = 25;
 
   document.addEventListener('mousemove', function (e) {
     if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
@@ -82,7 +82,7 @@
   function tick() {
     for (var i = particles.length - 1; i >= 0; i--) {
       var p = particles[i];
-      p.life -= 0.06;
+      p.life -= 0.04;
 
       if (!p.el) {
         p.el = document.createElement('div');
@@ -96,12 +96,13 @@
         continue;
       }
 
-      var size = 3 * p.life;
+      var size = 6 * p.life;
       p.el.style.width = size + 'px';
       p.el.style.height = size + 'px';
       p.el.style.left = (p.x - size / 2) + 'px';
       p.el.style.top = (p.y - size / 2) + 'px';
-      p.el.style.opacity = p.life * 0.5;
+      p.el.style.opacity = p.life * 0.7;
+      p.el.style.boxShadow = '0 0 ' + (4 * p.life) + 'px #00ff80';
     }
 
     requestAnimationFrame(tick);
