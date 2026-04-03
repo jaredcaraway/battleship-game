@@ -322,15 +322,29 @@ function fireAt(row, col) {
 function showNotification(message) {
   var el = document.createElement('div');
   el.className = 'notification';
-  el.textContent = message;
   document.body.appendChild(el);
 
-  // Remove after animation completes (2s matches the CSS fadeOut)
+  // Typewriter effect
+  var i = 0;
+  var speed = 30;
+  function type() {
+    if (i < message.length) {
+      el.textContent += message.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  type();
+
+  // Remove after typing + display time
+  var totalTime = (message.length * speed) + 2000;
+  el.style.animationDelay = (message.length * speed) + 'ms';
+
   setTimeout(function () {
     if (el.parentNode) {
       el.parentNode.removeChild(el);
     }
-  }, 2100);
+  }, totalTime + 100);
 }
 
 /**
