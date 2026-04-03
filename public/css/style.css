@@ -1492,8 +1492,8 @@ main {
 
 
 @keyframes cursorBlink {
-  0%, 100% { border-right-color: #00ff80; }
-  50% { border-right-color: transparent; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 @keyframes fadeOut {
