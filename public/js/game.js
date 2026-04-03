@@ -320,6 +320,10 @@ function fireAt(row, col) {
  * Appends a div.notification to <body>. CSS fadeOut animation auto-removes it.
  */
 function showNotification(message) {
+  // Clear any existing notification immediately
+  var existing = document.querySelectorAll('.notification');
+  existing.forEach(function (old) { old.parentNode.removeChild(old); });
+
   var el = document.createElement('div');
   el.className = 'notification';
   document.body.appendChild(el);

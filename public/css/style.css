@@ -1503,9 +1503,9 @@ main {
 }
 
 /* ===== Reduce Motion ===== */
-.reduce-motion *:not(body):not(.heading-icon),
+.reduce-motion *:not(body):not(.heading-icon):not(.notification),
 .reduce-motion *:not(body):not(.heading-icon)::before,
-.reduce-motion *:not(body):not(.heading-icon)::after {
+.reduce-motion *:not(body):not(.heading-icon):not(.notification)::after {
   animation-duration: 0.001s !important;
   animation-delay: 0s !important;
   transition-duration: 0.001s !important;
