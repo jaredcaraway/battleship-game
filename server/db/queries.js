@@ -1,6 +1,14 @@
 const pool = require('./pool');
 
+// When database is unavailable, this gets set to the memory store
+let _backend = null;
+
+function useMemoryBackend(store) {
+  _backend = store;
+}
+
 async function createUser(username, email, passwordHash) {
+  if (_backend) return _backend.createUser(username, email, passwordHash);
   const result = await pool.query(
     `INSERT INTO users (username, email, password_hash)
      VALUES ($1, $2, $3)
@@ -11,6 +19,7 @@ async function createUser(username, email, passwordHash) {
 }
 
 async function getUserByEmail(email) {
+  if (_backend) return _backend.getUserByEmail(email);
   const result = await pool.query(
     `SELECT id, username, email, password_hash
      FROM users
@@ -21,6 +30,7 @@ async function getUserByEmail(email) {
 }
 
 async function getUserById(id) {
+  if (_backend) return _backend.getUserById(id);
   const result = await pool.query(
     `SELECT id, username, email, created_at
      FROM users
@@ -31,6 +41,7 @@ async function getUserById(id) {
 }
 
 async function updateLastLogin(userId) {
+  if (_backend) return _backend.updateLastLogin(userId);
   await pool.query(
     `UPDATE users SET last_login = NOW() WHERE id = $1`,
     [userId]
@@ -38,6 +49,7 @@ async function updateLastLogin(userId) {
 }
 
 async function saveGame(stats) {
+  if (_backend) return _backend.saveGame(stats);
   const {
     player1_id,
     player2_id,
@@ -72,6 +84,7 @@ async function saveGame(stats) {
 }
 
 async function getLeaderboard(limit = 100) {
+  if (_backend) return _backend.getLeaderboard(limit);
   const result = await pool.query(
     `SELECT
        u.id,
@@ -105,6 +118,7 @@ async function getLeaderboard(limit = 100) {
 }
 
 async function getUserStats(userId) {
+  if (_backend) return _backend.getUserStats(userId);
   const result = await pool.query(
     `SELECT
        COUNT(g.id) AS total_games,
@@ -137,6 +151,7 @@ async function getUserStats(userId) {
 }
 
 async function getGameHistory(userId, limit = 10) {
+  if (_backend) return _backend.getGameHistory(userId, limit);
   const result = await pool.query(
     `SELECT
        g.id,
@@ -165,6 +180,7 @@ async function getGameHistory(userId, limit = 10) {
 }
 
 module.exports = {
+  useMemoryBackend,
   createUser,
   getUserByEmail,
   getUserById,

@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const { createUser, getUserByEmail, updateLastLogin } = require('../db/queries');
@@ -8,6 +9,19 @@ const { createUser, getUserByEmail, updateLastLogin } = require('../db/queries')
 const router = express.Router();
 const SALT_ROUNDS = 10;
 const JWT_EXPIRY = '7d';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Rate limit: 10 attempts per 15 minutes per IP
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many attempts. Please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.use(authLimiter);
 
 function issueToken(user) {
   return jwt.sign(
@@ -25,11 +39,14 @@ router.post('/register', async (req, res) => {
   if (!username || typeof username !== 'string' || username.length < 3 || username.length > 30) {
     return res.status(400).json({ error: 'Username must be between 3 and 30 characters' });
   }
-  if (!email || typeof email !== 'string' || !email.includes('@')) {
+  if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+    return res.status(400).json({ error: 'Username may only contain letters, numbers, hyphens, and underscores' });
+  }
+  if (!email || typeof email !== 'string' || !EMAIL_REGEX.test(email)) {
     return res.status(400).json({ error: 'Valid email is required' });
   }
-  if (!password || typeof password !== 'string' || password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  if (!password || typeof password !== 'string' || password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
   }
 
   try {

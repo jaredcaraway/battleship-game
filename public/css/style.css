@@ -920,6 +920,44 @@ body::after {
   font-size: 16px;
 }
 
+/* ===== Auth Form ===== */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #00ff8066;
+  margin-bottom: 4px;
+}
+
+.form-group .input-terminal {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-error {
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.nav-username {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #00ff8088;
+  margin: 0 8px;
+}
+
+.nav-user-icon {
+  width: 14px;
+  height: 14px;
+}
+
 /* ===== Settings Modal ===== */
 .modal-title {
   font-size: 11px;

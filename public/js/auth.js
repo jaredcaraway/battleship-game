@@ -59,12 +59,18 @@ var AuthUI = {
     AuthUI._currentMode = mode || 'login';
     AuthUI._renderForm();
     var modal = document.getElementById('modal-auth');
-    if (modal) modal.removeAttribute('hidden');
+    if (modal) {
+      modal.removeAttribute('hidden');
+      modal.classList.add('active');
+    }
   },
 
   hideModal: function () {
     var modal = document.getElementById('modal-auth');
-    if (modal) modal.setAttribute('hidden', '');
+    if (modal) {
+      modal.classList.remove('active');
+      modal.setAttribute('hidden', '');
+    }
     // Clear any error messages
     var container = document.getElementById('auth-form-container');
     if (container) container.innerHTML = '';
@@ -291,11 +297,14 @@ var AuthUI = {
     if (existingLogout) existingLogout.remove();
 
     if (user) {
-      // Show username
+      // Show username with icon
       var userInfo = document.createElement('span');
       userInfo.id = 'nav-user-info';
       userInfo.className = 'nav-username';
-      userInfo.textContent = user.username;
+      var icon = document.createElement('span');
+      icon.innerHTML = '<svg class="nav-user-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+      userInfo.appendChild(icon.firstChild);
+      userInfo.appendChild(document.createTextNode(' ' + user.username));
 
       // Show logout button
       var logoutBtn = document.createElement('button');
