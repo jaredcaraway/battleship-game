@@ -326,11 +326,6 @@ function showNotification(message) {
 
   var el = document.createElement('div');
   el.className = 'notification';
-  var textNode = document.createTextNode('');
-  var cursor = document.createElement('span');
-  cursor.className = 'notif-cursor';
-  el.appendChild(textNode);
-  el.appendChild(cursor);
   document.body.appendChild(el);
 
   // Typewriter effect
@@ -338,7 +333,7 @@ function showNotification(message) {
   var speed = 30;
   function type() {
     if (i < message.length) {
-      textNode.textContent += message.charAt(i);
+      el.textContent += message.charAt(i);
       i++;
       setTimeout(type, speed);
     }
