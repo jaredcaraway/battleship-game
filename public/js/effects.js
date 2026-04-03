@@ -12,7 +12,7 @@ console.log('[effects.js] loaded — matrix rain + cursor trail active');
 (function () {
   var canvas = document.createElement('canvas');
   canvas.id = 'matrix-rain';
-  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.4;';
+  canvas.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.15;';
   document.body.appendChild(canvas);
 
   var ctx = canvas.getContext('2d');
@@ -28,8 +28,17 @@ console.log('[effects.js] loaded — matrix rain + cursor trail active');
     columns.length = colCount;
   }
 
-  function draw() {
-    ctx.fillStyle = 'rgba(13, 13, 13, 0.08)';
+  var lastDraw = 0;
+  var frameInterval = 100; // ~10fps
+
+  function draw(timestamp) {
+    if (timestamp - lastDraw < frameInterval) {
+      requestAnimationFrame(draw);
+      return;
+    }
+    lastDraw = timestamp;
+
+    ctx.fillStyle = 'rgba(13, 13, 13, 0.05)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = '#00ff80';
