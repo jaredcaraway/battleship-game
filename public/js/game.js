@@ -40,14 +40,70 @@ var SoundManager = {
 
   play: function (name) {
     if (this.muted) return;
-    // Synthesized explosion for sunk events
-    if (name === 'explosion') {
-      this._playExplosion();
-      return;
-    }
+    // Synthesized sounds
+    if (name === 'explosion') { this._playExplosion(); return; }
+    if (name === 'boom-hit') { this._playBoomHit(); return; }
     if (!this.sounds[name]) return;
     this.sounds[name].currentTime = 0;
     this.sounds[name].play().catch(function () {});
+  },
+
+  _playBoomHit: function () {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var t = ctx.currentTime;
+
+      // Distorted square wave — rapid pitch drop (Earthbound SMAAASH feel)
+      var osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(300, t);
+      osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+
+      // Waveshaper for crunch/distortion
+      var distortion = ctx.createWaveShaper();
+      var curve = new Float32Array(256);
+      for (var i = 0; i < 256; i++) {
+        var x = (i / 128) - 1;
+        curve[i] = (Math.PI + 200) * x / (Math.PI + 200 * Math.abs(x));
+      }
+      distortion.curve = curve;
+
+      var oscGain = ctx.createGain();
+      oscGain.gain.setValueAtTime(0.7, t);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+
+      osc.connect(distortion);
+      distortion.connect(oscGain);
+      oscGain.connect(ctx.destination);
+
+      // Short noise crunch layer
+      var bufSize = ctx.sampleRate * 0.08;
+      var noiseBuf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+      var data = noiseBuf.getChannelData(0);
+      for (var j = 0; j < bufSize; j++) {
+        data[j] = (Math.random() * 2 - 1) * (1 - j / bufSize);
+      }
+      var noise = ctx.createBufferSource();
+      noise.buffer = noiseBuf;
+
+      var noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.value = 800;
+      noiseFilter.Q.value = 2;
+
+      var noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.5, t);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+
+      osc.start(t);
+      osc.stop(t + 0.2);
+      noise.start(t);
+      noise.stop(t + 0.1);
+    } catch (e) {}
   },
 
   _playExplosion: function () {
@@ -679,7 +735,7 @@ function connectSocket() {
       // Update enemy board
       updateSingleCell('board-enemy', data.row, data.col, data.result);
       if (data.result === 'hit' || data.result === 'sunk') {
-        SoundManager.play(data.sunk ? 'sunk' : 'hit');
+        SoundManager.play(data.sunk ? 'sunk' : 'boom-hit');
         if (data.sunk) SoundManager.play('explosion');
         _shakeScreen(data.sunk ? 'offense-sunk' : 'offense-hit');
       } else {
@@ -690,7 +746,7 @@ function connectSocket() {
       updateSingleCell('board-player', data.row, data.col, data.result);
       _spawnRipple(data.row, data.col, 'board-player');
       if (data.result === 'hit' || data.result === 'sunk') {
-        SoundManager.play(data.sunk ? 'sunk' : 'hit');
+        SoundManager.play(data.sunk ? 'sunk' : 'boom-hit');
         if (data.sunk) SoundManager.play('explosion');
         _shakeScreen(data.sunk ? 'defense-sunk' : 'defense-hit');
       } else {
