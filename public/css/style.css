@@ -1404,7 +1404,8 @@ main {
   animation: fadeOut 2s forwards;
 }
 
-.notif-cursor {
+.notification::after {
+  content: '';
   display: inline-block;
   width: 8px;
   height: 1em;
