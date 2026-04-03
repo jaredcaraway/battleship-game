@@ -35,6 +35,16 @@
   box-sizing: border-box;
 }
 
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.seo-content, .changelog-container, input, textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 html, body {
   height: 100%;
   background: var(--bg);
