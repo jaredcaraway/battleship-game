@@ -693,6 +693,19 @@ main {
   margin-top: 8px;
 }
 
+.btn-ready-active {
+  border-color: #00ff80 !important;
+  color: #00ff80 !important;
+  text-shadow: 0 0 8px #00ff80;
+  box-shadow: 0 0 12px #00ff8033, inset 0 0 8px #00ff8011;
+  animation: readyPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes readyPulse {
+  0%, 100% { box-shadow: 0 0 8px #00ff8022, inset 0 0 6px #00ff8011; }
+  50% { box-shadow: 0 0 16px #00ff8044, inset 0 0 10px #00ff8022; }
+}
+
 .ship-list {
   margin-bottom: 12px;
 }

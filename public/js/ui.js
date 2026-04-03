@@ -315,7 +315,10 @@ function initPlacement() {
 
   // Ready button starts disabled
   var readyBtn = document.getElementById('btn-ready');
-  if (readyBtn) readyBtn.disabled = true;
+  if (readyBtn) {
+    readyBtn.disabled = true;
+    readyBtn.classList.remove('btn-ready-active');
+  }
 }
 
 function _renderShipList() {
@@ -470,7 +473,10 @@ function _pickUpPlacedShip(placedIdx) {
   }
 
   var readyBtn = document.getElementById('btn-ready');
-  if (readyBtn) readyBtn.disabled = true;
+  if (readyBtn) {
+    readyBtn.disabled = true;
+    readyBtn.classList.remove('btn-ready-active');
+  }
 }
 
 function _handlePlacementClick(row, col) {
@@ -532,7 +538,10 @@ function _handlePlacementClick(row, col) {
 
 function _onAllShipsPlaced() {
   var readyBtn = document.getElementById('btn-ready');
-  if (readyBtn) readyBtn.disabled = false;
+  if (readyBtn) {
+    readyBtn.disabled = false;
+    readyBtn.classList.add('btn-ready-active');
+  }
 
   // Flash all placed ship cells
   var board = document.getElementById('board-placement');
