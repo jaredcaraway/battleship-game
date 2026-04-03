@@ -4,6 +4,8 @@
 
 'use strict';
 
+console.log('[effects.js] loaded — matrix rain + cursor trail active');
+
 // ---------------------------------------------------------------------------
 // Matrix Rain (#98)
 // ---------------------------------------------------------------------------
@@ -27,11 +29,6 @@
   }
 
   function draw() {
-    if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) {
-      requestAnimationFrame(draw);
-      return;
-    }
-
     ctx.fillStyle = 'rgba(13, 13, 13, 0.08)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -64,7 +61,6 @@
   var maxParticles = 25;
 
   document.addEventListener('mousemove', function (e) {
-    if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
 
     particles.push({
       x: e.clientX,
