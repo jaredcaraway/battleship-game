@@ -183,27 +183,42 @@ function updateBoard(containerId, gridState) {
 // ---------------------------------------------------------------------------
 
 /**
- * _shakeScreen(intensity)
- * Shakes the game screen with random jitter.
- * intensity: 'light' (hit) or 'heavy' (sunk)
+ * _shakeScreen(style)
+ * Shakes the game screen with differentiated feel.
+ * style: 'offense-hit', 'offense-sunk', 'defense-hit', 'defense-sunk'
  */
-function _shakeScreen(intensity) {
+function _shakeScreen(style) {
   if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
   var el = document.getElementById('screen-game');
   if (!el) return;
 
-  var frames = intensity === 'heavy' ? 40 : 18;
-  var maxOffset = intensity === 'heavy' ? 14 : 6;
+  var config = {
+    'offense-hit':   { frames: 10, offset: 4, color: null },
+    'offense-sunk':  { frames: 30, offset: 10, color: '#00ff80' },
+    'defense-hit':   { frames: 22, offset: 7, color: '#ff4444' },
+    'defense-sunk':  { frames: 45, offset: 16, color: '#ff4444' }
+  };
+  var c = config[style] || config['offense-hit'];
   var i = 0;
 
+  // Flash overlay
+  if (c.color) {
+    var flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;inset:0;z-index:9990;pointer-events:none;background:' +
+      c.color + ';opacity:0.12;transition:opacity 0.4s;';
+    document.body.appendChild(flash);
+    setTimeout(function () { flash.style.opacity = '0'; }, 50);
+    setTimeout(function () { if (flash.parentNode) flash.parentNode.removeChild(flash); }, 500);
+  }
+
   function jitter() {
-    if (i >= frames) {
+    if (i >= c.frames) {
       el.style.transform = '';
       return;
     }
-    var decay = 1 - (i / frames);
-    var x = (Math.random() * 2 - 1) * maxOffset * decay;
-    var y = (Math.random() * 2 - 1) * maxOffset * decay;
+    var decay = 1 - (i / c.frames);
+    var x = (Math.random() * 2 - 1) * c.offset * decay;
+    var y = (Math.random() * 2 - 1) * c.offset * decay;
     el.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
     i++;
     requestAnimationFrame(jitter);
@@ -666,7 +681,7 @@ function connectSocket() {
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
         if (data.sunk) SoundManager.play('explosion');
-        _shakeScreen(data.sunk ? 'heavy' : 'light');
+        _shakeScreen(data.sunk ? 'offense-sunk' : 'offense-hit');
       } else {
         SoundManager.play('miss');
       }
@@ -676,7 +691,7 @@ function connectSocket() {
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
         if (data.sunk) SoundManager.play('explosion');
-        _shakeScreen(data.sunk ? 'heavy' : 'light');
+        _shakeScreen(data.sunk ? 'defense-sunk' : 'defense-hit');
       } else {
         SoundManager.play('miss');
       }
