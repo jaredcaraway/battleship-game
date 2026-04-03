@@ -128,6 +128,12 @@ body::before {
   height: 1.2em;
   vertical-align: -0.15em;
   filter: drop-shadow(0 0 6px #00ff80);
+  animation: crosshairPulse 3s ease-in-out infinite;
+}
+
+@keyframes crosshairPulse {
+  0%, 100% { filter: drop-shadow(0 0 4px #00ff8066); }
+  50% { filter: drop-shadow(0 0 10px #00ff80) drop-shadow(0 0 20px #00ff8044); }
 }
 
 /* ===== Screens ===== */
