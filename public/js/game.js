@@ -688,11 +688,11 @@ function connectSocket() {
     } else {
       // Update own board
       updateSingleCell('board-player', data.row, data.col, data.result);
+      _spawnRipple(data.row, data.col, 'board-player');
       if (data.result === 'hit' || data.result === 'sunk') {
         SoundManager.play(data.sunk ? 'sunk' : 'hit');
         if (data.sunk) SoundManager.play('explosion');
         _shakeScreen(data.sunk ? 'defense-sunk' : 'defense-hit');
-        _spawnRipple(data.row, data.col, 'board-player');
       } else {
         SoundManager.play('miss');
       }
