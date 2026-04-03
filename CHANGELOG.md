@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.6.0] - 2026-04-03
+
+### Added
+- **Login/auth system**: functional register/login with JWT, bcrypt, rate limiting (10 req/15 min), in-memory fallback when PostgreSQL unavailable
+- **Login accepts username or email**
+- **User icon** in nav with proper spacing
+- **CRT effects**: static scanline overlay, vignette (radial-gradient edge darkening), phosphor afterglow on cell hover, VHS tracking distortion on screen transitions
+- **Matrix rain**: dim falling katakana/digits background (canvas, 12% opacity)
+- **Crosshair breathing pulse**: 3s glow animation on heading icon
+- **Cursor trail**: green particles that shrink and fade behind the cursor
+
+### Security
+- JWT_SECRET validated at startup (rejects default placeholder)
+- Username restricted to alphanumeric + hyphens/underscores (XSS mitigation)
+- Username rendered via createTextNode (no innerHTML)
+- Password minimum raised to 8 characters
+- Email validated with proper regex
+- Rate limiting on auth endpoints
+
 ## [1.5.0] - 2026-04-02
 
 ### Added
