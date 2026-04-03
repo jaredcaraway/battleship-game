@@ -320,17 +320,40 @@ function fireAt(row, col) {
  * Appends a div.notification to <body>. CSS fadeOut animation auto-removes it.
  */
 function showNotification(message) {
+  // Clear any existing notification immediately
+  var existing = document.querySelectorAll('.notification');
+  existing.forEach(function (old) { old.parentNode.removeChild(old); });
+
   var el = document.createElement('div');
   el.className = 'notification';
-  el.textContent = message;
+  var textNode = document.createTextNode('');
+  var cursor = document.createElement('span');
+  cursor.className = 'notif-cursor';
+  el.appendChild(textNode);
+  el.appendChild(cursor);
   document.body.appendChild(el);
 
-  // Remove after animation completes (2s matches the CSS fadeOut)
+  // Typewriter effect
+  var i = 0;
+  var speed = 30;
+  function type() {
+    if (i < message.length) {
+      textNode.textContent += message.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  type();
+
+  // Remove after typing + display time
+  var totalTime = (message.length * speed) + 2000;
+  el.style.animationDelay = (message.length * speed) + 'ms';
+
   setTimeout(function () {
     if (el.parentNode) {
       el.parentNode.removeChild(el);
     }
-  }, 2100);
+  }, totalTime + 100);
 }
 
 /**

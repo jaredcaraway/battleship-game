@@ -1404,6 +1404,16 @@ main {
   animation: fadeOut 2s forwards;
 }
 
+.notif-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1em;
+  background: #00ff80;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: cursorBlink 1s step-end infinite;
+}
+
 /* ===== Ship Status ===== */
 .ship-status {
   display: flex;
@@ -1480,6 +1490,11 @@ main {
 }
 
 
+@keyframes cursorBlink {
+  0%, 100% { border-right-color: #00ff80; }
+  50% { border-right-color: transparent; }
+}
+
 @keyframes fadeOut {
   0%   { opacity: 1; }
   70%  { opacity: 1; }
@@ -1487,9 +1502,9 @@ main {
 }
 
 /* ===== Reduce Motion ===== */
-.reduce-motion *:not(body):not(.heading-icon),
+.reduce-motion *:not(body):not(.heading-icon):not(.notification),
 .reduce-motion *:not(body):not(.heading-icon)::before,
-.reduce-motion *:not(body):not(.heading-icon)::after {
+.reduce-motion *:not(body):not(.heading-icon):not(.notification)::after {
   animation-duration: 0.001s !important;
   animation-delay: 0s !important;
   transition-duration: 0.001s !important;
