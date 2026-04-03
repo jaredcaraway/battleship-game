@@ -25,20 +25,23 @@ body::after {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0,255,128,0.04) 2px,
-    rgba(0,255,128,0.04) 4px
+    rgba(0,255,128,0.06) 2px,
+    rgba(0,255,128,0.06) 4px
   );
   pointer-events: none;
   z-index: 9999;
-  animation: scanlineFlicker 8s linear infinite;
+  animation: scanlineFlicker 6s ease-in-out infinite;
 }
 
 @keyframes scanlineFlicker {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
+  40% { opacity: 0.9; }
+  50% { opacity: 0.75; }
+  60% { opacity: 0.9; }
   92% { opacity: 1; }
-  93% { opacity: 0.6; }
-  94% { opacity: 1; }
+  93% { opacity: 0.5; }
+  94% { opacity: 0.9; }
+  95% { opacity: 1; }
 }
 
 /* CRT screen curvature + vignette (#95) */
@@ -46,10 +49,12 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  border-radius: 12px;
-  box-shadow:
-    inset 0 0 80px rgba(0,0,0,0.6),
-    inset 0 0 160px rgba(0,0,0,0.3);
+  background: radial-gradient(
+    ellipse at center,
+    transparent 60%,
+    rgba(0,0,0,0.4) 85%,
+    rgba(0,0,0,0.7) 100%
+  );
   pointer-events: none;
   z-index: 9998;
 }
@@ -408,8 +413,8 @@ body::before {
 /* Phosphor afterglow — slow fade out after hover (#96) */
 .cell:hover {
   border-color: #00ff8088;
-  background: #00ff8011;
-  box-shadow: inset 0 0 4px #00ff8022;
+  background: #00ff8018;
+  box-shadow: 0 0 6px #00ff8033, inset 0 0 4px #00ff8033;
   transition: background 0.05s, border-color 0.05s, box-shadow 0.05s;
 }
 
@@ -1424,13 +1429,15 @@ body::before {
 }
 
 /* ===== Reduce Motion ===== */
-.reduce-motion *,
-.reduce-motion *::before,
-.reduce-motion *::after {
+.reduce-motion *:not(body),
+.reduce-motion *:not(body)::before,
+.reduce-motion *:not(body)::after {
   animation-duration: 0.001s !important;
   animation-delay: 0s !important;
   transition-duration: 0.001s !important;
 }
+
+/* Keep CRT effects even with reduce-motion — they're ambient, not disorienting */
 
 .reduce-motion #gameover-title.defeat {
   filter: none;
