@@ -12,6 +12,7 @@ var currentRoomId = null;
 var myTurn = false;
 var mySocketId = null;
 var enemySunkShips = [];
+var _queuedShot = null; // { row, col }
 
 // ---------------------------------------------------------------------------
 // SoundManager
@@ -263,9 +264,43 @@ function _spawnRipple(row, col) {
   }, cleanupTime);
 }
 
+function _clearQueuedShot() {
+  if (_queuedShot) {
+    var board = document.getElementById('board-enemy');
+    if (board) {
+      var cell = board.querySelector('.cell[data-row="' + _queuedShot.row + '"][data-col="' + _queuedShot.col + '"]');
+      if (cell) cell.classList.remove('queued');
+    }
+    _queuedShot = null;
+  }
+}
+
+function _setQueuedShot(row, col) {
+  _clearQueuedShot();
+  _queuedShot = { row: row, col: col };
+  var board = document.getElementById('board-enemy');
+  if (board) {
+    var cell = board.querySelector('.cell[data-row="' + row + '"][data-col="' + col + '"]');
+    if (cell) cell.classList.add('queued');
+  }
+}
+
 function fireAt(row, col) {
-  if (!myTurn) return;
   if (!socket) return;
+
+  if (!myTurn) {
+    // Queue the shot for when turn resumes
+    var board = document.getElementById('board-enemy');
+    if (board) {
+      var cell = board.querySelector('.cell[data-row="' + row + '"][data-col="' + col + '"]');
+      if (cell && !cell.classList.contains('hit') && !cell.classList.contains('miss') && !cell.classList.contains('sunk')) {
+        _setQueuedShot(row, col);
+      }
+    }
+    return;
+  }
+
+  _clearQueuedShot();
 
   // Disable enemy board clicks immediately
   myTurn = false;
@@ -567,6 +602,7 @@ function connectSocket() {
   // ---- game-start: both players ready, game begins --------------------------
   socket.on('game-start', function (data) {
     enemySunkShips = [];
+    _queuedShot = null;
     if (typeof showScreen === 'function') showScreen('screen-game');
     showDifficultyBadge();
     updateEnemySunkTracker();
@@ -673,6 +709,14 @@ function connectSocket() {
     }
 
     // status-message updated by updateTurnIndicator
+
+    // Fire queued shot if one exists
+    if (myTurn && _queuedShot) {
+      var qr = _queuedShot.row;
+      var qc = _queuedShot.col;
+      _clearQueuedShot();
+      setTimeout(function () { fireAt(qr, qc); }, 100);
+    }
   });
 
   // ---- game-over ------------------------------------------------------------
