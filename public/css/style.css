@@ -426,6 +426,18 @@ main {
   box-shadow: 0 0 8px #00ff8033, inset 0 0 6px #00ff8022;
 }
 
+.cell.queued {
+  border-color: #ffaa00;
+  background: #ffaa0018;
+  box-shadow: 0 0 6px #ffaa0033;
+  animation: queuedPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes queuedPulse {
+  from { box-shadow: 0 0 4px #ffaa0022; }
+  to { box-shadow: 0 0 10px #ffaa0044; }
+}
+
 .cell.wave {
   animation: wave3d var(--wave-duration, 0.6s) ease-out forwards;
   animation-delay: var(--wave-delay, 0s);
