@@ -128,6 +128,35 @@ main {
   letter-spacing: 4px;
   margin: 20px 0;
   text-shadow: 0 0 8px #00ff80;
+  position: relative;
+  animation: glitchText 8s infinite;
+}
+
+@keyframes glitchText {
+  0%, 92%, 94%, 96%, 100% {
+    text-shadow: 0 0 8px #00ff80;
+    transform: translate(0);
+  }
+  92.5% {
+    text-shadow: -2px 0 #ff0040, 2px 0 #00ffff, 0 0 8px #00ff80;
+    transform: translate(2px, 0);
+  }
+  93% {
+    text-shadow: 2px 0 #ff0040, -2px 0 #00ffff, 0 0 8px #00ff80;
+    transform: translate(-1px, 1px);
+  }
+  93.5% {
+    text-shadow: 0 0 8px #00ff80;
+    transform: translate(0);
+  }
+  95% {
+    text-shadow: -1px 0 #ff0040, 1px 0 #00ffff, 0 0 8px #00ff80;
+    transform: translate(-1px, 0);
+  }
+  95.5% {
+    text-shadow: 1px 0 #ff0040, -1px 0 #00ffff, 0 0 8px #00ff80;
+    transform: translate(1px, -1px);
+  }
 }
 
 .heading-icon {
@@ -181,6 +210,7 @@ main {
   color: #00ff80;
   text-shadow: 0 0 8px #00ff80;
   margin-bottom: 4px;
+  animation: glitchText 12s 2s infinite;
 }
 
 .screen-subtitle {
