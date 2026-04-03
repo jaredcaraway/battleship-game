@@ -83,6 +83,11 @@ body::before {
   text-shadow: 0 0 8px #00ff80;
   cursor: crosshair;
   transition: text-shadow 0.2s;
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  padding: 0;
 }
 
 .nav-brand:hover {
