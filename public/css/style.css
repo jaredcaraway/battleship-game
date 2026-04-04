@@ -1649,6 +1649,13 @@ main {
     flex-shrink: 0;
     pointer-events: none;
     margin: 0;
+    perspective: none;
+    transform-style: flat;
+  }
+
+  .board-column-secondary .board-small .cell.wave {
+    animation: none;
+    transform: none;
   }
 
   .board-column-secondary .ship-status {

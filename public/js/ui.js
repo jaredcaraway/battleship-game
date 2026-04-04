@@ -61,12 +61,14 @@ function showScreen(screenId) {
   }
   window.scrollTo(0, 0);
 
-  // Hide SEO content and ads during gameplay, show on menu
+  // Hide SEO content, ads, and footer during gameplay, show on menu
   var seo = document.getElementById('seo-content');
   var adTop = document.getElementById('ad-top');
   var adBottom = document.getElementById('ad-bottom');
+  var footer = document.querySelector('.site-footer');
   var isMenu = screenId === 'screen-menu';
   if (seo) seo.style.display = isMenu ? '' : 'none';
+  if (footer) footer.style.display = isMenu ? '' : 'none';
   if (adTop) adTop.style.display = isMenu ? '' : 'none';
   if (adBottom) adBottom.style.display = isMenu ? '' : 'none';
 }
