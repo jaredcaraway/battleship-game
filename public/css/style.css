@@ -1651,6 +1651,13 @@ main {
     margin: 0;
     perspective: none;
     transform-style: flat;
+    overflow: hidden;
+  }
+
+  .board-column-secondary .board-small .cell {
+    font-size: 0;
+    text-shadow: none;
+    overflow: hidden;
   }
 
   .board-column-secondary .board-small .cell.wave {
