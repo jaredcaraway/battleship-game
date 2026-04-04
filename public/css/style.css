@@ -1630,11 +1630,12 @@ main {
     z-index: 100;
     background: #0a0a0a;
     border-top: 1px solid #00ff8033;
-    padding: 10px 12px;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 12px;
+    box-sizing: border-box;
   }
 
   .board-column-secondary .board-label {
@@ -1647,6 +1648,7 @@ main {
     max-width: 110px;
     flex-shrink: 0;
     pointer-events: none;
+    margin: 0;
   }
 
   .board-column-secondary .ship-status {
