@@ -823,32 +823,72 @@ function initMobileThumbnail() {
   secondary.insertBefore(handle, secondary.firstChild);
 
   var startY = 0;
-  var isSwiping = false;
+  var isDragging = false;
+  var startTime = 0;
+  var panelHeight = 0;
 
   secondary.addEventListener('touchstart', function (e) {
     startY = e.touches[0].clientY;
-    isSwiping = true;
+    startTime = Date.now();
+    isDragging = true;
+    panelHeight = secondary.offsetHeight;
+    // Kill transition during drag for immediate response
+    secondary.style.transition = 'none';
   }, { passive: true });
 
   secondary.addEventListener('touchmove', function (e) {
-    if (!isSwiping) return;
+    if (!isDragging) return;
+    var currentY = e.touches[0].clientY;
+    var isExpanded = secondary.classList.contains('board-expanded');
+
+    if (!isExpanded) {
+      // Collapsed: dragging up — progress goes 0 → 1
+      var dragUp = Math.max(0, startY - currentY);
+      var progress = Math.min(dragUp / (panelHeight * 0.6), 1);
+      // Translate from resting position (100% - 60px) toward 0
+      var restOffset = panelHeight - 60;
+      var translateY = restOffset - (progress * restOffset);
+      secondary.style.transform = 'translateY(' + translateY + 'px)';
+      secondary.style.setProperty('--drag-progress', progress);
+    } else {
+      // Expanded: dragging down — progress goes 1 → 0
+      var dragDown = Math.max(0, currentY - startY);
+      var progress = 1 - Math.min(dragDown / (panelHeight * 0.6), 1);
+      var restOffset = panelHeight - 60;
+      var translateY = (1 - progress) * restOffset;
+      secondary.style.transform = 'translateY(' + translateY + 'px)';
+      secondary.style.setProperty('--drag-progress', progress);
+    }
   }, { passive: true });
 
   secondary.addEventListener('touchend', function (e) {
-    if (!isSwiping) return;
-    isSwiping = false;
+    if (!isDragging) return;
+    isDragging = false;
 
     var endY = e.changedTouches[0].clientY;
     var deltaY = startY - endY;
+    var elapsed = Date.now() - startTime;
+    var velocity = Math.abs(deltaY) / elapsed;
     var isExpanded = secondary.classList.contains('board-expanded');
 
-    // Swipe up (deltaY > 50) to expand, swipe down (deltaY < -50) to collapse
-    if (deltaY > 50 && !isExpanded) {
+    // Restore spring transition for snap
+    secondary.style.transition = '';
+    secondary.style.transform = '';
+
+    // Fast flick (velocity > 0.5 px/ms) needs less distance, slow drag needs 30% of screen
+    var shouldToggle = velocity > 0.5 ? Math.abs(deltaY) > 30 : Math.abs(deltaY) > panelHeight * 0.3;
+
+    if (deltaY > 0 && shouldToggle && !isExpanded) {
+      secondary.style.setProperty('--drag-progress', '1');
       secondary.classList.add('board-expanded');
       document.querySelector('.game-layout').classList.add('board-expanded-active');
-    } else if (deltaY < -50 && isExpanded) {
+    } else if (deltaY < 0 && shouldToggle && isExpanded) {
+      secondary.style.setProperty('--drag-progress', '0');
       secondary.classList.remove('board-expanded');
       document.querySelector('.game-layout').classList.remove('board-expanded-active');
+    } else {
+      // Snap back — reset progress to current state
+      secondary.style.setProperty('--drag-progress', isExpanded ? '1' : '0');
     }
   }, { passive: true });
 
@@ -856,6 +896,7 @@ function initMobileThumbnail() {
   window.addEventListener('resize', function () {
     if (window.innerWidth > 600) {
       secondary.classList.remove('board-expanded');
+      secondary.style.setProperty('--drag-progress', '0');
       var layout = document.querySelector('.game-layout');
       if (layout) layout.classList.remove('board-expanded-active');
     }

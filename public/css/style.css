@@ -1591,29 +1591,34 @@ main {
   }
 
   .board-column-secondary {
+    --drag-progress: 0;
     position: fixed;
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
+    bottom: 0;
     z-index: 100;
     background: #0a0a0a;
     border-top: 1px solid #00ff8033;
-    padding: 0 12px 8px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: top 0.3s ease-out;
-    top: auto;
+    justify-content: flex-end;
+    transform: translateY(calc(100% - 60px));
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    will-change: transform;
   }
 
   .board-column-secondary .board-label {
-    display: none;
+    opacity: var(--drag-progress, 0);
+    transition: opacity 0.2s;
+    margin-bottom: 8px;
   }
 
   .board-column-secondary .board-small {
-    width: 25vw;
+    width: calc(25vw + var(--drag-progress, 0) * (80vw - 25vw));
     min-width: 80px;
-    max-width: 140px;
     pointer-events: none;
   }
 
@@ -1622,21 +1627,16 @@ main {
   }
 
   .board-column-secondary.board-expanded {
-    top: 0;
-    padding-top: 0;
+    transform: translateY(0);
     justify-content: center;
-    transition: top 0.3s ease-out;
   }
 
   .board-column-secondary.board-expanded .board-small {
-    width: 80vw;
-    max-width: 360px;
     pointer-events: auto;
   }
 
   .board-column-secondary.board-expanded .board-label {
-    display: block;
-    margin-top: 8px;
+    opacity: 1;
   }
 
   .board-expanded-active .board-column-primary {
