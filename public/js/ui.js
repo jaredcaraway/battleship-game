@@ -61,6 +61,16 @@ function showScreen(screenId) {
   }
   window.scrollTo(0, 0);
 
+  // On mobile, move player board panel to body so screen shake doesn't jitter it
+  if (screenId === 'screen-game' && window.innerWidth <= 600) {
+    setTimeout(function () {
+      var secondary = document.querySelector('.board-column-secondary');
+      if (secondary && secondary.parentNode !== document.body) {
+        document.body.appendChild(secondary);
+      }
+    }, 50);
+  }
+
   // Hide SEO content, ads, and footer during gameplay, show on menu
   var seo = document.getElementById('seo-content');
   var adTop = document.getElementById('ad-top');
