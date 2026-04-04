@@ -851,6 +851,15 @@ function initMobileThumbnail() {
       document.querySelector('.game-layout').classList.remove('board-expanded-active');
     }
   }, { passive: true });
+
+  // Collapse on resize past mobile breakpoint
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 600) {
+      secondary.classList.remove('board-expanded');
+      var layout = document.querySelector('.game-layout');
+      if (layout) layout.classList.remove('board-expanded-active');
+    }
+  });
 }
 
 // ---------------------------------------------------------------------------
