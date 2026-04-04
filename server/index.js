@@ -75,7 +75,7 @@ app.use(express.json({ limit: '10kb' }));
 // ---------------------------------------------------------------------------
 // Static files
 // ---------------------------------------------------------------------------
-app.use(express.static(path.join(__dirname, '..', 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public'), { index: false }));
 
 // ---------------------------------------------------------------------------
 // API routes
