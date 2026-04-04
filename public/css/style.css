@@ -1605,7 +1605,7 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    transform: translateY(calc(100% - 60px));
+    transform: translateY(calc(100% - 25vw - 40px));
     transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
     will-change: transform;
   }

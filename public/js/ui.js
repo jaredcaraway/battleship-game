@@ -846,7 +846,8 @@ function initMobileThumbnail() {
       var dragUp = Math.max(0, startY - currentY);
       var progress = Math.min(dragUp / (panelHeight * 0.6), 1);
       // Translate from resting position (100% - 60px) toward 0
-      var restOffset = panelHeight - 60;
+      var peekHeight = window.innerWidth * 0.25 + 40;
+      var restOffset = panelHeight - peekHeight;
       var translateY = restOffset - (progress * restOffset);
       secondary.style.transform = 'translateY(' + translateY + 'px)';
       secondary.style.setProperty('--drag-progress', progress);
@@ -854,7 +855,8 @@ function initMobileThumbnail() {
       // Expanded: dragging down — progress goes 1 → 0
       var dragDown = Math.max(0, currentY - startY);
       var progress = 1 - Math.min(dragDown / (panelHeight * 0.6), 1);
-      var restOffset = panelHeight - 60;
+      var peekHeight = window.innerWidth * 0.25 + 40;
+      var restOffset = panelHeight - peekHeight;
       var translateY = (1 - progress) * restOffset;
       secondary.style.transform = 'translateY(' + translateY + 'px)';
       secondary.style.setProperty('--drag-progress', progress);
