@@ -59,7 +59,23 @@ function showScreen(screenId) {
       setTimeout(function () { target.classList.remove('vhs-glitch'); }, 350);
     }
   }
+  // Clean up mobile thumbnail state when leaving game screen
+  var expandedBoard = document.querySelector('.board-column-secondary.board-expanded');
+  if (expandedBoard) {
+    expandedBoard.classList.remove('board-expanded');
+  }
+  var expandedLayout = document.querySelector('.game-layout.board-expanded-active');
+  if (expandedLayout) {
+    expandedLayout.classList.remove('board-expanded-active');
+  }
+
   window.scrollTo(0, 0);
+
+  // Init mobile thumbnail when entering game screen
+  if (screenId === 'screen-game' && window.innerWidth <= 600) {
+    // Defer to let the DOM settle
+    setTimeout(initMobileThumbnail, 50);
+  }
 
   // Hide SEO content and ads during gameplay, show on menu
   var seo = document.getElementById('seo-content');
@@ -787,6 +803,54 @@ function fetchLeaderboard() {
     .catch(function () {
       if (tbody) tbody.innerHTML = '<tr><td colspan="5">Failed to load leaderboard.</td></tr>';
     });
+}
+
+// ---------------------------------------------------------------------------
+// Mobile sticky thumbnail — swipe to expand/collapse player board
+// ---------------------------------------------------------------------------
+
+function initMobileThumbnail() {
+  var secondary = document.querySelector('.board-column-secondary');
+  if (!secondary) return;
+
+  // Don't add duplicate handle
+  if (secondary.querySelector('.swipe-handle')) return;
+
+  // Inject swipe handle
+  var handle = document.createElement('div');
+  handle.className = 'swipe-handle';
+  handle.setAttribute('aria-label', 'Swipe to expand your fleet');
+  secondary.insertBefore(handle, secondary.firstChild);
+
+  var startY = 0;
+  var isSwiping = false;
+
+  secondary.addEventListener('touchstart', function (e) {
+    startY = e.touches[0].clientY;
+    isSwiping = true;
+  }, { passive: true });
+
+  secondary.addEventListener('touchmove', function (e) {
+    if (!isSwiping) return;
+  }, { passive: true });
+
+  secondary.addEventListener('touchend', function (e) {
+    if (!isSwiping) return;
+    isSwiping = false;
+
+    var endY = e.changedTouches[0].clientY;
+    var deltaY = startY - endY;
+    var isExpanded = secondary.classList.contains('board-expanded');
+
+    // Swipe up (deltaY > 50) to expand, swipe down (deltaY < -50) to collapse
+    if (deltaY > 50 && !isExpanded) {
+      secondary.classList.add('board-expanded');
+      document.querySelector('.game-layout').classList.add('board-expanded-active');
+    } else if (deltaY < -50 && isExpanded) {
+      secondary.classList.remove('board-expanded');
+      document.querySelector('.game-layout').classList.remove('board-expanded-active');
+    }
+  }, { passive: true });
 }
 
 // ---------------------------------------------------------------------------
