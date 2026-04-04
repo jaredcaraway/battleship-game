@@ -1646,17 +1646,17 @@ main {
 
   .game-layout {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     gap: 20px;
     padding-bottom: calc(25vw + 50px + env(safe-area-inset-bottom, 0px));
   }
 
-  .board-large {
-    max-width: 100%;
+  .board-column-primary {
+    width: 100%;
   }
 
-  .board-small {
-    max-width: 100%;
+  .board-large {
+    width: 100%;
   }
 
   .placement-container,
