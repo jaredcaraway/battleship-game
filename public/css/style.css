@@ -579,38 +579,6 @@ main {
   border-color: #ff003388;
 }
 
-/* ===== Board Labels ===== */
-.board-label {
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-size: 11px;
-  margin: 8px 0;
-}
-
-.enemy-label {
-  color: #ff6b6b;
-}
-
-.friendly-label {
-  color: #00ff80;
-}
-
-.board-section {
-  margin-bottom: 16px;
-}
-
-/* ===== Game Status ===== */
-.game-status {
-  text-align: center;
-  padding: 8px;
-  margin-bottom: 12px;
-  border: 1px solid #00ff8022;
-  font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #00ff8088;
-}
-
 /* ===== Game Container ===== */
 #status-bar {
   display: flex;
@@ -919,7 +887,6 @@ main {
   max-width: 600px;
   margin: 0 auto;
   border-collapse: collapse;
-  border-collapse: collapse;
   font-size: 12px;
 }
 
@@ -1143,12 +1110,6 @@ main {
 }
 
 /* ===== Misc Text ===== */
-.subtitle {
-  color: #00ff8066;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
 .seo-content {
   max-width: 600px;
   margin: 40px auto;
