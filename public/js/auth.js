@@ -234,6 +234,7 @@ var AuthUI = {
           localStorage.setItem('battleship_token', result.data.token);
           AuthUI.updateNav();
           AuthUI.hideModal();
+          if (typeof trackEvent === 'function') trackEvent('login');
           // Reconnect socket with new token
           if (typeof connectSocket === 'function' && typeof socket !== 'undefined') {
             if (socket) socket.disconnect();
@@ -265,6 +266,7 @@ var AuthUI = {
           localStorage.setItem('battleship_token', result.data.token);
           AuthUI.updateNav();
           AuthUI.hideModal();
+          if (typeof trackEvent === 'function') trackEvent('account_created');
           // Reconnect socket with new token
           if (typeof connectSocket === 'function' && typeof socket !== 'undefined') {
             if (socket) socket.disconnect();
