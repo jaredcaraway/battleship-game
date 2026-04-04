@@ -1614,6 +1614,7 @@ main {
     width: 25vw;
     min-width: 80px;
     max-width: 140px;
+    pointer-events: none;
   }
 
   .board-column-secondary .ship-status {
@@ -1630,6 +1631,7 @@ main {
   .board-column-secondary.board-expanded .board-small {
     width: 80vw;
     max-width: 360px;
+    pointer-events: auto;
   }
 
   .board-column-secondary.board-expanded .board-label {
