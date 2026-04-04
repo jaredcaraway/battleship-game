@@ -285,9 +285,6 @@ var AuthUI = {
     var navControls = document.querySelector('.nav-controls');
     if (!navControls) return;
 
-    // Find or keep btn-sound
-    var soundBtn = document.getElementById('btn-sound');
-
     // Remove existing auth-related nav elements
     var existingLogin = document.getElementById('btn-login');
     var existingUserInfo = document.getElementById('nav-user-info');

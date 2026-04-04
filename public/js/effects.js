@@ -4,7 +4,6 @@
 
 'use strict';
 
-console.log('[effects.js] loaded — matrix rain + cursor trail active');
 
 // ---------------------------------------------------------------------------
 // Matrix Rain (#98)
@@ -31,7 +30,19 @@ console.log('[effects.js] loaded — matrix rain + cursor trail active');
   var lastDraw = 0;
   var frameInterval = 100; // ~10fps
 
+  var motionCleared = false;
+
   function draw(timestamp) {
+    if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) {
+      if (!motionCleared) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        motionCleared = true;
+      }
+      requestAnimationFrame(draw);
+      return;
+    }
+    motionCleared = false;
+
     if (timestamp - lastDraw < frameInterval) {
       requestAnimationFrame(draw);
       return;
@@ -70,6 +81,7 @@ console.log('[effects.js] loaded — matrix rain + cursor trail active');
   var maxParticles = 25;
 
   document.addEventListener('mousemove', function (e) {
+    if (typeof MotionSettings !== 'undefined' && !MotionSettings.enabled) return;
 
     particles.push({
       x: e.clientX,

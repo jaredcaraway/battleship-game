@@ -322,7 +322,6 @@ function initPlacement() {
   placementState.occupiedGrid = _initOccupiedGrid();
 
   _renderShipList();
-  _renderPlacementBoard();
   _renderPlacementBoardCells();
 
   // Ready button starts disabled
@@ -404,12 +403,6 @@ function _updateShipListUI() {
   // Update undo button state
   var undo = document.getElementById('btn-undo');
   if (undo) undo.disabled = placementState.placedShips.length === 0;
-}
-
-function _renderPlacementBoard() {
-  var board = document.getElementById('board-placement');
-  if (!board) return;
-  board.innerHTML = '';
 }
 
 function _renderPlacementBoardCells() {
