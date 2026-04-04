@@ -473,14 +473,12 @@ main {
 }
 
 .board-large {
-  width: 400px;
-  max-width: 100%;
+  width: min(400px, 100%);
   margin: 0 auto;
 }
 
 .board-small {
-  width: 280px;
-  max-width: 100%;
+  width: min(280px, 100%);
   margin: 0 auto;
 }
 
@@ -685,6 +683,7 @@ main {
   gap: 32px;
   align-items: flex-start;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .board-column {
@@ -693,11 +692,13 @@ main {
 }
 
 .board-column-primary {
-  flex: 0 0 auto;
+  flex: 1 1 400px;
+  min-width: 0;
 }
 
 .board-column-secondary {
-  flex: 0 0 auto;
+  flex: 0 1 280px;
+  min-width: 0;
 }
 
 .board-label {
