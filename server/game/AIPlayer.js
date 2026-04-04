@@ -290,4 +290,3 @@ class AIPlayer {
 }
 
 module.exports = AIPlayer;
-module.exports.SHIP_SIZES = SHIP_SIZES;

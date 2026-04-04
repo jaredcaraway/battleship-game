@@ -76,6 +76,29 @@ async function saveGameResult(room) {
   }
 }
 
+async function _emitGameOver(room, roomId, winner, io) {
+  const stats = room.getStats();
+  for (const player of room.players) {
+    const isP1 = room.players[0] && room.players[0].socketId === player.socketId;
+    const playerSocket = io.sockets.sockets.get(player.socketId);
+    if (playerSocket) {
+      playerSocket.emit('game-over', {
+        winner,
+        roomId,
+        turns: stats.turns,
+        duration: stats.duration_seconds ? stats.duration_seconds * 1000 : null,
+        accuracy: Math.round((isP1 ? stats.player1_accuracy : stats.player2_accuracy) * 100),
+        mode: stats.mode,
+      });
+    }
+  }
+  await saveGameResult(room);
+  rooms.delete(roomId);
+  for (const player of room.players) {
+    socketToRoom.delete(player.socketId);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // setupSocketHandlers(io)
 // ---------------------------------------------------------------------------
@@ -328,26 +351,7 @@ function setupSocketHandlers(io) {
           });
 
           if (result.gameOver) {
-            const stats = room.getStats();
-            for (const player of room.players) {
-              const isP1 = room.players[0] && room.players[0].socketId === player.socketId;
-              const playerSocket = io.sockets.sockets.get(player.socketId);
-              if (playerSocket) {
-                playerSocket.emit('game-over', {
-                  winner: result.winner,
-                  roomId,
-                  turns: stats.turns,
-                  duration: stats.duration_seconds ? stats.duration_seconds * 1000 : null,
-                  accuracy: Math.round((isP1 ? stats.player1_accuracy : stats.player2_accuracy) * 100),
-                  mode: stats.mode,
-                });
-              }
-            }
-            saveGameResult(room);
-            rooms.delete(roomId);
-            for (const player of room.players) {
-              socketToRoom.delete(player.socketId);
-            }
+            _emitGameOver(room, roomId, result.winner, io);
           } else {
             // AI didn't win — return turn to human
             io.to(roomId).emit('turn-change', { currentTurn: room.currentTurn });
@@ -355,27 +359,7 @@ function setupSocketHandlers(io) {
         }, aiDelay);
       } else if (result.gameOver) {
         // Player won (no AI counter-move) — emit immediately
-        const stats = room.getStats();
-        for (const player of room.players) {
-          const isP1 = room.players[0] && room.players[0].socketId === player.socketId;
-          const playerSocket = io.sockets.sockets.get(player.socketId);
-          if (playerSocket) {
-            playerSocket.emit('game-over', {
-              winner: result.winner,
-              roomId,
-              turns: stats.turns,
-              duration: stats.duration_seconds ? stats.duration_seconds * 1000 : null,
-              accuracy: Math.round((isP1 ? stats.player1_accuracy : stats.player2_accuracy) * 100),
-              mode: stats.mode,
-            });
-          }
-        }
-        await saveGameResult(room);
-        // Clean up room
-        rooms.delete(roomId);
-        for (const player of room.players) {
-          socketToRoom.delete(player.socketId);
-        }
+        await _emitGameOver(room, roomId, result.winner, io);
       } else {
         io.to(roomId).emit('turn-change', { currentTurn: room.currentTurn });
       }
