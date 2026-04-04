@@ -1554,7 +1554,7 @@ main {
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    padding-bottom: calc(25vw + 30px);
+    padding-bottom: calc(25vw + 50px);
   }
 
   .board-large {
@@ -1593,27 +1593,25 @@ main {
   .board-column-secondary {
     --drag-progress: 0;
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
-    bottom: 0;
     z-index: 100;
     background: #0a0a0a;
     border-top: 1px solid #00ff8033;
-    padding: 12px;
+    padding: 8px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    transform: translateY(calc(100% - 25vw - 40px));
-    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-    will-change: transform;
+    height: calc(25vw + 40px);
+    transition: height 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+    overflow: hidden;
   }
 
   .board-column-secondary .board-label {
     opacity: var(--drag-progress, 0);
-    transition: opacity 0.2s;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
+    font-size: 9px;
   }
 
   .board-column-secondary .board-small {
@@ -1627,7 +1625,7 @@ main {
   }
 
   .board-column-secondary.board-expanded {
-    transform: translateY(0);
+    height: 100dvh;
     justify-content: center;
   }
 

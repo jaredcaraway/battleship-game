@@ -825,13 +825,15 @@ function initMobileThumbnail() {
   var startY = 0;
   var isDragging = false;
   var startTime = 0;
-  var panelHeight = 0;
+  var collapsedHeight = 0;
+  var fullHeight = 0;
 
   secondary.addEventListener('touchstart', function (e) {
     startY = e.touches[0].clientY;
     startTime = Date.now();
     isDragging = true;
-    panelHeight = secondary.offsetHeight;
+    collapsedHeight = window.innerWidth * 0.25 + 40;
+    fullHeight = window.innerHeight;
     // Kill transition during drag for immediate response
     secondary.style.transition = 'none';
   }, { passive: true });
@@ -840,25 +842,21 @@ function initMobileThumbnail() {
     if (!isDragging) return;
     var currentY = e.touches[0].clientY;
     var isExpanded = secondary.classList.contains('board-expanded');
+    var maxDrag = fullHeight - collapsedHeight;
 
     if (!isExpanded) {
-      // Collapsed: dragging up — progress goes 0 → 1
+      // Collapsed: dragging up — height grows, progress 0 → 1
       var dragUp = Math.max(0, startY - currentY);
-      var progress = Math.min(dragUp / (panelHeight * 0.6), 1);
-      // Translate from resting position (100% - 60px) toward 0
-      var peekHeight = window.innerWidth * 0.25 + 40;
-      var restOffset = panelHeight - peekHeight;
-      var translateY = restOffset - (progress * restOffset);
-      secondary.style.transform = 'translateY(' + translateY + 'px)';
+      var progress = Math.min(dragUp / maxDrag, 1);
+      var height = collapsedHeight + (progress * maxDrag);
+      secondary.style.height = height + 'px';
       secondary.style.setProperty('--drag-progress', progress);
     } else {
-      // Expanded: dragging down — progress goes 1 → 0
+      // Expanded: dragging down — height shrinks, progress 1 → 0
       var dragDown = Math.max(0, currentY - startY);
-      var progress = 1 - Math.min(dragDown / (panelHeight * 0.6), 1);
-      var peekHeight = window.innerWidth * 0.25 + 40;
-      var restOffset = panelHeight - peekHeight;
-      var translateY = (1 - progress) * restOffset;
-      secondary.style.transform = 'translateY(' + translateY + 'px)';
+      var progress = 1 - Math.min(dragDown / maxDrag, 1);
+      var height = collapsedHeight + (progress * maxDrag);
+      secondary.style.height = height + 'px';
       secondary.style.setProperty('--drag-progress', progress);
     }
   }, { passive: true });
@@ -875,10 +873,10 @@ function initMobileThumbnail() {
 
     // Restore spring transition for snap
     secondary.style.transition = '';
-    secondary.style.transform = '';
+    secondary.style.height = '';
 
     // Fast flick (velocity > 0.5 px/ms) needs less distance, slow drag needs 30% of screen
-    var shouldToggle = velocity > 0.5 ? Math.abs(deltaY) > 30 : Math.abs(deltaY) > panelHeight * 0.3;
+    var shouldToggle = velocity > 0.5 ? Math.abs(deltaY) > 30 : Math.abs(deltaY) > fullHeight * 0.3;
 
     if (deltaY > 0 && shouldToggle && !isExpanded) {
       secondary.style.setProperty('--drag-progress', '1');
