@@ -1070,6 +1070,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // --- Theme picker ---
+  var savedTheme = localStorage.getItem('cyber-ship-battle-theme') || 'matrix';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+
+  var swatches = document.querySelectorAll('.theme-swatch');
+  swatches.forEach(function (swatch) {
+    var theme = swatch.getAttribute('data-theme');
+    if (theme === savedTheme) swatch.classList.add('active');
+
+    // Preview on hover
+    swatch.addEventListener('mouseenter', function () {
+      document.documentElement.setAttribute('data-theme', theme);
+    });
+    swatch.addEventListener('mouseleave', function () {
+      var current = localStorage.getItem('cyber-ship-battle-theme') || 'matrix';
+      document.documentElement.setAttribute('data-theme', current);
+    });
+
+    // Commit on click
+    swatch.addEventListener('click', function () {
+      localStorage.setItem('cyber-ship-battle-theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      swatches.forEach(function (s) { s.classList.remove('active'); });
+      swatch.classList.add('active');
+    });
+  });
+
   // --- Play Again / Main Menu (game over screen) ---
   var btnPlayAgain = document.getElementById('btn-play-again');
   if (btnPlayAgain) {
