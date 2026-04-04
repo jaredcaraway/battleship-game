@@ -1658,15 +1658,12 @@ main {
     font-size: 0;
     text-shadow: none;
     overflow: hidden;
+    transition: none;
   }
 
   .board-column-secondary .board-small .cell.wave {
     animation: none;
     transform: none;
-  }
-
-  .board-column-secondary .board-small .cell {
-    transition: none;
   }
 
   .board-column-secondary .ship-status {
