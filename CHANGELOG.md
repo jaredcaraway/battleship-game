@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.0] - 2026-04-04
+
+### Added
+- **GitHub Actions CI** — `npm test` runs on all PRs targeting main; branch protection enforces passing checks before merge
+- **Mobile status panel** — fixed bottom panel on mobile with thumbnail board grid and ship health block indicators (green = intact, red = hit, SUNK label)
+- **Ship health blocks** — `updateShipStatus()` now renders per-hit block indicators instead of plain text `[OK]`/`[SUNK]`
+- **Pre-push git hook** — runs tests locally before any push reaches GitHub
+- **Repo is now public** with branch protection rulesets on main
+
+### Fixed
+- **`.env.test`** updated from PostgreSQL to MySQL connection string (stale after v2.0.0 migration)
+- **Thumbnail board stability** — disabled ripple/wave animation, hidden text markers, and moved panel outside screen shake transform to prevent layout blowout on hit
+- **Footer bleedthrough** — changelog link hidden during gameplay so it doesn't show behind the status panel
+
 ## [2.0.0] - 2026-04-03
 
 ### BREAKING
