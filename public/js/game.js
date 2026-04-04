@@ -15,6 +15,15 @@ var enemySunkShips = [];
 var _queuedShot = null; // { row, col }
 
 // ---------------------------------------------------------------------------
+// Shared AudioContext (lazy-initialized to avoid exceeding browser limits)
+// ---------------------------------------------------------------------------
+var _sharedAudioCtx = null;
+function _getAudioCtx() {
+  if (!_sharedAudioCtx) _sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return _sharedAudioCtx;
+}
+
+// ---------------------------------------------------------------------------
 // SoundManager
 // ---------------------------------------------------------------------------
 var SoundManager = {
@@ -50,7 +59,7 @@ var SoundManager = {
 
   _playBoomHit: function () {
     try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var ctx = _getAudioCtx();
       var t = ctx.currentTime;
 
       // Distorted square wave — rapid pitch drop (Earthbound SMAAASH feel)
@@ -108,7 +117,7 @@ var SoundManager = {
 
   _playExplosion: function () {
     try {
-      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var ctx = _getAudioCtx();
       var t = ctx.currentTime;
 
       // White noise burst
@@ -429,7 +438,7 @@ function showNotification(message) {
 function _playTurnBeep() {
   if (SoundManager.muted) return;
   try {
-    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var ctx = _getAudioCtx();
     var osc = ctx.createOscillator();
     var gain = ctx.createGain();
     osc.type = 'sine';
@@ -754,27 +763,18 @@ function connectSocket() {
   socket.on('fire-result', function (data) {
     var isMyShot = (data.shooter === socket.id);
 
-    if (isMyShot) {
-      // Update enemy board
-      updateSingleCell('board-enemy', data.row, data.col, data.result);
-      if (data.result === 'hit' || data.result === 'sunk') {
-        SoundManager.play(data.sunk ? 'sunk' : 'boom-hit');
-        if (data.sunk) SoundManager.play('explosion');
-        _shakeScreen(data.sunk ? 'offense-sunk' : 'offense-hit');
-      } else {
-        SoundManager.play('miss');
-      }
+    var board = isMyShot ? 'board-enemy' : 'board-player';
+    var shakeStyle = isMyShot
+      ? (data.sunk ? 'offense-sunk' : 'offense-hit')
+      : (data.sunk ? 'defense-sunk' : 'defense-hit');
+    updateSingleCell(board, data.row, data.col, data.result);
+    if (!isMyShot) _spawnRipple(data.row, data.col, board);
+    if (data.result === 'hit' || data.result === 'sunk') {
+      SoundManager.play(data.sunk ? 'sunk' : 'boom-hit');
+      if (data.sunk) SoundManager.play('explosion');
+      _shakeScreen(shakeStyle);
     } else {
-      // Update own board
-      updateSingleCell('board-player', data.row, data.col, data.result);
-      _spawnRipple(data.row, data.col, 'board-player');
-      if (data.result === 'hit' || data.result === 'sunk') {
-        SoundManager.play(data.sunk ? 'sunk' : 'boom-hit');
-        if (data.sunk) SoundManager.play('explosion');
-        _shakeScreen(data.sunk ? 'defense-sunk' : 'defense-hit');
-      } else {
-        SoundManager.play('miss');
-      }
+      SoundManager.play('miss');
     }
 
     // Track and show sunk ships
@@ -795,31 +795,6 @@ function connectSocket() {
   socket.on('turn-change', function (data) {
     myTurn = (data.currentTurn === socket.id);
     updateTurnIndicator(myTurn);
-
-    // Re-render enemy board to enable/disable clicks
-    var enemyBoard = document.getElementById('board-enemy');
-    if (enemyBoard) {
-      var cells = enemyBoard.querySelectorAll('.cell');
-      cells.forEach(function (cell) {
-        // Clone to strip old listeners, then re-attach if needed
-        var newCell = cell.cloneNode(true);
-        if (myTurn) {
-          var row = parseInt(newCell.getAttribute('data-row'), 10);
-          var col = parseInt(newCell.getAttribute('data-col'), 10);
-          // Only add click if the cell is not already hit/miss/sunk
-          if (!newCell.classList.contains('hit') &&
-              !newCell.classList.contains('miss') &&
-              !newCell.classList.contains('sunk')) {
-            (function (r, c) {
-              newCell.addEventListener('click', function () {
-                fireAt(r, c);
-              });
-            })(row, col);
-          }
-        }
-        cell.parentNode.replaceChild(newCell, cell);
-      });
-    }
 
     // status-message updated by updateTurnIndicator
 
