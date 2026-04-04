@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.2.0] - 2026-04-04
+
+### Added
+- **8 terminal color themes** — Matrix (default), Dracula, Solarized Dark, Monokai, Nord, Catppuccin, Gruvbox, Tokyo Night
+- **Theme picker** in Settings modal with color swatches — hover to preview, click to apply
+- **CSS custom properties** for all theme colors (`--fg`, `--fg-dim`, `--fg-faint`, `--fg-ghost`, `--fg-subtle`, `--bg`, `--accent-hit`, `--accent-warn`)
+- **Text selection prevention** on game UI elements (content areas still selectable)
+- Theme selection persists via localStorage
+
+### Changed
+- Converted ~80 hardcoded color values to theme variables
+- All themes verified for WCAG AA contrast
+
 ## [2.1.1] - 2026-04-04
 
 ### Changed
