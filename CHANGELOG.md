@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.1.1] - 2026-04-04
+
+### Changed
+- **Shared AudioContext** — single instance reused across all synthesized sounds instead of creating one per play
+- **Removed redundant cell cloning** — turn-change handler no longer clones all 100 enemy cells (fireAt already gates on myTurn)
+- **Consolidated fire-result handler** — merged duplicate sound/shake branches into shared logic
+- **Extracted game-over helper** — deduplicated copy-pasted emit logic in socket handlers
+- **effects.js respects MotionSettings** — matrix rain and cursor trail now skip rendering when motion is disabled
+
+### Removed
+- Dead CSS classes (`.game-status`, `.board-section`, `.enemy-label`, `.friendly-label`, `.subtitle`)
+- Duplicate `.board-label` definition and `border-collapse` property
+- Redundant `_renderPlacementBoard()` function
+- Unused `soundBtn` variable, unused `SHIP_SIZES` export, debug `console.log`
+
+### Fixed
+- `join-room-group` class → `join-row` (had no CSS rule)
+- Added missing `waiting-text` class to room waiting text element
+
 ## [2.1.0] - 2026-04-04
 
 ### Added
