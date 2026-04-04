@@ -604,15 +604,38 @@ function updateShipStatus(ships) {
 
   container.innerHTML = '';
 
+  var SHORT_NAMES = { carrier: 'Carrier', battleship: 'Battle', cruiser: 'Cruiser', submarine: 'Sub', destroyer: 'Patrol' };
+
   ships.forEach(function (ship) {
-    var el = document.createElement('span');
-    el.className = 'ship-status-item' + (ship.sunk ? ' sunk' : '');
-    el.textContent = ship.name + (ship.sunk ? ' [SUNK]' : ' [OK]');
-    if (ship.sunk) {
-      el.style.color = '#ff0033';
-      el.style.textDecoration = 'line-through';
+    var size = ship.size || FLEET_SIZES[ship.name.toLowerCase()] || 3;
+    var hits = ship.hits || 0;
+    var isSunk = ship.sunk || hits >= size;
+
+    var row = document.createElement('div');
+    row.className = 'ship-status-row';
+
+    var name = document.createElement('span');
+    name.className = 'ship-status-name' + (isSunk ? ' sunk' : '');
+    name.textContent = SHORT_NAMES[ship.name.toLowerCase()] || ship.name;
+    row.appendChild(name);
+
+    var blocks = document.createElement('span');
+    blocks.className = 'ship-status-blocks';
+    for (var i = 0; i < size; i++) {
+      var block = document.createElement('span');
+      block.className = 'ship-block' + (i < hits ? ' hit' : '');
+      blocks.appendChild(block);
     }
-    container.appendChild(el);
+    row.appendChild(blocks);
+
+    if (isSunk) {
+      var label = document.createElement('span');
+      label.className = 'ship-sunk-label';
+      label.textContent = 'SUNK';
+      row.appendChild(label);
+    }
+
+    container.appendChild(row);
   });
 }
 
