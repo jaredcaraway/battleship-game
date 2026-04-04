@@ -104,7 +104,7 @@ let indexHtml = fs.readFileSync(indexPath, 'utf8');
 const gaId = process.env.GA_MEASUREMENT_ID;
 if (gaId) {
   const gaSnippet = `<!-- Google Analytics -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>\n<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');</script>`;
-  indexHtml = indexHtml.replace('</head>', gaSnippet + '\n</head>');
+  indexHtml = indexHtml.replace('<head>', '<head>\n' + gaSnippet);
 }
 
 app.get('/{*splat}', (req, res) => {
