@@ -1648,7 +1648,7 @@ main {
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    padding-bottom: calc(25vw + 50px);
+    padding-bottom: calc(25vw + 50px + env(safe-area-inset-bottom, 0px));
   }
 
   .board-large {
