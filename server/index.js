@@ -97,9 +97,18 @@ app.get('/changelog', (req, res) => {
 
 // ---------------------------------------------------------------------------
 // SPA fallback — must come after API routes
+// Injects Google Analytics tag if GA_MEASUREMENT_ID is set
 // ---------------------------------------------------------------------------
+const indexPath = path.join(__dirname, '..', 'public', 'index.html');
+let indexHtml = fs.readFileSync(indexPath, 'utf8');
+const gaId = process.env.GA_MEASUREMENT_ID;
+if (gaId) {
+  const gaSnippet = `<!-- Google Analytics -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>\n<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');</script>`;
+  indexHtml = indexHtml.replace('</head>', gaSnippet + '\n</head>');
+}
+
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  res.type('html').send(indexHtml);
 });
 
 // ---------------------------------------------------------------------------
