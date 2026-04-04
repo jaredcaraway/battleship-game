@@ -833,7 +833,7 @@ function initMobileThumbnail() {
     startTime = Date.now();
     isDragging = true;
     collapsedHeight = window.innerWidth * 0.25 + 40;
-    fullHeight = window.innerHeight;
+    fullHeight = window.innerHeight * 0.4;
     // Kill transition during drag for immediate response
     secondary.style.transition = 'none';
   }, { passive: true });
