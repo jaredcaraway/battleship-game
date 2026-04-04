@@ -1602,6 +1602,8 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: top 0.3s ease-out;
+    top: auto;
   }
 
   .board-column-secondary .board-label {
@@ -1616,5 +1618,50 @@ main {
 
   .board-column-secondary .ship-status {
     display: none;
+  }
+
+  .board-column-secondary.board-expanded {
+    top: 0;
+    padding-top: 0;
+    justify-content: center;
+    transition: top 0.3s ease-out;
+  }
+
+  .board-column-secondary.board-expanded .board-small {
+    width: 80vw;
+    max-width: 360px;
+  }
+
+  .board-column-secondary.board-expanded .board-label {
+    display: block;
+    margin-top: 8px;
+  }
+
+  .board-expanded-active .board-column-primary {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    background: #0a0a0a;
+    border-bottom: 1px solid #00ff8033;
+    padding: 8px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .board-expanded-active .board-column-primary .board-large {
+    display: none;
+  }
+
+  .board-expanded-active .board-column-primary .sunk-tracker {
+    display: none;
+  }
+
+  .board-expanded-active .board-column-primary .board-label {
+    margin: 0;
+    font-size: 10px;
   }
 }
