@@ -103,7 +103,7 @@ const indexPath = path.join(__dirname, '..', 'public', 'index.html');
 let indexHtml = fs.readFileSync(indexPath, 'utf8');
 const gaId = process.env.GA_MEASUREMENT_ID;
 if (gaId) {
-  const gaSnippet = `<!-- Google Analytics -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>\n<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');</script>`;
+  const gaSnippet = `<!-- Google tag (gtag.js) -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gaId}"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${gaId}');\n</script>`;
   indexHtml = indexHtml.replace('<head>', '<head>\n' + gaSnippet);
 }
 
