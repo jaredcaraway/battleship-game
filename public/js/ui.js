@@ -839,6 +839,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnCreateRoom = document.getElementById('btn-create-room');
   if (btnCreateRoom) {
     btnCreateRoom.addEventListener('click', function () {
+      _lastGameMode = { type: 'multiplayer' };
       if (socket) socket.emit('create-room');
     });
   }
@@ -1094,6 +1095,7 @@ document.addEventListener('DOMContentLoaded', function () {
       document.documentElement.setAttribute('data-theme', theme);
       swatches.forEach(function (s) { s.classList.remove('active'); });
       swatch.classList.add('active');
+      trackEvent('theme_changed', { theme_name: theme });
     });
   });
 
@@ -1101,6 +1103,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var btnPlayAgain = document.getElementById('btn-play-again');
   if (btnPlayAgain) {
     btnPlayAgain.addEventListener('click', function () {
+      trackEvent('play_again');
       if (_lastGameMode && _lastGameMode.type === 'ai' && socket) {
         socket.emit('create-ai-game', { difficulty: _lastGameMode.difficulty });
       } else {
@@ -1172,6 +1175,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (placementState.placedShips.length < FLEET.length) return;
     if (socket) {
       socket.emit('place-ships', { ships: placementState.placedShips });
+      trackEvent('placement_complete');
     }
   }
   if (btnReady) {

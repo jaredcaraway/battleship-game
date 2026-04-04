@@ -5,11 +5,19 @@
 'use strict';
 
 // ---------------------------------------------------------------------------
+// Analytics helper — safe to call even when GA is not loaded
+// ---------------------------------------------------------------------------
+function trackEvent(name, params) {
+  if (typeof gtag === 'function') gtag('event', name, params || {});
+}
+
+// ---------------------------------------------------------------------------
 // Global state
 // ---------------------------------------------------------------------------
 var socket = null;
 var currentRoomId = null;
 var myTurn = false;
+var _gameStartTime = 0;
 var mySocketId = null;
 var enemySunkShips = [];
 var _queuedShot = null; // { row, col }
@@ -670,6 +678,7 @@ function connectSocket() {
 
   // ---- room-created: private PvP room created --------------------------------
   socket.on('room-created', function (data) {
+    trackEvent('multiplayer_room_created');
     currentRoomId = data.roomId;
     var display = document.getElementById('room-code-display');
     if (display) display.textContent = data.roomId;
@@ -678,6 +687,7 @@ function connectSocket() {
 
   // ---- player-joined: second player joined a private room -------------------
   socket.on('player-joined', function (data) {
+    trackEvent('multiplayer_room_joined');
     var count = data.playerCount;
     var waitingText = document.querySelector('#screen-room .waiting-text');
     if (waitingText) {
@@ -724,9 +734,12 @@ function connectSocket() {
   socket.on('game-start', function (data) {
     enemySunkShips = [];
     _queuedShot = null;
+    _gameStartTime = Date.now();
     if (typeof showScreen === 'function') showScreen('screen-game');
     showDifficultyBadge();
     updateEnemySunkTracker();
+    var mode = (typeof _lastGameMode !== 'undefined' && _lastGameMode) ? _lastGameMode : {};
+    trackEvent('game_start', { mode: mode.type || 'unknown', difficulty: mode.difficulty || '' });
     // Request full state after showing game screen
     if (socket) socket.emit('get-state');
   });
@@ -779,6 +792,7 @@ function connectSocket() {
 
     // Track and show sunk ships
     if (data.sunk && data.shipName) {
+      trackEvent('ship_sunk', { ship_name: data.shipName, is_player: !isMyShot });
       if (isMyShot) {
         enemySunkShips.push(data.shipName);
         updateEnemySunkTracker();
@@ -811,6 +825,15 @@ function connectSocket() {
   socket.on('game-over', function (data) {
     var iWon = (data.winner === socket.id);
     myTurn = false;
+    var mode = (typeof _lastGameMode !== 'undefined' && _lastGameMode) ? _lastGameMode : {};
+    var duration = _gameStartTime ? Math.round((Date.now() - _gameStartTime) / 1000) : 0;
+    trackEvent('game_end', {
+      result: iWon ? 'win' : 'loss',
+      mode: mode.type || 'unknown',
+      difficulty: mode.difficulty || '',
+      turns_taken: data.turns || 0,
+      duration_seconds: duration
+    });
 
     if (typeof showGameOver === 'function') {
       showGameOver({
