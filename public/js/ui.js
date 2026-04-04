@@ -59,23 +59,7 @@ function showScreen(screenId) {
       setTimeout(function () { target.classList.remove('vhs-glitch'); }, 350);
     }
   }
-  // Clean up mobile thumbnail state when leaving game screen
-  var expandedBoard = document.querySelector('.board-column-secondary.board-expanded');
-  if (expandedBoard) {
-    expandedBoard.classList.remove('board-expanded');
-  }
-  var expandedLayout = document.querySelector('.game-layout.board-expanded-active');
-  if (expandedLayout) {
-    expandedLayout.classList.remove('board-expanded-active');
-  }
-
   window.scrollTo(0, 0);
-
-  // Init mobile thumbnail when entering game screen
-  if (screenId === 'screen-game' && window.innerWidth <= 600) {
-    // Defer to let the DOM settle
-    setTimeout(initMobileThumbnail, 50);
-  }
 
   // Hide SEO content and ads during gameplay, show on menu
   var seo = document.getElementById('seo-content');
@@ -803,104 +787,6 @@ function fetchLeaderboard() {
     .catch(function () {
       if (tbody) tbody.innerHTML = '<tr><td colspan="5">Failed to load leaderboard.</td></tr>';
     });
-}
-
-// ---------------------------------------------------------------------------
-// Mobile sticky thumbnail — swipe to expand/collapse player board
-// ---------------------------------------------------------------------------
-
-function initMobileThumbnail() {
-  var secondary = document.querySelector('.board-column-secondary');
-  if (!secondary) return;
-
-  // Don't add duplicate handle
-  if (secondary.querySelector('.swipe-handle')) return;
-
-  // Inject swipe handle
-  var handle = document.createElement('div');
-  handle.className = 'swipe-handle';
-  handle.setAttribute('aria-label', 'Swipe to expand your fleet');
-  secondary.insertBefore(handle, secondary.firstChild);
-
-  var startY = 0;
-  var isDragging = false;
-  var startTime = 0;
-  var collapsedHeight = 0;
-  var fullHeight = 0;
-
-  secondary.addEventListener('touchstart', function (e) {
-    startY = e.touches[0].clientY;
-    startTime = Date.now();
-    isDragging = true;
-    collapsedHeight = window.innerWidth * 0.25 + 40;
-    fullHeight = window.innerHeight * 0.4;
-    // Kill transition during drag for immediate response
-    secondary.style.transition = 'none';
-  }, { passive: true });
-
-  secondary.addEventListener('touchmove', function (e) {
-    if (!isDragging) return;
-    var currentY = e.touches[0].clientY;
-    var isExpanded = secondary.classList.contains('board-expanded');
-    var maxDrag = fullHeight - collapsedHeight;
-
-    if (!isExpanded) {
-      // Collapsed: dragging up — height grows, progress 0 → 1
-      var dragUp = Math.max(0, startY - currentY);
-      var progress = Math.min(dragUp / maxDrag, 1);
-      var height = collapsedHeight + (progress * maxDrag);
-      secondary.style.height = height + 'px';
-      secondary.style.setProperty('--drag-progress', progress);
-    } else {
-      // Expanded: dragging down — height shrinks, progress 1 → 0
-      var dragDown = Math.max(0, currentY - startY);
-      var progress = 1 - Math.min(dragDown / maxDrag, 1);
-      var height = collapsedHeight + (progress * maxDrag);
-      secondary.style.height = height + 'px';
-      secondary.style.setProperty('--drag-progress', progress);
-    }
-  }, { passive: true });
-
-  secondary.addEventListener('touchend', function (e) {
-    if (!isDragging) return;
-    isDragging = false;
-
-    var endY = e.changedTouches[0].clientY;
-    var deltaY = startY - endY;
-    var elapsed = Date.now() - startTime;
-    var velocity = Math.abs(deltaY) / elapsed;
-    var isExpanded = secondary.classList.contains('board-expanded');
-
-    // Restore spring transition for snap
-    secondary.style.transition = '';
-    secondary.style.height = '';
-
-    // Fast flick (velocity > 0.5 px/ms) needs less distance, slow drag needs 30% of screen
-    var shouldToggle = velocity > 0.5 ? Math.abs(deltaY) > 30 : Math.abs(deltaY) > fullHeight * 0.3;
-
-    if (deltaY > 0 && shouldToggle && !isExpanded) {
-      secondary.style.setProperty('--drag-progress', '1');
-      secondary.classList.add('board-expanded');
-      document.querySelector('.game-layout').classList.add('board-expanded-active');
-    } else if (deltaY < 0 && shouldToggle && isExpanded) {
-      secondary.style.setProperty('--drag-progress', '0');
-      secondary.classList.remove('board-expanded');
-      document.querySelector('.game-layout').classList.remove('board-expanded-active');
-    } else {
-      // Snap back — reset progress to current state
-      secondary.style.setProperty('--drag-progress', isExpanded ? '1' : '0');
-    }
-  }, { passive: true });
-
-  // Collapse on resize past mobile breakpoint
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 600) {
-      secondary.classList.remove('board-expanded');
-      secondary.style.setProperty('--drag-progress', '0');
-      var layout = document.querySelector('.game-layout');
-      if (layout) layout.classList.remove('board-expanded-active');
-    }
-  });
 }
 
 // ---------------------------------------------------------------------------

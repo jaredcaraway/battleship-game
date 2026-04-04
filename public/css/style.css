@@ -1443,6 +1443,47 @@ main {
   color: #00ff8088;
 }
 
+.ship-status-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ship-status-name {
+  width: 52px;
+  color: #00ff8088;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+
+.ship-status-name.sunk {
+  color: #ff003366;
+  text-decoration: line-through;
+}
+
+.ship-status-blocks {
+  display: flex;
+  gap: 2px;
+}
+
+.ship-block {
+  width: 8px;
+  height: 8px;
+  background: #00ff8033;
+  border: 1px solid #00ff8055;
+}
+
+.ship-block.hit {
+  background: #ff003344;
+  border-color: #ff003366;
+}
+
+.ship-sunk-label {
+  color: #ff003366;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
 /* Sunk tracker under enemy board */
 .sunk-tracker {
   display: flex;
@@ -1581,17 +1622,7 @@ main {
     padding: 7px 12px;
   }
 
-  .swipe-handle {
-    width: 32px;
-    height: 4px;
-    background: #00ff8044;
-    border-radius: 2px;
-    margin: 6px auto;
-    flex-shrink: 0;
-  }
-
   .board-column-secondary {
-    --drag-progress: 0;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1599,42 +1630,32 @@ main {
     z-index: 100;
     background: #0a0a0a;
     border-top: 1px solid #00ff8033;
-    padding: 8px 12px;
+    padding: 10px 12px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    height: calc(25vw + 40px);
-    transition: height 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
-    overflow: hidden;
+    gap: 12px;
   }
 
   .board-column-secondary .board-label {
-    opacity: var(--drag-progress, 0);
-    margin-bottom: 4px;
-    font-size: 9px;
+    display: none;
   }
 
   .board-column-secondary .board-small {
-    width: calc(25vw + var(--drag-progress, 0) * (55vw - 25vw));
+    width: 25vw;
     min-width: 80px;
+    max-width: 110px;
+    flex-shrink: 0;
     pointer-events: none;
   }
 
   .board-column-secondary .ship-status {
-    display: none;
-  }
-
-  .board-column-secondary.board-expanded {
-    height: 40dvh;
-    justify-content: center;
-  }
-
-  .board-column-secondary.board-expanded .board-small {
-    pointer-events: auto;
-  }
-
-  .board-column-secondary.board-expanded .board-label {
-    opacity: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 10px;
+    margin-top: 0;
   }
 
 }
