@@ -1717,6 +1717,10 @@ main {
     align-items: center;
   }
 
+  .key-hint {
+    display: none;
+  }
+
   .game-container,
   .menu-container {
     padding: 12px;
