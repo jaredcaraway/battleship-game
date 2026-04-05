@@ -1636,6 +1636,54 @@ main {
   100% { opacity: 0; }
 }
 
+/* ===== Colorblind Patterns ===== */
+.colorblind .cell.hit {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 3px,
+    #ff003344 3px,
+    #ff003344 5px
+  );
+}
+
+.colorblind .cell.miss {
+  background-image: radial-gradient(
+    circle,
+    #ffffff33 1px,
+    transparent 1px
+  );
+  background-size: 6px 6px;
+}
+
+.colorblind .cell.sunk {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 3px,
+      #ff003355 3px,
+      #ff003355 5px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      #ff003355 3px,
+      #ff003355 5px
+    );
+}
+
+.colorblind .cell.ship {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    #00ff8022 3px,
+    #00ff8022 5px
+  );
+}
+
 /* ===== Reduce Motion ===== */
 .reduce-motion *:not(body):not(.heading-icon):not(.notification),
 .reduce-motion *:not(body):not(.heading-icon)::before,
