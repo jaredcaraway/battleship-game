@@ -400,6 +400,46 @@ function fireAt(row, col) {
 }
 
 // ---------------------------------------------------------------------------
+// Keyboard board navigation
+// ---------------------------------------------------------------------------
+var _cursorRow = 0;
+var _cursorCol = 0;
+
+function _updateCursor() {
+  var board = document.getElementById('board-enemy');
+  if (!board) return;
+  var prev = board.querySelector('.cell.keyboard-cursor');
+  if (prev) prev.classList.remove('keyboard-cursor');
+  var cell = board.querySelector('.cell[data-row="' + _cursorRow + '"][data-col="' + _cursorCol + '"]');
+  if (cell) cell.classList.add('keyboard-cursor');
+}
+
+document.addEventListener('keydown', function (e) {
+  var gameScreen = document.querySelector('#screen-game.active');
+  if (!gameScreen) return;
+  // Don't capture if a modal is open
+  if (document.querySelector('.modal.active')) return;
+
+  var moved = false;
+  switch (e.key) {
+    case 'ArrowUp':    if (_cursorRow > 0) { _cursorRow--; moved = true; } break;
+    case 'ArrowDown':  if (_cursorRow < 9) { _cursorRow++; moved = true; } break;
+    case 'ArrowLeft':  if (_cursorCol > 0) { _cursorCol--; moved = true; } break;
+    case 'ArrowRight': if (_cursorCol < 9) { _cursorCol++; moved = true; } break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      fireAt(_cursorRow, _cursorCol);
+      return;
+    default: return;
+  }
+  if (moved) {
+    e.preventDefault();
+    _updateCursor();
+  }
+});
+
+// ---------------------------------------------------------------------------
 // Helper UI functions
 // ---------------------------------------------------------------------------
 
@@ -741,7 +781,10 @@ function connectSocket() {
     var mode = (typeof _lastGameMode !== 'undefined' && _lastGameMode) ? _lastGameMode : {};
     trackEvent('game_start', { mode: mode.type || 'unknown', difficulty: mode.difficulty || '' });
     // Request full state after showing game screen
+    _cursorRow = 0;
+    _cursorCol = 0;
     if (socket) socket.emit('get-state');
+    setTimeout(_updateCursor, 100);
   });
 
   // ---- game-state: full state update ----------------------------------------
