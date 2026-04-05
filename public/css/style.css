@@ -523,6 +523,11 @@ main {
   box-shadow: 0 0 8px var(--fg-subtle), inset 0 0 6px #00ff8022;
 }
 
+.cell.keyboard-cursor {
+  border-color: var(--fg);
+  box-shadow: 0 0 6px var(--fg-subtle), inset 0 0 4px var(--fg-subtle);
+}
+
 .cell.queued {
   border-color: var(--accent-warn);
   background: #ffaa0018;
