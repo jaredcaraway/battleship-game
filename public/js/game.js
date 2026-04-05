@@ -829,8 +829,18 @@ function connectSocket() {
       SoundManager.play(data.sunk ? 'sunk' : 'boom-hit');
       if (data.sunk) SoundManager.play('explosion');
       _shakeScreen(shakeStyle);
+      if (typeof ParticleSystem !== 'undefined') {
+        if (data.sunk) {
+          ParticleSystem.spawnSunk(board, data.row, data.col);
+        } else {
+          ParticleSystem.spawnHit(board, data.row, data.col);
+        }
+      }
     } else {
       SoundManager.play('miss');
+      if (typeof ParticleSystem !== 'undefined') {
+        ParticleSystem.spawnMiss(board, data.row, data.col);
+      }
     }
 
     // Track and show sunk ships
