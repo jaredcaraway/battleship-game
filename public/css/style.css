@@ -475,6 +475,51 @@ main {
   animation: blink 1s infinite alternate;
 }
 
+/* ===== Radar Sweep ===== */
+#board-enemy {
+  position: relative;
+}
+
+#board-enemy {
+  overflow: hidden;
+}
+
+#board-enemy::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    transparent 340deg,
+    rgba(0, 255, 128, 0.06) 350deg,
+    rgba(0, 255, 128, 0.12) 360deg
+  );
+  animation: radarSweep 3s linear infinite;
+  z-index: 1;
+}
+
+#board-enemy.radar-active::after {
+  opacity: 1;
+}
+
+@keyframes radarSweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.reduce-motion #board-enemy::after {
+  animation: none;
+  opacity: 0;
+}
+
 /* ===== Boards ===== */
 .board {
   display: grid;

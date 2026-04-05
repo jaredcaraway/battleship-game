@@ -614,6 +614,12 @@ function updateTurnIndicator(isMyTurn) {
   }, 150);
 
   if (isMyTurn) _playTurnBeep();
+
+  // Toggle radar sweep on enemy board — active when waiting for opponent
+  var enemyBoard = document.getElementById('board-enemy');
+  if (enemyBoard) {
+    enemyBoard.classList.toggle('radar-active', !isMyTurn);
+  }
 }
 
 /**
