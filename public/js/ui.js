@@ -803,6 +803,24 @@ document.addEventListener('DOMContentLoaded', function () {
   // --- Core init ---
   if (typeof connectSocket === 'function') connectSocket();
   if (typeof AuthUI !== 'undefined') AuthUI.init();
+
+  // --- Hamburger menu ---
+  var hamburger = document.getElementById('nav-hamburger');
+  var navControls = document.querySelector('.nav-controls');
+  if (hamburger && navControls) {
+    hamburger.addEventListener('click', function () {
+      var isOpen = navControls.classList.toggle('open');
+      hamburger.setAttribute('aria-expanded', isOpen);
+      hamburger.textContent = isOpen ? '\u2715' : '\u2630';
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#top-nav') && navControls.classList.contains('open')) {
+        navControls.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.textContent = '\u2630';
+      }
+    });
+  }
   // SoundManager.init() is already called at the bottom of game.js
 
   // --- Mode tabs ---

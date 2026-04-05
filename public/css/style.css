@@ -158,6 +158,18 @@ body::before {
   transition: all 0.2s;
 }
 
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: 1px solid var(--fg-faint);
+  color: var(--fg);
+  font-size: 20px;
+  padding: 2px 8px;
+  cursor: crosshair;
+  font-family: 'Courier New', monospace;
+  line-height: 1;
+}
+
 .nav-btn:hover {
   border-color: var(--fg);
   text-shadow: 0 0 8px var(--fg);
@@ -1637,6 +1649,46 @@ main {
   .nav-brand {
     font-size: 12px;
     letter-spacing: 2px;
+  }
+
+  #top-nav {
+    z-index: 9999;
+  }
+
+  .nav-hamburger {
+    display: block;
+  }
+
+  .nav-controls {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--fg-faint);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+    padding: 12px 20px;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 9999;
+  }
+
+  .nav-controls.open {
+    display: flex;
+  }
+
+  .nav-controls .nav-btn {
+    width: 100%;
+    text-align: center;
+    padding: 8px 12px;
+  }
+
+  .nav-controls .nav-username {
+    text-align: center;
+    justify-content: center;
   }
 
   .room-code {
