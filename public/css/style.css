@@ -296,7 +296,7 @@ main {
 }
 
 .menu-section {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -341,8 +341,8 @@ main {
 .tab-panel.active {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 16px;
+  gap: 16px;
+  padding-top: 20px;
 }
 
 /* Difficulty buttons */
