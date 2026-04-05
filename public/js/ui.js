@@ -61,6 +61,15 @@ function showScreen(screenId) {
   }
   window.scrollTo(0, 0);
 
+  // Ambient drone — start on game screen, stop on others
+  if (typeof SoundManager !== 'undefined') {
+    if (screenId === 'screen-game') {
+      SoundManager.startAmbient();
+    } else {
+      SoundManager.stopAmbient();
+    }
+  }
+
   // On mobile, move player board panel to body so screen shake doesn't jitter it
   if (screenId === 'screen-game' && window.innerWidth <= 600) {
     setTimeout(function () {
