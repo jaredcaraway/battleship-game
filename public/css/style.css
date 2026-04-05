@@ -771,6 +771,11 @@ main {
   display: flex;
   gap: 10px;
   margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-drop-mobile {
+  display: none;
 }
 
 .btn-ready-active {
@@ -1719,6 +1724,10 @@ main {
 
   .key-hint {
     display: none;
+  }
+
+  .btn-drop-mobile {
+    display: inline-block;
   }
 
   .game-container,
