@@ -419,6 +419,9 @@ function _renderPlacementBoardCells() {
 
       (function (r, c) {
         cell.addEventListener('click', function () {
+          // Track position for mobile rotate preview
+          placementState.lastHoverRow = r;
+          placementState.lastHoverCol = c;
           _handlePlacementClick(r, c);
         });
         cell.addEventListener('mouseenter', function () {
@@ -1231,6 +1234,37 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   if (btnReady) {
     btnReady.addEventListener('click', _submitReady);
+  }
+
+  // --- Drop button (mobile) — removes a tapped placed ship ---
+  var btnDrop = document.getElementById('btn-drop');
+  var _lastTappedPlacedIdx = -1;
+
+  // Track when a placed ship cell is tapped
+  var placementBoard = document.getElementById('board-placement');
+  if (placementBoard && btnDrop) {
+    placementBoard.addEventListener('click', function (e) {
+      var cell = e.target.closest('.cell');
+      if (!cell) return;
+      var r = parseInt(cell.getAttribute('data-row'), 10);
+      var c = parseInt(cell.getAttribute('data-col'), 10);
+      var placedIdx = _findPlacedShipAt(r, c);
+      if (placedIdx !== -1) {
+        _lastTappedPlacedIdx = placedIdx;
+        btnDrop.disabled = false;
+      } else {
+        _lastTappedPlacedIdx = -1;
+        btnDrop.disabled = true;
+      }
+    });
+
+    btnDrop.addEventListener('click', function () {
+      if (_lastTappedPlacedIdx >= 0 && _lastTappedPlacedIdx < placementState.placedShips.length) {
+        _pickUpPlacedShip(_lastTappedPlacedIdx);
+        _lastTappedPlacedIdx = -1;
+        btnDrop.disabled = true;
+      }
+    });
   }
 
   // Keyboard shortcuts for placement screen
