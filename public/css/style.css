@@ -1223,6 +1223,24 @@ main {
   color: var(--fg-dim);
 }
 
+.settings-group-feedback {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.feedback-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.feedback-links .btn-terminal {
+  text-decoration: none;
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
 /* ===== Misc Text ===== */
 .seo-content {
   max-width: 600px;
@@ -1634,6 +1652,54 @@ main {
   0%   { opacity: 1; }
   70%  { opacity: 1; }
   100% { opacity: 0; }
+}
+
+/* ===== Colorblind Patterns ===== */
+.colorblind .cell.hit {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 3px,
+    #ff003344 3px,
+    #ff003344 5px
+  );
+}
+
+.colorblind .cell.miss {
+  background-image: radial-gradient(
+    circle,
+    #ffffff33 1px,
+    transparent 1px
+  );
+  background-size: 6px 6px;
+}
+
+.colorblind .cell.sunk {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 3px,
+      #ff003355 3px,
+      #ff003355 5px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 3px,
+      #ff003355 3px,
+      #ff003355 5px
+    );
+}
+
+.colorblind .cell.ship {
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    #00ff8022 3px,
+    #00ff8022 5px
+  );
 }
 
 /* ===== Reduce Motion ===== */

@@ -1125,6 +1125,27 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  // --- Colorblind toggle ---
+  var btnColorblind = document.getElementById('btn-colorblind');
+  var savedCb = localStorage.getItem('cyber-ship-battle-colorblind') === 'on';
+  if (savedCb) document.documentElement.classList.add('colorblind');
+
+  function _updateColorblindButton(enabled) {
+    if (!btnColorblind) return;
+    var textEl = btnColorblind.querySelector('.toggle-text');
+    if (textEl) textEl.textContent = enabled ? 'ON' : 'OFF';
+    btnColorblind.classList.toggle('toggle-off', !enabled);
+  }
+  _updateColorblindButton(savedCb);
+
+  if (btnColorblind) {
+    btnColorblind.addEventListener('click', function () {
+      var enabled = document.documentElement.classList.toggle('colorblind');
+      _updateColorblindButton(enabled);
+      localStorage.setItem('cyber-ship-battle-colorblind', enabled ? 'on' : 'off');
+    });
+  }
+
   // --- Theme picker ---
   var savedTheme = localStorage.getItem('cyber-ship-battle-theme') || 'matrix';
   document.documentElement.setAttribute('data-theme', savedTheme);
