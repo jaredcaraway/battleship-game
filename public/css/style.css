@@ -687,7 +687,7 @@ main {
 .game-wrapper {
   max-width: 900px;
   margin: 0 auto;
-  padding: 16px 20px;
+  padding: 16px 20px 60px;
 }
 
 .game-layout {
@@ -737,7 +737,7 @@ main {
 #screen-placement {
   max-width: 700px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 20px 20px 60px;
 }
 
 #screen-placement h2 {
