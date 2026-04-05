@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [2.3.0] - 2026-04-04
+
+### Added
+- **Hamburger nav on mobile** — nav buttons collapse behind a ☰ menu icon on small screens, dropdown with full-width buttons, tap outside to close
+- **GA4 custom event tracking** — 10 engagement events (game_start, game_end, ship_sunk, play_again, placement_complete, theme_changed, login, account_created, multiplayer room events)
+- **Google Analytics** via server-side injection (`GA_MEASUREMENT_ID` env var)
+
+### Fixed
+- **CRT vignette** reduced from 0.85 to 0.45 opacity at edges for better readability
+- **Board layout 600-716px** — boards now flex-shrink instead of overflowing
+- **Miss marker contrast** — bumped opacity for visibility on mobile
+- **Mobile game board** fills available width instead of shrink-wrapping
+- **Safe area inset** — `viewport-fit=cover` enables proper home bar clearance on iPhone
+- **Pinch zoom disabled** on mobile
+
 ## [2.2.0] - 2026-04-04
 
 ### Added
