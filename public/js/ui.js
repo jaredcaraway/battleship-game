@@ -1042,6 +1042,39 @@ document.addEventListener('DOMContentLoaded', function () {
   if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettings);
   if (settingsOverlay) settingsOverlay.addEventListener('click', closeSettings);
 
+  // --- Click backdrop to close modals ---
+  if (modalSettings) {
+    modalSettings.addEventListener('click', function (e) {
+      if (e.target === modalSettings) closeSettings();
+    });
+  }
+  var modalAuth = document.getElementById('modal-auth');
+  if (modalAuth) {
+    modalAuth.addEventListener('click', function (e) {
+      if (e.target === modalAuth) AuthUI.hideModal();
+    });
+  }
+  var modalLeave = document.getElementById('modal-leave');
+  if (modalLeave) {
+    modalLeave.addEventListener('click', function (e) {
+      if (e.target === modalLeave) _hideLeaveModal();
+    });
+  }
+
+  // --- Escape key closes any open modal ---
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (modalSettings && modalSettings.classList.contains('active')) {
+      closeSettings();
+    } else if (document.getElementById('modal-auth') &&
+               document.getElementById('modal-auth').classList.contains('active')) {
+      AuthUI.hideModal();
+    } else if (document.getElementById('modal-leave') &&
+               document.getElementById('modal-leave').classList.contains('active')) {
+      _hideLeaveModal();
+    }
+  });
+
   // --- Sound toggle (inside settings) ---
   var btnSound = document.getElementById('btn-sound');
   var soundIcon = '<svg class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/>';
