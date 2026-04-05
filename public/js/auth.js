@@ -304,6 +304,10 @@ var AuthUI = {
       icon.innerHTML = '<svg class="nav-user-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
       userInfo.appendChild(icon.firstChild);
       userInfo.appendChild(document.createTextNode(' ' + user.username));
+      userInfo.style.cursor = 'crosshair';
+      userInfo.addEventListener('click', function () {
+        if (typeof showScreen === 'function') showScreen('screen-stats');
+      });
 
       // Show logout button
       var logoutBtn = document.createElement('button');

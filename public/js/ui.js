@@ -703,8 +703,46 @@ function _renderStatsScreen() {
   if (!el) return;
 
   var s = GameStats.load();
-  var winRate = s.gamesPlayed > 0 ? Math.round((s.wins / s.gamesPlayed) * 100) : 0;
-  var avgTurns = s.wins > 0 ? Math.round(s.totalTurns / s.gamesPlayed) : '—';
+  var token = localStorage.getItem('battleship_token');
+
+  // Render local stats immediately
+  _renderStatsHTML(el, s, null, null);
+
+  // If logged in, fetch server stats and history
+  if (token) {
+    var headers = { 'Authorization': 'Bearer ' + token };
+    Promise.all([
+      fetch('/api/stats', { headers: headers }).then(function (r) { return r.ok ? r.json() : null; }),
+      fetch('/api/history', { headers: headers }).then(function (r) { return r.ok ? r.json() : null; })
+    ]).then(function (results) {
+      _renderStatsHTML(el, s, results[0] ? results[0].stats : null, results[1] ? results[1].history : null);
+    }).catch(function () {});
+  }
+}
+
+function _renderStatsHTML(el, local, server, history) {
+  var s = local;
+  // Merge server stats if available (server is authoritative for logged-in data)
+  if (server) {
+    s = {
+      gamesPlayed: Math.max(local.gamesPlayed, server.total_games || 0),
+      wins: Math.max(local.wins, server.wins || 0),
+      losses: Math.max(local.losses, server.losses || 0),
+      totalTurns: local.totalTurns,
+      totalShots: local.totalShots,
+      totalHits: local.totalHits,
+      fastestWin: local.fastestWin,
+      currentStreak: local.currentStreak,
+      bestStreak: local.bestStreak,
+      byMode: local.byMode
+    };
+    if (server.win_rate !== undefined && server.win_rate !== null) {
+      s.winRate = Math.round(server.win_rate);
+    }
+  }
+
+  var winRate = s.winRate !== undefined ? s.winRate : (s.gamesPlayed > 0 ? Math.round((s.wins / s.gamesPlayed) * 100) : 0);
+  var avgTurns = s.gamesPlayed > 0 ? Math.round(s.totalTurns / s.gamesPlayed) : '—';
 
   var html = '<div class="stats-grid">';
   html += _statCard('GAMES', s.gamesPlayed);
@@ -735,6 +773,46 @@ function _renderStatsScreen() {
     });
     html += '</div>';
   }
+
+  // Recent game history
+  if (history && history.length > 0) {
+    html += '<h3 class="stats-section-heading">RECENT GAMES</h3>';
+    html += '<div class="stats-history">';
+    history.forEach(function (game) {
+      var result = game.won ? 'W' : 'L';
+      var resultClass = game.won ? 'history-win' : 'history-loss';
+      var mode = (game.mode || '').replace('ai_', '').toUpperCase() || '—';
+      var turns = game.turns || '—';
+      var acc = game.accuracy !== null && game.accuracy !== undefined ? Math.round(game.accuracy) + '%' : '—';
+      html += '<div class="stats-history-row">';
+      html += '<span class="history-result ' + resultClass + '">' + result + '</span>';
+      html += '<span class="history-mode">' + mode + '</span>';
+      html += '<span class="history-detail">' + turns + ' turns</span>';
+      html += '<span class="history-detail">' + acc + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Achievements placeholder
+  html += '<h3 class="stats-section-heading">ACHIEVEMENTS</h3>';
+  html += '<div class="stats-achievements">';
+  var achievements = [
+    { name: 'FIRST BLOOD', desc: 'Win your first game', check: s.wins >= 1 },
+    { name: 'SHARPSHOOTER', desc: 'Win with 50%+ accuracy', check: s.fastestWin !== null },
+    { name: 'STREAK MASTER', desc: '5-win streak', check: s.bestStreak >= 5 },
+    { name: 'SPEED DEMON', desc: 'Win in under 30 turns', check: s.fastestWin !== null && s.fastestWin < 30 },
+    { name: 'VETERAN', desc: 'Play 50 games', check: s.gamesPlayed >= 50 },
+    { name: 'ADMIRAL', desc: 'Win 100 games', check: s.wins >= 100 }
+  ];
+  achievements.forEach(function (a) {
+    var cls = a.check ? 'achievement-unlocked' : 'achievement-locked';
+    html += '<div class="achievement ' + cls + '">';
+    html += '<span class="achievement-name">' + a.name + '</span>';
+    html += '<span class="achievement-desc">' + a.desc + '</span>';
+    html += '</div>';
+  });
+  html += '</div>';
 
   el.innerHTML = html;
 }
