@@ -1223,6 +1223,24 @@ main {
   color: var(--fg-dim);
 }
 
+.settings-group-feedback {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.feedback-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.feedback-links .btn-terminal {
+  text-decoration: none;
+  font-size: 11px;
+  padding: 5px 10px;
+}
+
 /* ===== Misc Text ===== */
 .seo-content {
   max-width: 600px;
