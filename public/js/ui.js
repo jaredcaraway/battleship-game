@@ -61,6 +61,13 @@ function showScreen(screenId) {
   }
   window.scrollTo(0, 0);
 
+  // Hide main title on placement/game screens on mobile to save space
+  var mainTitle = document.getElementById('main-title');
+  if (mainTitle) {
+    var hideTitle = (screenId === 'screen-placement' || screenId === 'screen-game') && window.innerWidth <= 600;
+    mainTitle.style.display = hideTitle ? 'none' : '';
+  }
+
   // Ambient drone — start on game screen, stop on others
   if (typeof SoundManager !== 'undefined') {
     if (screenId === 'screen-game') {
