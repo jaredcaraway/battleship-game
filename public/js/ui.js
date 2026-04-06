@@ -425,8 +425,29 @@ function _renderPlacementBoardCells() {
   var board = document.getElementById('board-placement');
   if (!board) return;
   board.innerHTML = '';
+  board.classList.add('board-labeled');
+
+  var rowLabels = 'ABCDEFGHIJ';
+
+  // Corner
+  var corner = document.createElement('div');
+  corner.className = 'grid-label grid-corner';
+  board.appendChild(corner);
+
+  // Column headers
+  for (var c = 0; c < 10; c++) {
+    var colLabel = document.createElement('div');
+    colLabel.className = 'grid-label grid-col-label';
+    colLabel.textContent = c + 1;
+    board.appendChild(colLabel);
+  }
 
   for (var row = 0; row < 10; row++) {
+    var rLabel = document.createElement('div');
+    rLabel.className = 'grid-label grid-row-label';
+    rLabel.textContent = rowLabels[row];
+    board.appendChild(rLabel);
+
     for (var col = 0; col < 10; col++) {
       var cell = document.createElement('div');
       cell.className = 'cell';

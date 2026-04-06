@@ -331,8 +331,30 @@ function renderBoard(containerId, grid, clickable) {
   if (!container) return;
 
   container.innerHTML = '';
+  container.classList.add('board-labeled');
+
+  var rowLabels = 'ABCDEFGHIJ';
+
+  // Top-left corner (empty)
+  var corner = document.createElement('div');
+  corner.className = 'grid-label grid-corner';
+  container.appendChild(corner);
+
+  // Column headers (1-10)
+  for (var c = 0; c < 10; c++) {
+    var colLabel = document.createElement('div');
+    colLabel.className = 'grid-label grid-col-label';
+    colLabel.textContent = c + 1;
+    container.appendChild(colLabel);
+  }
 
   for (var row = 0; row < 10; row++) {
+    // Row label
+    var rLabel = document.createElement('div');
+    rLabel.className = 'grid-label grid-row-label';
+    rLabel.textContent = rowLabels[row];
+    container.appendChild(rLabel);
+
     for (var col = 0; col < 10; col++) {
       var cell = document.createElement('div');
       cell.className = 'cell';
@@ -340,9 +362,9 @@ function renderBoard(containerId, grid, clickable) {
       cell.setAttribute('data-col', col);
 
       if (clickable) {
-        (function (r, c) {
+        (function (r, c2) {
           cell.addEventListener('click', function () {
-            fireAt(r, c);
+            fireAt(r, c2);
           });
         })(row, col);
       }
