@@ -257,6 +257,17 @@ function showGameOver(data) {
   // Record to local stats
   GameStats.record(data);
 
+  // Show account CTA if not logged in and player won
+  var cta = document.getElementById('gameover-account-cta');
+  if (cta) {
+    var isLoggedIn = !!localStorage.getItem('battleship_token');
+    if (!isLoggedIn && data.won) {
+      cta.removeAttribute('hidden');
+    } else {
+      cta.setAttribute('hidden', '');
+    }
+  }
+
   showScreen('screen-gameover');
 
   if (data.won) _fireVictoryConfetti();
@@ -1315,6 +1326,14 @@ document.addEventListener('DOMContentLoaded', function () {
   if (btnMainMenu) {
     btnMainMenu.addEventListener('click', function () {
       showScreen('screen-menu');
+    });
+  }
+
+  // --- Victory CTA register button ---
+  var btnCtaRegister = document.getElementById('btn-cta-register');
+  if (btnCtaRegister) {
+    btnCtaRegister.addEventListener('click', function () {
+      if (typeof AuthUI !== 'undefined') AuthUI.showModal('register');
     });
   }
 

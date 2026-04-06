@@ -1001,6 +1001,20 @@ main {
   color: var(--fg-dim);
 }
 
+.gameover-cta {
+  margin-top: 20px;
+  padding: 12px 16px;
+  border: 1px solid var(--fg-ghost);
+  text-align: center;
+}
+
+.gameover-cta .cta-text {
+  font-size: 11px;
+  color: var(--fg-dim);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
 .gameover-buttons {
   display: flex;
   gap: 12px;
