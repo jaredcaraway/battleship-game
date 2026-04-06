@@ -529,6 +529,33 @@ main {
   transform-style: preserve-3d;
 }
 
+.board.board-labeled {
+  grid-template-columns: 16px repeat(10, 1fr);
+  grid-template-rows: 16px repeat(10, 1fr);
+}
+
+.grid-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  color: var(--fg-faint);
+  letter-spacing: 0;
+  user-select: none;
+}
+
+.grid-corner {
+  /* empty top-left cell */
+}
+
+.grid-col-label {
+  font-size: 7px;
+}
+
+.grid-row-label {
+  font-size: 7px;
+}
+
 .board-large {
   width: min(400px, 100%);
   margin: 0 auto;
