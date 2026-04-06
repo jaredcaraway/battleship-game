@@ -529,6 +529,7 @@ function _handlePlacementClick(row, col) {
   });
 
   // Update UI
+  if (typeof SoundManager !== 'undefined') SoundManager.play('place');
   _redrawPlacedShips();
   _updateShipListUI();
 
@@ -893,6 +894,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // --- Core init ---
   if (typeof connectSocket === 'function') connectSocket();
   if (typeof AuthUI !== 'undefined') AuthUI.init();
+
+  // --- UI click sounds on buttons ---
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('.btn-terminal, .nav-btn, .nav-hamburger, .mode-tab, .theme-swatch, .ship-item');
+    if (btn && typeof SoundManager !== 'undefined') {
+      SoundManager.play('click');
+    }
+  });
 
   // --- Hamburger menu ---
   var hamburger = document.getElementById('nav-hamburger');

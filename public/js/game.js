@@ -60,6 +60,8 @@ var SoundManager = {
     // Synthesized sounds
     if (name === 'explosion') { this._playExplosion(); return; }
     if (name === 'boom-hit') { this._playBoomHit(); return; }
+    if (name === 'click') { this._playClick(); return; }
+    if (name === 'place') { this._playPlace(); return; }
     if (!this.sounds[name]) return;
     this.sounds[name].currentTime = 0;
     this.sounds[name].play().catch(function () {});
@@ -171,6 +173,42 @@ var SoundManager = {
       osc.start(t);
       osc.stop(t + 0.5);
     } catch (e) { /* ignore audio errors */ }
+  },
+
+  _playClick: function () {
+    try {
+      var ctx = _getAudioCtx();
+      var t = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, t);
+      osc.frequency.exponentialRampToValueAtTime(600, t + 0.03);
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.06, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.06);
+    } catch (e) {}
+  },
+
+  _playPlace: function () {
+    try {
+      var ctx = _getAudioCtx();
+      var t = ctx.currentTime;
+      var osc = ctx.createOscillator();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(400, t);
+      osc.frequency.exponentialRampToValueAtTime(600, t + 0.08);
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.08, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.12);
+    } catch (e) {}
   },
 
   toggle: function () {
