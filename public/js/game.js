@@ -175,7 +175,107 @@ var SoundManager = {
 
   toggle: function () {
     this.muted = !this.muted;
+    if (this.muted) {
+      this.stopAmbient();
+    }
     return this.muted;
+  },
+
+  // --- Ambient submarine drone ---
+  _ambient: null,
+  _ambientGain: null,
+
+  startAmbient: function () {
+    if (this.muted || this._ambient) return;
+    try {
+      var ctx = _getAudioCtx();
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 2);
+      gain.connect(ctx.destination);
+
+      // Low drone oscillator
+      var drone = ctx.createOscillator();
+      drone.type = 'sawtooth';
+      drone.frequency.setValueAtTime(45, ctx.currentTime);
+      var droneFilter = ctx.createBiquadFilter();
+      droneFilter.type = 'lowpass';
+      droneFilter.frequency.setValueAtTime(120, ctx.currentTime);
+      droneFilter.Q.setValueAtTime(2, ctx.currentTime);
+      drone.connect(droneFilter);
+      droneFilter.connect(gain);
+      drone.start();
+
+      // Sub-bass hum
+      var sub = ctx.createOscillator();
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(30, ctx.currentTime);
+      var subGain = ctx.createGain();
+      subGain.gain.setValueAtTime(0.4, ctx.currentTime);
+      sub.connect(subGain);
+      subGain.connect(gain);
+      sub.start();
+
+      // Slow LFO to modulate drone pitch slightly
+      var lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.setValueAtTime(0.15, ctx.currentTime);
+      var lfoGain = ctx.createGain();
+      lfoGain.gain.setValueAtTime(3, ctx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(drone.frequency);
+      lfo.start();
+
+      // Sonar ping every 4 seconds
+      var self = this;
+      this._sonarInterval = setInterval(function () {
+        if (self.muted) return;
+        try {
+          var t2 = ctx.currentTime;
+          var ping = ctx.createOscillator();
+          ping.type = 'sine';
+          ping.frequency.setValueAtTime(1200, t2);
+          ping.frequency.exponentialRampToValueAtTime(800, t2 + 0.15);
+
+          var pingGain = ctx.createGain();
+          pingGain.gain.setValueAtTime(0.12, t2);
+          pingGain.gain.exponentialRampToValueAtTime(0.001, t2 + 1.2);
+
+          var pingFilter = ctx.createBiquadFilter();
+          pingFilter.type = 'bandpass';
+          pingFilter.frequency.setValueAtTime(1000, t2);
+          pingFilter.Q.setValueAtTime(5, t2);
+
+          ping.connect(pingFilter);
+          pingFilter.connect(pingGain);
+          pingGain.connect(ctx.destination);
+          ping.start(t2);
+          ping.stop(t2 + 1.5);
+        } catch (e) {}
+      }, 4000);
+
+      this._ambient = [drone, sub, lfo];
+      this._ambientGain = gain;
+    } catch (e) {}
+  },
+
+  stopAmbient: function () {
+    if (!this._ambient) return;
+    try {
+      var gain = this._ambientGain;
+      var ctx = _getAudioCtx();
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      var oscs = this._ambient;
+      setTimeout(function () {
+        oscs.forEach(function (o) { try { o.stop(); } catch (e) {} });
+      }, 1100);
+    } catch (e) {}
+    if (this._sonarInterval) {
+      clearInterval(this._sonarInterval);
+      this._sonarInterval = null;
+    }
+    this._ambient = null;
+    this._ambientGain = null;
   }
 };
 
