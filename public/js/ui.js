@@ -1346,7 +1346,7 @@ document.addEventListener('DOMContentLoaded', function () {
     placementState.orientation =
       placementState.orientation === 'horizontal' ? 'vertical' : 'horizontal';
     if (btnRotate) {
-      btnRotate.innerHTML = 'Rotate <span class="key-hint">[R]</span>';
+      btnRotate.innerHTML = '&#8635; Rotate <span class="key-hint">[R]</span>';
     }
     // Refresh hover preview so the rotated orientation is visible immediately
     if (placementState.lastHoverRow >= 0 && placementState.lastHoverCol >= 0) {
