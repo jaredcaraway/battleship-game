@@ -1895,6 +1895,10 @@ main {
     z-index: 9999;
   }
 
+  .notification {
+    z-index: 10000;
+  }
+
   .nav-hamburger {
     display: block;
   }
